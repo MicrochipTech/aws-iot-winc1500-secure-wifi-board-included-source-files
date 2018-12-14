@@ -76,12 +76,13 @@
 #include "cloud_wrapper.h"
 //#include "button_handle.h"
 #include "cmdset.h"
-#include "gateway_prov.h"
+#include "wifi_prov.h"
 #include "led.h"
 #include "wearable.h"
 #include "env_sensor.h"
 #include "motion_sensor.h"
 #include "nvm_handle.h"
+#include "button.h"
 #include "main.h"
 
 uint8_t gMacaddr[M2M_MAC_ADDRES_LEN];
@@ -1062,6 +1063,7 @@ static void wifiSwitchtoSTA(void)
 		printf("main: m2m_wifi_connect \r\n");
 		ret = m2m_wifi_connect((char *)gDefaultSSID, strlen((char *)gDefaultSSID), \
 		gAuthType, (char *)gDefaultKey, M2M_WIFI_CH_ALL);
+		
 		if (M2M_SUCCESS != ret) {
 			printf("main: m2m_wifi_connect call error!\r\n");
 			while (1) {
@@ -1510,10 +1512,35 @@ void getThingID(char* id)
 	memcpy(id, g_thing_name, sizeof(g_thing_name));
 }
 
-void buttonSW0Handle()
+void buttonSW3Handle()
 {
 	DBG_LOG("[%s] In\n", __func__);
-	wifi_states = WIFI_TASK_SWITCH_TO_AP;
+	//unRegButtonPressDetectCallback(detSw0Sock);
+	
+}
+void buttonSW3LongPressHandle()
+{
+	DBG_LOG("[%s] In\n", __func__);
+	
+	switch (wifi_states)
+	{
+		case WIFI_TASK_MQTT_RUNNING:
+		case WIFI_TASK_MQTT_SUBSCRIBE:
+			cloud_disconnect();
+			m2m_wifi_disconnect();
+			wifi_states = WIFI_TASK_SWITCH_TO_AP;
+			break;
+			
+		case WIFI_TASK_CONNECT_CLOUD:
+		case WIFI_TASK_SWITCHING_TO_STA:
+			m2m_wifi_disconnect();
+			wifi_states = WIFI_TASK_SWITCH_TO_AP;
+			break;
+		default: 
+			break;
+		
+	}
+	
 	//unRegButtonPressDetectCallback(detSw0Sock);
 	
 }
@@ -1522,6 +1549,12 @@ void detectWiFiMode()
 	//detSw0Sock = regButtonPressDetectCallback(buttonSW0Handle);
 }
 
+void configureSW3()
+{
+	int buttonSock, button5SecSock;
+	buttonSock = regButtonShortPressDetectCallback(buttonSW3Handle,3);
+	button5SecSock = regButtonLongPressDetectCallback(buttonSW3LongPressHandle, 3);
+}
 
 
 int wifiInit(void)
@@ -1634,6 +1667,8 @@ int wifiInit(void)
 	cloud_create_topic_shadow(gSubscribe_Channel_shadow, DEVICE_TYPE, g_thing_name, SUBSCRIBE_TOPIC_SHADOW);
 	cloud_create_topic_shadow(gPublish_Channel_shadow, DEVICE_TYPE, g_thing_name, PUBLISH_TOPIC_SHADOW);
 #endif		
+
+	configureSW3();
 	
 }
 

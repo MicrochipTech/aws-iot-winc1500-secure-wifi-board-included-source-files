@@ -55,6 +55,8 @@
 
 #define PADDING_LEN     0
 
+uint8_t gMacaddr[M2M_MAC_ADDRES_LEN];
+
 typedef enum _prov_state{
 	PROV_WAITING,
 	PROV_INIT,

@@ -89,6 +89,8 @@ void configure_wdt(void);
 
 void enable_gclk1(void);
 
+extern volatile uint32_t ms_ticks;
+
 /** SysTick counter to avoid busy wait delay. */
 //volatile uint32_t ms_ticks = 0;
 
@@ -235,9 +237,13 @@ int main(void)
 	env_sensor_data_init();
 	enable_rotation_vector();
 	while (1) {
-                zero_touch_provisioning_task();
+         
+		 zero_touch_provisioning_task();
 		/* Handle pending events from network controller. */
 		wifiTaskExecute();
+		
+		buttonTaskExecute(ms_ticks);
+		
 		if(tick_rotation_data)
 		{
 			tick_rotation_data = 0;

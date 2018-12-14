@@ -350,14 +350,14 @@
         <documentation help="http://asf.atmel.com/docs/3.28.2/thirdparty.wireless.ble_sdk.apps.startup_template.saml21_xplained_pro_b/html/index.html" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.34.1" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.36.1" />
         </dependencies>
         <project id="thirdparty.wireless.ble_sdk.apps.startup_template.saml21_xplained_pro_b" value="Add" config="" content-id="Atmel.ASF" />
         <board id="board.saml21_xplained_pro_b" value="Add" config="" content-id="Atmel.ASF" />
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <avrtoolserialnumber>J41800087005</avrtoolserialnumber>
+    <avrtoolserialnumber>J41800076584</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x10810214</avrdeviceexpectedsignature>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_edbg>
@@ -379,7 +379,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800087005</ToolNumber>
+      <ToolNumber>J41800076584</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <com_atmel_avrdbg_tool_samice>
@@ -824,7 +824,7 @@
   </armgcc.linker.libraries.LibrarySearchPaths>
   <armgcc.linker.optimization.GarbageCollectUnusedSections>True</armgcc.linker.optimization.GarbageCollectUnusedSections>
   <armgcc.linker.memorysettings.ExternalRAM />
-  <armgcc.linker.miscellaneous.LinkerFlags>-Wl,--section-start=.text=0x2000, -Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam0/utils/linker_scripts/saml21/gcc/saml21g18b_flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
+  <armgcc.linker.miscellaneous.LinkerFlags>-Wl,--section-start=.text=0x0000, -Wl,--entry=Reset_Handler -Wl,--cref -mthumb -T../src/ASF/sam0/utils/linker_scripts/saml21/gcc/saml21g18b_flash.ld</armgcc.linker.miscellaneous.LinkerFlags>
   <armgcc.assembler.general.IncludePaths>
     <ListValues>
       <Value>../src/Config</Value>
@@ -1504,9 +1504,6 @@
     <Compile Include="src\cryptoauthlib\lib\tls\atcatls_cfg.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\datapoint.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\ecc_configure.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1525,10 +1522,10 @@
     <Compile Include="src\env_sensor.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\gateway_prov.c">
+    <Compile Include="src\wifi_prov.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\gateway_prov.h">
+    <Compile Include="src\wifi_prov.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\iot_message.c">
@@ -2006,9 +2003,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\bme280\bme280_support.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\qtouch\touch.h">

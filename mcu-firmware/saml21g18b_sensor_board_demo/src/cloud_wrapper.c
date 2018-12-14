@@ -269,3 +269,11 @@ Cloud_RC cloud_create_search_topic(char* full_path, char* acct_uuid, char* topic
 	return rc;
 	
 }
+
+Cloud_RC cloud_disconnect()
+{
+	IoT_Error_t rc = NONE_ERROR;
+	
+	rc = aws_iot_mqtt_disconnect();
+	return rc;
+}

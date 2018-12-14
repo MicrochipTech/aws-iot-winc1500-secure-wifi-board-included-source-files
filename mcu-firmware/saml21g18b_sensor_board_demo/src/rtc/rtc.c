@@ -113,18 +113,7 @@ void rtc_overflow_callback(void)
 	
 	/* Do something on RTC overflow here */
 	rtc_count_clear_compare_match(&rtc_instance,RTC_COUNT_COMPARE_0);
-	touch_time.time_to_measure_touch = 1u;
 
-	if(low_power_mode==0)
-	{
-		touch_time.current_time_ms = touch_time.current_time_ms +
-		touch_time.measurement_period_ms;
-	}else if(low_power_mode==1)
-	{
-		touch_time.current_time_ms = touch_time.current_time_ms +
-		DEF_LOWPOWER_SENSOR_DRIFT_PERIODICITY_MS;
-		drift_wakeup=1;
-	}
 
 	if(started_advertising == true)
 	{

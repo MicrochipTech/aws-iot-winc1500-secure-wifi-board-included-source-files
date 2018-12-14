@@ -65,6 +65,10 @@ extern uint8 gAuthType;
 extern uint8 gDefaultKey[M2M_MAX_PSK_LEN];
 extern uint8 gUuid[AWS_COGNITO_UUID_LEN];
 
+uint32 pre_tick[NUMBER_OF_BUTTON];
+uint32 press_time[NUMBER_OF_BUTTON];
+uint32 sw_index[NUMBER_OF_BUTTON];
+uint8 prev_state[NUMBER_OF_BUTTON];	// 0: release; 1: press]
 
 void initialise_button(void)
 {
@@ -77,6 +81,9 @@ void initialise_button(void)
 	port_pin_set_config(SW1_PIN, &config_port_pin);
 	port_pin_set_config(SW2_PIN, &config_port_pin);
 	port_pin_set_config(SW3_PIN, &config_port_pin);
+	
+	for (int i=0; i< NUMBER_OF_BUTTON; i++)
+		sw_index[i] = 1;
 
 }
 
@@ -101,53 +108,135 @@ void buttonTaskInit()
 {
 	return;	
 }
-void buttonTaskExecute(uint32 tick)
+
+
+
+void button_check(uint32 tick, int button)
 {
-	static uint32 pre_tick = 0;
-	uint32 press_time = 0;
-	static uint32 idx_5s = 1;
+
+	bool pin_lvl;
 	
-	bool pin_lvl = port_pin_get_output_level(SW1_PIN);
-	
-	if(SW1_ACTIVE == pin_lvl){
-		for (int i=0; i<MAX_CB_INDEX; i++)
-		{
-			if (button_detect_cb[i]!=NULL)
-			button_detect_cb[i]();
-		}
+	switch (button)
+	{
+		case 1:
+			pin_lvl = port_pin_get_input_level(SW1_PIN);
+			break;
+		case 2:
+			pin_lvl = port_pin_get_input_level(SW2_PIN);
+			break;
+		case 3:
+			pin_lvl = port_pin_get_input_level(SW3_PIN);
+			break;
 	}
-	if(SW1_ACTIVE == pin_lvl && pre_tick == 0){
-		pre_tick = tick;
+	
+	
+	if(SW1_ACTIVE == pin_lvl && pre_tick[button-1] == 0){
+		pre_tick[button-1]  = tick;
 		
 	}
-	else if(SW1_ACTIVE == pin_lvl && pre_tick != 0){
-		if (tick > pre_tick)
-		press_time = tick - pre_tick;
-		
-		if (press_time >= idx_5s*TIMEOUT_COUNTER_5S)
+	else if(SW1_ACTIVE == pin_lvl && pre_tick[button-1]  != 0){
+		if (tick > pre_tick[button-1] )
+			press_time[button-1]  = tick - pre_tick[button-1] ;
+		if (press_time[button-1]  >= TIMEOUT_COUNTER_BUTTON_DEBOUNCE && prev_state[button-1]  == 0)
 		{
-			idx_5s++;
+			printf("[%s] In, trigger \r\n", __func__);
+			prev_state[button-1]  = 1;
+			
 			for (int i=0; i<MAX_CB_INDEX; i++)
 			{
-				if (button_5s_timeout_cb[i]!=NULL)
-					button_5s_timeout_cb[i]();
+				if (button_short_press_cb[button -1][i]!=NULL)
+				button_short_press_cb[button -1][i]();
+			}
+		}
+		
+		
+		if (press_time[button-1]  >= (sw_index[button-1] *TIMEOUT_COUNTER_5S) )
+		{
+			prev_state[button-1]  = 1;
+			sw_index[button-1] ++;
+			for (int i=0; i<MAX_CB_INDEX; i++)
+			{
+				if (button_long_press_cb[button-1][i]!=NULL)
+				button_long_press_cb[button-1][i]();
 			}
 		}
 	}
 	else
 	{
-		pre_tick = 0;
-		idx_5s = 0;
+		prev_state[button-1]  = 0;
+		pre_tick[button-1]  = 0;
+		sw_index[button-1]  = 1;
 	}
+	
+}
+void buttonTaskExecute(uint32 tick)
+{
+	
+	button_check(tick, 1);
+	button_check(tick, 2);
+	button_check(tick, 3);
+	
+	
+#if 0	
+	static uint32 pre_tick_sw1 = 0;
+	uint32 press_time_sw1 = 0;
+	static uint32 sw1_index = 1;
+	static uint8 prev_state_sw1 = 0;		// 0: release; 1: press]
+	
+	
+	
+	
+	bool pin_lvl = port_pin_get_input_level(SW1_PIN);
+	
+	if(SW1_ACTIVE == pin_lvl && press_time_sw1 == 0){
+		pre_tick_sw1 = tick;
+		
+	}
+	else if(SW1_ACTIVE == pin_lvl && pre_tick_sw1 != 0){
+		if (tick > pre_tick_sw1)
+		press_time_sw1 = tick - pre_tick_sw1;
+		
+		if (press_time_sw1 >= TIMEOUT_COUNTER_BUTTON_DEBOUNCE && prev_state == 0)
+		{
+			printf("[%s] In, trigger \r\n", __func__);
+			prev_state_sw1 = 1;
+		
+			for (int i=0; i<MAX_CB_INDEX; i++)
+			{
+				if (button_short_press_cb[0][i]!=NULL)
+				button_short_press_cb[0][i]();
+			}
+		}
+		
+		
+		if (press_time_sw1 >= (sw1_index*TIMEOUT_COUNTER_5S) )
+		{
+			prev_state_sw1 = 1;
+			sw1_index++;
+			for (int i=0; i<MAX_CB_INDEX; i++)
+			{
+				if (button_long_press_cb[0][i]!=NULL)
+					button_long_press_cb[0][i]();
+			}
+		}
+	}
+	else
+	{
+		prev_state_sw1 = 0;
+		pre_tick_sw1 = 0;
+		sw1_index = 1;
+	}
+
+#endif
 }
 
-int regButtonPressDetectCallback(void* cb)
+int regButtonShortPressDetectCallback(void* cb, int button)
 {
 	for (int i=0; i<MAX_CB_INDEX; i++)
 	{
-		if (button_detect_cb[i]==NULL)
+		if (button_short_press_cb[button-1][i]==NULL)
 		{
-			button_detect_cb[i] = cb;
+			button_short_press_cb[button-1][i] = cb;
 			return i;
 		}
 	}
@@ -155,11 +244,11 @@ int regButtonPressDetectCallback(void* cb)
 	printf("[%s] No quota...\n", __func__);
 	return -1;
 }
-int unRegButtonPressDetectCallback(int sock)
+int unRegButtonShortPressDetectCallback(int sock, int button)
 {
-	if (button_detect_cb[sock]!=NULL)
+	if (button_short_press_cb[button-1][sock]!=NULL)
 	{
-			button_detect_cb[sock] = NULL;
+			button_short_press_cb[button-1][sock] = NULL;
 			return 0;
 	}
 	else
@@ -168,13 +257,13 @@ int unRegButtonPressDetectCallback(int sock)
 	return -1;
 }
 
-int regButtonPress5sTimeoutCallback(void* cb)
+int regButtonLongPressDetectCallback(void* cb, int button)
 {
 	for (int i=0; i<MAX_CB_INDEX; i++)
 	{
-		if (button_5s_timeout_cb[i]==NULL)
+		if (button_long_press_cb[button-1][i]==NULL)
 		{
-			button_5s_timeout_cb[i] = cb;
+			button_long_press_cb[button-1][i] = cb;
 			return i;
 		}
 	}
@@ -182,15 +271,16 @@ int regButtonPress5sTimeoutCallback(void* cb)
 	printf("[%s] No quota...\n", __func__);
 	return -1;
 }
-int unRegButtonPress5sTimeoutCallback(int sock)
+int unRegButtonLongPressDetectCallback(int sock, int button)
 {
-	
-	if (button_5s_timeout_cb[sock]!=NULL)
+
+	if (button_long_press_cb[button-1][sock]!=NULL)
 	{
-		button_5s_timeout_cb[sock] = NULL;
+		button_long_press_cb[button-1][sock] = NULL;
 		return 0;
 	}
 	else
-	printf("[%s] Cannot find the related cb..\n", __func__);
+		printf("[%s] Cannot find the related cb..\n", __func__);
+		
 	return -1;
 }
