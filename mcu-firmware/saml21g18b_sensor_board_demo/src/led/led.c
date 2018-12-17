@@ -53,7 +53,7 @@
 */
 /*- Includes ---------------------------------------------------------------*/
 #include <asf.h>
-#include "conf_board.h"
+//#include "conf_board.h"
 #include "led.h"
 #include "rtc.h"
 

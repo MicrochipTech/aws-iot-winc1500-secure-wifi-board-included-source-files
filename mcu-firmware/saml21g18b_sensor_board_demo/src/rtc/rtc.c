@@ -88,13 +88,10 @@ volatile uint32_t ms_ticks = 0;
 uint32_t rtc_timer;
 volatile uint8_t tick_100ms;
 volatile uint8_t tick_500ms;
-volatile uint8_t tick_rotation_data;
 volatile uint8_t tick_1second;
 volatile uint8_t tick_2second;
 volatile uint8_t tick_5second;
-volatile uint8_t tick_env_sensor;
 volatile uint8_t tick_motion_sensor;
-volatile uint8_t tick_ble_event_task;
 volatile uint8_t tick_10second;
 volatile uint8_t tick_bhi;
 volatile uint8_t tick_60second;
@@ -114,13 +111,6 @@ void rtc_overflow_callback(void)
 	/* Do something on RTC overflow here */
 	rtc_count_clear_compare_match(&rtc_instance,RTC_COUNT_COMPARE_0);
 
-
-	if(started_advertising == true)
-	{
-		/* advertisement timer */
-		advertisement_timer++;
-	}
-	
 	/* 20ms tick */
 	rtc_timer++;
 	ms_ticks +=20;
@@ -136,20 +126,7 @@ void rtc_overflow_callback(void)
 	{
 		//tick_10second = 1;
 	}	
-
-	if(rtc_timer % env_sensor_period == 0)
-	{
-		tick_env_sensor = 1;
-	}
-	if(rtc_timer % motion_sensor_period == 0)
-	{
-		tick_motion_sensor = 1;
-	}
 	
-	if(rtc_timer % ble_event_task_period == 0)
-	{
-		tick_ble_event_task = 1;
-	}
 	if(rtc_timer % 250 == 0)
 	{
 		tick_5second = 1;
@@ -168,7 +145,6 @@ void rtc_overflow_callback(void)
 	{
 		if (gu8LedMode == LED_MODE_BLINK_NORMAL)
 			toggleLED();
-		tick_rotation_data = 1;
 		tick_500ms = 1;
 	}
 	if(rtc_timer % 5 == 0)

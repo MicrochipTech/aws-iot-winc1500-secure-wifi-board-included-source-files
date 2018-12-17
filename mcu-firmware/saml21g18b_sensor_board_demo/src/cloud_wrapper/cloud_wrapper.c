@@ -54,17 +54,12 @@
 /*- Includes ---------------------------------------------------------------*/
 
 #include <asf.h>
-#include "driver/include/m2m_wifi.h"
-#include "main.h"
-#include "socket/include/socket.h"
-#include "string.h"
 #include "AWS_SDK/aws_iot_src/utils/aws_iot_log.h"
 #include "AWS_SDK/aws_iot_src/utils/aws_iot_version.h"
 #include "AWS_SDK/aws_iot_src/protocol/mqtt/aws_iot_mqtt_interface.h"
-#include "winc15x0.h"
+#include "socket/include/socket.h"
 #include "cJSON.h"
 #include "cloud_wrapper.h"
-#include "iot_message.h"
 #include "aws_iot_config.h"
 
 /**
@@ -138,7 +133,7 @@ static void jsonMessagePublish(char* channel, cJSON *message)
 	
 }
 
-Cloud_RC cloud_connect(char* hostname)
+Cloud_RC cloud_connect(char* hostname, char* mqtt_client_id)
 {
 	IoT_Error_t rc = NONE_ERROR;
     
@@ -161,7 +156,7 @@ Cloud_RC cloud_connect(char* hostname)
 	connectParams.isCleansession = true;
 	connectParams.MQTTVersion = MQTT_3_1_1;
 #ifdef AWS_JITR
-	connectParams.pClientID = g_mqtt_client_id;
+	connectParams.pClientID = mqtt_client_id;
 #else
 	connectParams.pClientID = gAwsMqttClientId;
 #endif

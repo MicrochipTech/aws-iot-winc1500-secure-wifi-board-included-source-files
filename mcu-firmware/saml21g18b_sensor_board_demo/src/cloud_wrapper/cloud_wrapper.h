@@ -54,7 +54,7 @@ typedef enum {
 	CLOUD_RC_NETWORK_ATTEMPTING_RECONNECT = -25,
 }Cloud_RC;
 
-Cloud_RC cloud_connect(char* hostname);
+Cloud_RC cloud_connect(char* hostname, char* mqtt_client_id);
 Cloud_RC cloud_mqtt_yield(int timeout);
 Cloud_RC cloud_mqtt_publish(char* channel, void* message);
 Cloud_RC cloud_mqtt_subscribe(char* channel, void*);

@@ -161,20 +161,6 @@ void nvm_store_config_data(wifi_nvm_data_t config_data)
 			NVMCTRL_PAGE_SIZE);
 	}
 	
-#if 0	// for debug only
-	memset(NVDS_Data,0,sizeof(NVDS_Data));
-	
-	for(i=0;i<16;i++)
-	{
-		nvm_read_buffer((unsigned long)(TEST_PAGE_ADDR+i*NVMCTRL_PAGE_SIZE),
-		(uint8_t *)&NVDS_Data[i*NVMCTRL_PAGE_SIZE],
-		NVMCTRL_PAGE_SIZE);
-		DBG_LOG("Read NVDS_Data = %d",NVDS_Data[i*NVMCTRL_PAGE_SIZE]);
-	}
-	memset(&config_data,0,sizeof(wifi_nvm_data_t));
-	memcpy((uint8_t *)&config_data,NVDS_Data,sizeof(wifi_nvm_data_t));
-#endif
-	
 }
 	
 	

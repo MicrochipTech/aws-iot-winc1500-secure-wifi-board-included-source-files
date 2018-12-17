@@ -48,27 +48,14 @@
 
 
 #include <asf.h>
-#include "stdio.h"
-#include "string.h"
 #include "button.h"
-//#include "nvm_api.h"
-#include "winc15x0.h"
-#include "conf_board.h"
-#include "main.h"
-#include "nvm_handle.h"
-#include "led.h"
 
-extern wifi_nvm_data_t wifi_nvm_data;
-extern uint8 gMacaddr[M2M_MAC_ADDRES_LEN];
-extern uint8 gDefaultSSID[M2M_MAX_SSID_LEN];
-extern uint8 gAuthType;
-extern uint8 gDefaultKey[M2M_MAX_PSK_LEN];
-extern uint8 gUuid[AWS_COGNITO_UUID_LEN];
 
-uint32 pre_tick[NUMBER_OF_BUTTON];
-uint32 press_time[NUMBER_OF_BUTTON];
-uint32 sw_index[NUMBER_OF_BUTTON];
-uint8 prev_state[NUMBER_OF_BUTTON];	// 0: release; 1: press]
+
+unsigned long pre_tick[NUMBER_OF_BUTTON];
+unsigned long press_time[NUMBER_OF_BUTTON];
+unsigned long sw_index[NUMBER_OF_BUTTON];
+unsigned char prev_state[NUMBER_OF_BUTTON];	// 0: release; 1: press]
 
 void initialise_button(void)
 {
@@ -87,21 +74,20 @@ void initialise_button(void)
 
 }
 
-void buttonInitCheck()
+int buttonInitCheck()
 {
 	
+	if(SW1_ACTIVE == port_pin_get_input_level(SW1_PIN)){	// Enter WINC1500 FW programming mode
+		return 1;
+	}
 	if(SW2_ACTIVE == port_pin_get_input_level(SW2_PIN)){	// Enter WINC1500 FW programming mode
-		
-		led_ctrl_set_color(LED_COLOR_GREEN, LED_MODE_BLINK_NORMAL);
-		while(1) {
-			
-		}
+		return 2;
+	}
+	if(SW3_ACTIVE == port_pin_get_input_level(SW3_PIN)){	// Enter WINC1500 FW programming mode
+		return 3;
 	}
 	
-	if(SW1_ACTIVE == port_pin_get_input_level(SW1_PIN)){
-		setWiFiStates(WIFI_TASK_SWITCH_TO_AP);
-		printf("Set as AP mode\r\n");
-	}
+	return 0;
 	
 }
 void buttonTaskInit()
@@ -111,7 +97,7 @@ void buttonTaskInit()
 
 
 
-void button_check(uint32 tick, int button)
+void button_check(unsigned long tick, int button)
 {
 
 	bool pin_lvl;
@@ -169,7 +155,7 @@ void button_check(uint32 tick, int button)
 	}
 	
 }
-void buttonTaskExecute(uint32 tick)
+void buttonTaskExecute(unsigned long tick)
 {
 	
 	button_check(tick, 1);

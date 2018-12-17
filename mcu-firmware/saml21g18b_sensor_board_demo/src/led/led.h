@@ -67,7 +67,7 @@ typedef enum Led_Mode
 	LED_MODE_TURN_ON = 2,
 	LED_MODE_BLINK_NORMAL = 3,
 	LED_MODE_BLINK_FAST = 4,
-	LED_MODE_BLINK_SHORT = 5,
+	LED_MODE_BLINK_SLOW = 5,
 }Led_Mode;
 
 void initialise_led(void);

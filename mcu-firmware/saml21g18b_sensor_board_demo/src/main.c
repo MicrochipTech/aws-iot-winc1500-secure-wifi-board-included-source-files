@@ -50,13 +50,10 @@
 #include <asf.h>
 #include "platform.h"
 #include "at_ble_api.h"
-#include "console_serial.h"
 #include "timer_hw.h"
 #include "conf_serialdrv.h"
 #include "conf_board.h"
 #include "wearable.h"
-#include "touch_api_ptc.h"
-#include "touch_app.h"
 #include "rtc.h"
 #include "bme280\bme280_support.h"
 #include "conf_sensor.h"
@@ -77,6 +74,7 @@
 #include "winc15x0.h"
 #include "usb_hid.h"
 #include "ecc_provisioning_task.h"
+#include "conf_console.h"
 
 /* enum variable */
 enum status_code veml60xx_sensor_status = STATUS_ERR_NOT_INITIALIZED;
@@ -94,6 +92,28 @@ extern volatile uint32_t ms_ticks;
 /** SysTick counter to avoid busy wait delay. */
 //volatile uint32_t ms_ticks = 0;
 
+
+/** UART module for debug. */
+static struct usart_module cdc_uart_module;
+
+/**
+ *  Configure console.
+ */
+static void serial_console_init(void)
+{
+ 	struct usart_config usart_conf;
+
+	usart_get_config_defaults(&usart_conf);
+	usart_conf.mux_setting = CONF_STDIO_MUX_SETTING;
+	usart_conf.pinmux_pad0 = CONF_STDIO_PINMUX_PAD0;
+	usart_conf.pinmux_pad1 = CONF_STDIO_PINMUX_PAD1;
+	usart_conf.pinmux_pad2 = CONF_STDIO_PINMUX_PAD2;
+	usart_conf.pinmux_pad3 = CONF_STDIO_PINMUX_PAD3;
+	usart_conf.baudrate    = CONF_STDIO_BAUDRATE;
+
+	stdio_serial_init(&cdc_uart_module, CONF_STDIO_USART_MODULE, &usart_conf);
+	usart_enable(&cdc_uart_module);
+}
 
 
 /* Watchdog configuration */
@@ -182,14 +202,12 @@ int main(void)
 
 	//i2c configure
 	configure_sensor_i2c();
-	//Initialize BHI160
-	bhy_driver_init(_bhi_fw, _bhi_fw_len);
 	
 	/* delay routine initialization */
 	delay_init();
 
 	/* configure adc for battery measurement */
-	configure_adc();
+	//configure_adc();
  
 #ifdef DEBUG_SUPPORT
 	/* Initialize serial console for debugging */
@@ -208,10 +226,14 @@ int main(void)
 	
 	initialise_button();
 	
-	buttonInitCheck();
+	if (buttonInitCheck() == 2)
+	{
+		led_ctrl_set_color(LED_COLOR_GREEN, LED_MODE_BLINK_NORMAL);
+		while(1) {
+			
+		}
+	}
 
-	/* Hardware timer */
-	hw_timer_init();
 	//Initialize bme280
 	wearable_bme280_init();
 	//Initialize veml60xx
@@ -235,7 +257,6 @@ int main(void)
 	wifiInit();
 
 	env_sensor_data_init();
-	enable_rotation_vector();
 	while (1) {
          
 		 zero_touch_provisioning_task();
@@ -244,12 +265,7 @@ int main(void)
 		
 		buttonTaskExecute(ms_ticks);
 		
-		if(tick_rotation_data)
-		{
-			tick_rotation_data = 0;
-			if (getWiFiMode()==APP_STA)
-				motion_sensor_execute();
-		}
+		
 		if(tick_2second == 1)
 		{
 			tick_2second = 0;

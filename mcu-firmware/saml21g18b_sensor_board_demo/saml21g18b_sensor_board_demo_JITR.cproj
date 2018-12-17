@@ -745,12 +745,10 @@
       <Value>../src/ASF/sam0/drivers/system/interrupt</Value>
       <Value>../src/ASF/sam0/drivers/system/interrupt/system_interrupt_saml21</Value>
       <Value>../src/ASF/sam0/utils/cmsis/saml21/source</Value>
-      <Value>../src/ble_profile</Value>
       <Value>../src/ASF/sam0/drivers/rtc</Value>
       <Value>../src/ASF/sam0/drivers/rtc/rtc_sam_l_c</Value>
       <Value>../src/ASF/sam0/drivers/events/events_sam_l_c</Value>
       <Value>../src/ASF/sam0/drivers/events</Value>
-      <Value>../src/qtouch</Value>
       <Value>../src/rtc</Value>
       <Value>../src/ASF/sam0/drivers/wdt</Value>
       <Value>../src/ASF/sam0/drivers/adc</Value>
@@ -798,6 +796,14 @@
       <Value>../src/cryptoauthlib/lib</Value>
       <Value>../src/parson_json</Value>
       <Value>../src/utilities</Value>
+      <Value>../src/cert</Value>
+      <Value>../src/iot_message</Value>
+      <Value>../src/cloud_wrapper</Value>
+      <Value>../src/button</Value>
+      <Value>../src/led</Value>
+      <Value>../src/env_sensor</Value>
+      <Value>../src/ble_profile</Value>
+      <Value>../src/qtouch</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -1085,26 +1091,6 @@
     <Folder Include="src\ASF\thirdparty\CMSIS\Include\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\GCC\" />
-    <Folder Include="src\ASF\thirdparty\wireless\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\inc\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\gcc\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\sam0\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\sam0\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\src\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\utils\" />
-    <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
@@ -1112,15 +1098,12 @@
     <Folder Include="src\atcalib\arch\" />
     <Folder Include="src\atcalib\arch\" />
     <Folder Include="src\atcalib\arch\" />
-    <Folder Include="src\atcalib\arch\" />
-    <Folder Include="src\atcalib\arch\samd21\" />
-    <Folder Include="src\atcalib\arch\samd21\i2c\" />
-    <Folder Include="src\bhi160\bhi160_api" />
+    <Folder Include="src\button\" />
+    <Folder Include="src\cert\" />
     <Folder Include="src\cJSON\" />
+    <Folder Include="src\cloud_wrapper\" />
     <Folder Include="src\config\" />
-    <Folder Include="src\ble_profile" />
     <Folder Include="src\bme280" />
-    <Folder Include="src\bhi160" />
     <Folder Include="src\cryptoauthlib\" />
     <Folder Include="src\cryptoauthlib\app\" />
     <Folder Include="src\cryptoauthlib\lib\" />
@@ -1130,14 +1113,18 @@
     <Folder Include="src\cryptoauthlib\lib\crypto\hashes\" />
     <Folder Include="src\cryptoauthlib\lib\hal\" />
     <Folder Include="src\cryptoauthlib\lib\tls\" />
+    <Folder Include="src\env_sensor\" />
     <Folder Include="src\i2c" />
     <Folder Include="src\battery" />
+    <Folder Include="src\iot_message\" />
     <Folder Include="src\kit_protocol\" />
+    <Folder Include="src\led\" />
     <Folder Include="src\parson_json\" />
+    <Folder Include="src\qtouch\" />
+    <Folder Include="src\qtouch\" />
+    <Folder Include="src\qtouch\" />
     <Folder Include="src\utilities\" />
-    <Folder Include="src\veml6080" />
     <Folder Include="src\rtc" />
-    <Folder Include="src\qtouch" />
     <Folder Include="src\veml60xx\" />
   </ItemGroup>
   <ItemGroup>
@@ -1237,28 +1224,28 @@
     <Compile Include="src\aws_status.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\button.c">
+    <Compile Include="src\button\button.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\button.h">
+    <Compile Include="src\button\button.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cert_def_1_signer.c">
+    <Compile Include="src\cert\cert_def_1_signer.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cert_def_1_signer.h">
+    <Compile Include="src\cert\cert_def_1_signer.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cert_def_2_device.c">
+    <Compile Include="src\cert\cert_def_2_device.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cert_def_2_device.h">
+    <Compile Include="src\cert\cert_def_2_device.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cert_def_3_device_csr.c">
+    <Compile Include="src\cert\cert_def_3_device_csr.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cert_def_3_device_csr.h">
+    <Compile Include="src\cert\cert_def_3_device_csr.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\cJSON\cJSON.c">
@@ -1267,18 +1254,18 @@
     <Compile Include="src\cJSON\cJSON.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\cloud_wrapper.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\cloud_wrapper.h">
-      <SubType>compile</SubType>
-    </Compile>
     <None Include="src\config\conf_sleepmgr.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\config\conf_usb.h">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="src\cloud_wrapper\cloud_wrapper.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\cloud_wrapper\cloud_wrapper.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\cryptoauthlib\lib\atcacert\atcacert.h">
       <SubType>compile</SubType>
     </Compile>
@@ -1516,22 +1503,43 @@
     <Compile Include="src\ecc_provisioning_task.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\env_sensor.c">
+    <Compile Include="src\env_sensor\env_sensor.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\env_sensor.h">
+    <Compile Include="src\env_sensor\env_sensor.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\iot_message\iot_message.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\iot_message\iot_message.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\led\led.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\led\led.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\qtouch\touch.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\qtouch\touch.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\qtouch\touch_api_ptc.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\qtouch\touch_app.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\qtouch\touch_app.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\wifi_prov.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\wifi_prov.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\iot_message.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\iot_message.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\kit_protocol\kit_protocol_api.h">
@@ -1555,19 +1563,7 @@
     <Compile Include="src\kit_protocol\kit_protocol_utilities.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\led.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\led.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\main.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\motion_sensor.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\motion_sensor.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\nvm_handle.c">
@@ -1870,42 +1866,6 @@
     <Compile Include="src\battery\adc_measure.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\bhi160\bhi160.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhi160.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhi160_api\BHIfw.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhi160_api\bhy.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhi160_api\bhy.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhi160_api\BHy_support.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhi160_api\BHy_support.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhy_uc_driver.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhy_uc_driver.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhy_uc_driver_config.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhy_uc_driver_constants.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\bhi160\bhy_uc_driver_types.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\config\conf_sensor.h">
       <SubType>compile</SubType>
     </Compile>
@@ -1925,12 +1885,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\i2c\i2c.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\veml6080\veml6080.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\veml6080\veml6080.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\version.h">
@@ -2005,18 +1959,6 @@
     <Compile Include="src\bme280\bme280_support.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\qtouch\touch.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch_api_ptc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch_app.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch_app.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\rtc\rtc.c">
       <SubType>compile</SubType>
     </Compile>
@@ -2051,12 +1993,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\ASF\sam0\drivers\rtc\rtc_sam_l_c\rtc_count_interrupt.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ble_profile\wearable.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ble_profile\wearable.h">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\asf.h">
@@ -2137,9 +2073,6 @@
     <None Include="src\ASF\thirdparty\CMSIS\README.txt">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_trace.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\instance\usb.h">
       <SubType>compile</SubType>
     </None>
@@ -2164,16 +2097,7 @@
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\instance\tcc0.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_api.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\drivers\sercom\usart\quick_start_callback\qs_usart_callback.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\gcc\libble_sdk.a">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\timer_hw.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\component\usb.h">
@@ -2236,16 +2160,7 @@
     <None Include="src\ASF\common\utils\interrupt.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_errno.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\common2\services\delay\sam0\systick_counter.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\inc\platform.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\utils\ble_utils.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\component\wdt.h">
@@ -2305,19 +2220,10 @@
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\component\ccl.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\serial_fifo.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\utils\preprocessor\preprocessor.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\instance\supc.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\inc\profiles.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\serial_drv.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\instance\aes.h">
@@ -2386,9 +2292,6 @@
     <None Include="src\ASF\common\services\serial\sam0_usart\usart_serial.h">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\ble_manager.h">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\ASF\sam0\drivers\system\pinmux\quick_start\qs_pinmux_basic.h">
       <SubType>compile</SubType>
     </None>
@@ -2396,9 +2299,6 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\utils\cmsis\saml21\include_b\instance\tcc2.h">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\console_serial.h">
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\drivers\system\clock\gclk.h">
@@ -2620,24 +2520,6 @@
     <Compile Include="src\ASF\sam0\utils\syscalls\gcc\syscalls.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\ble_manager.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\sam0\console_serial.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\serial_drv.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\serial_fifo.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\sam0\timer_hw.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\src\platform.c">
-      <SubType>compile</SubType>
-    </Compile>
     <None Include="src\config\conf_rtc.h">
       <SubType>compile</SubType>
     </None>
@@ -2647,6 +2529,10 @@
     <None Include="src\cryptoauthlib\lib\tls\ec_cert-508.csr">
       <SubType>compile</SubType>
     </None>
+    <None Include="src\qtouch\libsaml21_qtouch_gcc.a">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\qtouch\libsaml21_qtouch_gcc.a" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

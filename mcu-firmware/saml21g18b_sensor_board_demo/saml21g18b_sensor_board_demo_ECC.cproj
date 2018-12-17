@@ -350,7 +350,7 @@
   <documentation help="http://asf.atmel.com/docs/3.28.2/thirdparty.wireless.ble_sdk.apps.startup_template.saml21_xplained_pro_b/html/index.html" />
   <offline-documentation help="" />
   <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.35.1" />
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.36.1" />
   </dependencies>
   <project id="thirdparty.wireless.ble_sdk.apps.startup_template.saml21_xplained_pro_b" value="Add" config="" content-id="Atmel.ASF" />
   <board id="board.saml21_xplained_pro_b" value="Add" config="" content-id="Atmel.ASF" />

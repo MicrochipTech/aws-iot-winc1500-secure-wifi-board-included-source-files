@@ -64,7 +64,7 @@
 #include "cert_def_2_device.h"
 #include "tls/atcatls.h"
 #include "ecc_provisioning_task.h"
-
+#include "socket/include/socket.h"
 #include "socket/include/socket.h"
 #include "string.h"
 #include "AWS_SDK/aws_iot_src/utils/aws_iot_log.h"
@@ -80,7 +80,6 @@
 #include "led.h"
 #include "wearable.h"
 #include "env_sensor.h"
-#include "motion_sensor.h"
 #include "nvm_handle.h"
 #include "button.h"
 #include "main.h"
@@ -620,29 +619,7 @@ static void aws_wifi_ssl_callback(uint8 u8MsgType, void *pvMsg)
 		break;
 	}
 }
-//========================================================
-//========================================================
-//========================================================
 
-static void motionSensorCallbackHandler(device_rotation_vector_t rotation_data, unsigned char flag)
-{
-	cJSON* item;
-	NodeInfo node_info[4];
-	
-	strcpy(node_info[0].dataType,ROTATION_W_DATATYPE_NAME);
-	node_info[0].value = (int) rotation_data.w;
-	strcpy(node_info[1].dataType,ROTATION_X_DATATYPE_NAME);
-	node_info[1].value = (int) rotation_data.x;
-	strcpy(node_info[2].dataType,ROTATION_Y_DATATYPE_NAME);
-	node_info[2].value = (int) rotation_data.y;
-	strcpy(node_info[3].dataType,ROTATION_Z_DATATYPE_NAME);
-	node_info[3].value = (int) rotation_data.z;
-	
-	item = iot_message_reportInfo(DEVICE_TYPE, gAwsMqttClientId, 4, &node_info);
-	cloud_mqtt_publish(gPublish_Channel,item);
-	cJSON_Delete(item);
-
-}
 
 static void EnvSensorCallbackHandler(environment_data_t sensor_data, unsigned char flag)
 {
@@ -780,7 +757,7 @@ static void MQTTSubscribeCBCallbackHandler(MQTTCallbackParams params)
 		get_env_sensor_data_for_display(&env_data);
 		DBG_LOG("DBG: temperature = %d, humidity = %d, uv = %d, pressure = %d\r\n", env_data.temperature, env_data.humidity, env_data.uv, env_data.pressure);
 		
-		item = iot_message_searchResp_with_temp_uv(DEVICE_TYPE,gAwsMqttClientId, env_data.temperature, env_data.uv);
+		item = iot_message_searchResp_with_temp_uv(DEVICE_TYPE,gAwsMqttClientId, env_data.temperature, env_data.uv, DEVICE_NAME);
 		cloud_mqtt_publish(gSearchResp_Channel,item);
 	}
 	else if (cmd == MSG_CMD_GET)
@@ -811,14 +788,11 @@ static void MQTTSubscribeCBCallbackHandler(MQTTCallbackParams params)
 		info[4].value = color;
 		
 		
-		item = iot_message_reportAllInfo(DEVICE_TYPE, gAwsMqttClientId, 5, info);
+		item = iot_message_reportAllInfo(DEVICE_TYPE, gAwsMqttClientId, 5, info, DEVICE_NAME, gUuid);
 		cloud_mqtt_publish(gPublish_Channel,item);
 		
 	}
-	else if (cmd == MSG_SUBCMD_GET_3D_PLOT_DATA)
-	{
-		set_motion_sensor_update_timer(15);
-	}
+
 	
 	if (item!=NULL)
 	cJSON_Delete(item);
@@ -857,7 +831,7 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 	json_state = cJSON_GetObjectItem(json,"state");
 	
 	json_key = cJSON_GetObjectItem(json_state,"LED_R");
-	//printf("DBG command = %s\n", json_key->valueint);
+	printf("DBG command = %s\n", json_key->valueint);
 	if (json_key)
 	{
 		if (json_key->valueint)
@@ -871,7 +845,7 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 	}
 	
 	json_key = cJSON_GetObjectItem(json_state,"LED_G");
-	//printf("DBG command = %s\n", json_key->valueint);
+	printf("DBG command = %s\n", json_key->valueint);
 	if (json_key)
 	{
 		if (json_key->valueint)
@@ -884,7 +858,7 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 		cnt++;
 	}
 	json_key = cJSON_GetObjectItem(json_state,"LED_B");
-	//printf("DBG command = %s\n", json_key->valueint);
+	printf("DBG command = %s\n", json_key->valueint);
 	if (json_key)
 	{
 		if (json_key->valueint)
@@ -1533,6 +1507,7 @@ void buttonSW3LongPressHandle()
 			
 		case WIFI_TASK_CONNECT_CLOUD:
 		case WIFI_TASK_SWITCHING_TO_STA:
+		case WIFI_TASK_IDLE:
 			m2m_wifi_disconnect();
 			wifi_states = WIFI_TASK_SWITCH_TO_AP;
 			break;
@@ -1564,6 +1539,8 @@ int wifiInit(void)
 	tstrWifiInitParam param;
 	int8_t ret;
 
+	configureSW3();
+	
 	/* Initialize Wi-Fi parameters structure. */
 	memset((uint8_t *)&param, 0, sizeof(tstrWifiInitParam));
 
@@ -1608,7 +1585,6 @@ int wifiInit(void)
 	}
 	
 	register_env_sensor_udpate_callback_handler(EnvSensorCallbackHandler);
-	register_rotation_vector_udpate_callback_handler(motionSensorCallbackHandler);
 	
 	//regButtonPress5sTimeoutCallback(buttonSW0Handle);
 
@@ -1668,7 +1644,7 @@ int wifiInit(void)
 	cloud_create_topic_shadow(gPublish_Channel_shadow, DEVICE_TYPE, g_thing_name, PUBLISH_TOPIC_SHADOW);
 #endif		
 
-	configureSW3();
+	
 	
 }
 
@@ -1712,7 +1688,7 @@ int wifiTaskExecute()
             atca_status = provisioning_get_hostname(&hostname_length, hostname);
             
             printf("hostname=%s\r\n", hostname);
-			ret = cloud_connect(hostname);
+			ret = cloud_connect(hostname, g_mqtt_client_id);
 
 			if (ret == CLOUD_RC_SUCCESS)
 			{

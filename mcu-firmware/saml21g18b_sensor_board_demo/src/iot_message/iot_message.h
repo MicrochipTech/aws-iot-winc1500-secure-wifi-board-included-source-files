@@ -111,10 +111,10 @@ Iot_Message_RC iot_message_parser_info_data(char* json_msg, int array_idx, char*
 Iot_Message_RC iot_message_parser_addnode_cmd_msg(char* json_msg, char* node_mac_addr);
 //Iot_Message_RC iot_message_parser_control_cmd_msg(char* json_msg);
 Iot_Msg_Command iot_message_parser_cmd_type(char* json_msg);
-cJSON* iot_message_searchResp(char* device_type, char* mac_addr);
-cJSON* iot_message_searchResp_with_temp_uv(char* device_type, char* mac_addr, int temp, int uv );
-cJSON* iot_message_reportAllInfo(char* device_type, char* mac_addr, int online_dev_num, NodeInfo endnode_info[]);
-cJSON* iot_message_reportInfo(char* device_type, char* mac_addr, int report_data_num, NodeInfo data_info[]);
+cJSON* iot_message_searchResp(char* device_type, char* mac_addr, char* device_name);
+cJSON* iot_message_searchResp_with_temp_uv(char* device_type, char* mac_addr, int temp, int uv, char* dev_name);
+cJSON* iot_message_reportAllInfo(char* device_type, char* mac_addr, int num_of_data, NodeInfo data[], char* device_name, unsigned char* uuid);
+cJSON* iot_message_reportInfo(char* device_type, char* mac_addr, int report_data_num, NodeInfo data_info[], char* device_name, unsigned char* uuid);
 cJSON* iot_message_reportInfo_shadow(char* device_type, char* mac_addr, int report_data_num, NodeInfo data_info[]);
 cJSON* iot_message_reportDisconnect(int report_dev_num, NodeInfo endnode_info[]);
 
