@@ -132,7 +132,7 @@ public class WlanAdapter {
 	 */
 	public void removeCurrentAP() {
 
-
+		this.ensureWifi();
 		WifiInfo connInfo = this.mWifi.getConnectionInfo();
 
 		int networkId = connInfo.getNetworkId();
@@ -150,6 +150,7 @@ public class WlanAdapter {
 	 */
 	public WifiConfiguration getCurrentAPInfo() {
 
+		this.ensureWifi();
 		WifiInfo connInfo = this.mWifi.getConnectionInfo();
 
 		int networkId = connInfo.getNetworkId();
@@ -210,6 +211,46 @@ public class WlanAdapter {
 		}
 
 		return false;
+	}
+
+	public boolean connectToNewWifi(String ssid)
+	{
+		MyHelper.d(">>>> connectToKnownWifi Enter");
+		this.mTargetSSID = '"' + ssid + '"';
+
+		Activity act = this.mWeak.get();
+		if (act == null)
+			return false;
+
+		WifiManager wifiManager = (WifiManager) act.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+		WifiConfiguration wifiConfiguration = new WifiConfiguration();
+
+		wifiConfiguration.SSID='"'+ssid+'"';
+		wifiConfiguration.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+
+
+		int res = wifiManager.addNetwork(wifiConfiguration);
+		MyHelper.d( "# addNetwork returned " + res);
+		boolean b = wifiManager.enableNetwork(res, true);
+		MyHelper.d( "# enableNetwork returned " + b);
+		wifiManager.setWifiEnabled(true);
+
+		boolean changeHappen = wifiManager.saveConfiguration();
+		if (res != -1 && changeHappen) {
+			MyHelper.d("# Change happen: " + ssid);
+		} else {
+			MyHelper.d( "# Change NOT happen");
+		}
+
+		this.waitingNetworkChange();
+		if (WlanHelper.isConnectedTo(ssid, this.mWifi)) {
+			MyHelper.d(">>>> connect success to " + ssid);
+			return true;
+		}
+		else {
+			MyHelper.d(">>>> connect fail to " + ssid);
+			return false;
+		}
 	}
 	/**
 	 * try connect AP

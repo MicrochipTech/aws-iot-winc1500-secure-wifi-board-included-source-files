@@ -30,27 +30,59 @@
 
 
                 <LinearLayout
-                    android:id="@+id/tab_speaker_audio"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
                     >
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ThingName:"
-                        android:textColor="@color/black"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/thing_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="#FF76CDE5"
-                        android:textStyle="bold|italic" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        >
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MAC Address:  "
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+
+                        <TextView
+                            android:id="@+id/mac_addr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="#FF76CDE5"
+                            android:textStyle="bold|italic" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Status:  "
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="online"
+                            android:textColor="#FF76CDE5"
+                            android:textStyle="bold|italic" />
+
+                    </LinearLayout>
                     <ImageButton
                         android:id="@+id/btn_audio_volumeUp"
                         android:layout_width="100dp"
@@ -63,111 +95,6 @@
                         android:scaleX="1"
                         android:scaleY="1" />
 
-
-
-
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="100dp"
-                        android:layout_gravity="left"
-                        android:orientation="horizontal"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:text="Temperature:"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/temp_val"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="50dp"
-                            android:text="test"
-                            android:textColor="#FF76CDE5"
-                            android:textStyle="bold|italic" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:layout_gravity="left"
-                        android:orientation="horizontal"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:text="Humidity:"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/hum_val"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="50dp"
-                            android:text="test"
-                            android:textColor="#FF76CDE5"
-                            android:textStyle="bold|italic" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:layout_gravity="left"
-                        android:orientation="horizontal"
-                        >
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:text="LED Color:"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-                        <Spinner
-                            android:id="@+id/led_spinner"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="50dp"
-                            android:entries="@array/led_spinner" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
-
-
-                        <CheckBox
-                            android:id="@+id/led1"
-                            android:layout_width="120dp"
-                            android:layout_height="120dp"
-                            android:checked="false"
-                            android:text="LED1"
-                            android:onClick="onCheckboxClicked" />
-
-                        <CheckBox
-                            android:id="@+id/led2"
-                            android:layout_width="120dp"
-                            android:layout_height="120dp"
-                            android:checked="false"
-                            android:text="LED2"
-                            android:onClick="onCheckboxClicked" />
-
-                        <CheckBox
-                            android:id="@+id/led3"
-                            android:layout_width="120dp"
-                            android:layout_height="120dp"
-                            android:checked="false"
-                            android:text="LED3"
-                            android:onClick="onCheckboxClicked" />
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -204,6 +131,411 @@
                             >
 
                     </LinearLayout>
+
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/led_control_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="2dp">
+                        <LinearLayout
+                            android:id="@+id/ll_ces_gateway_cate_ble"
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            android:layout_alignParentLeft="true"
+                            android:clickable="true">
+
+
+
+                            <LinearLayout
+                                android:id="@+id/llLeft1"
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="vertical" >
+
+                                <ImageView
+                                    android:id="@+id/imgLeft1"
+                                    android:layout_width="46dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:src="@drawable/light_icon" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="0.02"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical" >
+
+                                <TextView
+                                    android:id="@+id/tvSensorBaordLEDColor"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="LED Control"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical"
+                                android:layout_weight="0.04">
+
+                                <Spinner
+                                    android:id="@+id/led_spinner"
+                                    android:layout_width="7dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.08"
+                                    android:entries="@array/led_spinner" />
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/temperature_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            android:layout_alignParentLeft="true"
+                            android:clickable="true">
+
+                            <LinearLayout
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="vertical" >
+
+                                <ImageView
+                                    android:layout_width="46dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:src="@drawable/temperature_icon" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical" >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="Temperature"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical" >
+
+                                <TextView
+                                    android:id="@+id/tvWifiSensorTemp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="0"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:paddingLeft="10dp"
+                                    android:singleLine="true"
+                                    android:text="^C"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/humidity_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="2dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            android:layout_alignParentLeft="true"
+                            android:clickable="true">
+
+                            <LinearLayout
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="vertical" >
+
+                                <ImageView
+                                    android:layout_width="46dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:src="@drawable/humidity_icon" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical" >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="Humidity"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical" >
+
+                                <TextView
+                                    android:id="@+id/tvWifiSensorHum"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="0"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:paddingLeft="10dp"
+                                    android:singleLine="true"
+                                    android:text=" %"
+                                    android:textColor="@color/black"
+                                    android:textSize="17sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/uv_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="2dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            android:layout_alignParentLeft="true"
+                            android:clickable="true">
+
+                            <LinearLayout
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="46dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:src="@drawable/uv_icon" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="UV"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/tvWifiSensorUv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="70"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:paddingLeft="10dp"
+                                    android:singleLine="true"
+                                    android:text="lx"
+                                    android:textColor="@color/black"
+                                    android:textSize="17sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+
+
+
+                    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/pressure_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:clickable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardCornerRadius="2dp"
+                        card_view:cardElevation="2dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            android:layout_alignParentLeft="true"
+                            android:clickable="true">
+
+                            <LinearLayout
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="46dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:src="@drawable/pressure_icon" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="10dp"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="Pressure"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="20dp"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/tvWifiSensorPressure"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="70"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="50dp"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:paddingLeft="10dp"
+                                    android:singleLine="true"
+                                    android:text="mbar"
+                                    android:textColor="@color/black"
+                                    android:textSize="17sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
 
                 </LinearLayout>
 

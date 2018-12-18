@@ -25,10 +25,12 @@ public class ServiceConstant {
     public static final String ThingName = "thing_name";
     public static final String CallerCmd = "caller_cmd";
     public static final String DeviceType = "device_type";
-    public static final String MspkMacAddr = "mspk_mac_address";
     public static final String ConfigFilePath = "MyFileStorage";
     public static final String ConfigFileName = "config.txt";
     public static final String UpdateAcctInfoToDB = "update_acct_info_to_db";
     public static final String ScanThingID = "scan_thing_id";
     public static final String ThingIdList = "thing_id_list";
+    public static final String Ssid = "ssid";
+    public static final String ApPassword = "ap_password";
+    public static final String ApSec = "ap_sec";
 }

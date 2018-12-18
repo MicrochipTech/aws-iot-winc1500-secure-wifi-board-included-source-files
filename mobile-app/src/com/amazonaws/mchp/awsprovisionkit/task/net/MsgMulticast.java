@@ -615,6 +615,31 @@ public class MsgMulticast extends MsgBase {
 		return md2;
 	}
 
+	public MsgData tryDiscovery2(String ssid, String password, String sec, String uuid) {
+		if (null == this.discovery) {
+			MsgData md = new MsgData();
+			md.setError("The device might be disconnected.");
+			return md;
+		}
+
+		WifiSEC wifiSec = WifiSEC.OPEN;
+		if (sec.contains("WPA"))
+		{
+			wifiSec = WifiSEC.WPA;
+		}
+		else if (sec.contains("WEP"))
+		{
+			wifiSec = WifiSEC.WEP;
+		}
+
+		MsgData md2 = discovery.tryDiscovery(2, ssid, password, wifiSec, uuid);
+		if (null != md2 && !md2.hasError()) {
+			MyHelper.d(">>>>>>>>>>>>>tryDiscovery(3)");
+			discovery.tryDiscovery(3);// send CONDONE message to gateway to finish the provision
+		}
+		return md2;
+	}
+
 	public MsgData tryDiscovery2(String ssid, String password, WifiSEC wifiSEC, String uuid) {
 		if (null == this.discovery) {
 			MsgData md = new MsgData();

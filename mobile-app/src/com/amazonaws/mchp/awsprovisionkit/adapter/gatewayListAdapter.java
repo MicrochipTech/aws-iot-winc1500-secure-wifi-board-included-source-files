@@ -141,9 +141,9 @@ public class gatewayListAdapter extends BaseAdapter {
 		final AwsRouter device = deviceList.get(position);
 		holder.getTvDeviceStatus().setText("Remote");
 		holder.getTvDeviceName().setText(device.getDeviceName());
-		holder.getTvDeviceMac().setText(device.getMacAddr().substring(0,18)+"...");
+		holder.getTvDeviceMac().setText(device.getMacAddr());
 
-		holder.getImgLeft().setImageResource(R.drawable.provision_kit);
+		holder.getImgLeft().setImageResource(R.drawable.winc1500_secure_wifi_board);
 
 		holder.getDelete2().setOnClickListener(new OnClickListener() {
 

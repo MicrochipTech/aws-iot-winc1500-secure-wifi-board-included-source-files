@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -79,15 +82,6 @@ import zxing.CaptureActivity;
 public class DeviceListActivity  extends AppCompatActivity implements OnClickListener, SwipeRefreshLayout.OnRefreshListener {
 
 	static final String LOG_TAG = DeviceListActivity.class.getCanonicalName();
-
-	/** The ll NoDevice */
-	private ScrollView llNoDevice;
-
-	/** The img NoDevice */
-	private ImageView imgNoDevice;
-
-	/** The btn NoDevice */
-	private Button btnNoDevice;
 
 	/** The ic FoundDevices */
 	private View icFoundDevices;
@@ -134,9 +128,9 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 	protected static final int TOAST = 3;
 
 	/* Display progress diaglog */
-	protected static final int PROGRESSDIAG= 4;
-
-	protected static final int PROGRESSDIAG_DISMISS= 5;
+	protected static final int PROGRESSDIAG = 4;
+	protected static final int PROGRESSDIAG_DISMISS = 5;
+	protected static final int REFRESH_ICON_DISMISS = 6;
 
 	protected static final int BOUND = 9;
 
@@ -152,8 +146,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 	private String username;
 
 	private VerticalSwipeRefreshLayout mSwipeLayout;
-
-	private VerticalSwipeRefreshLayout mSwipeLayout1;
 
 	private AlertDialog.Builder alertDialogBuilder;
 	private AlertDialog alertDialog;
@@ -369,28 +361,28 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		public void handleMessage(android.os.Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
-			case GETLIST:
+				case GETLIST:
 
-				break;
+					break;
 
-			case UPDATALIST:
-				//if (progressDialog.isShowing()) {
-				//	progressDialog.cancel();
-				//}
-				UpdateUI();
-				break;
+				case UPDATALIST:
+					//if (progressDialog.isShowing()) {
+					//	progressDialog.cancel();
+					//}
+					UpdateUI();
+					break;
 
-			case BOUND:
+				case BOUND:
 
-				break;
+					break;
 
-			case UNBOUND:
-				//progressDialog.show();
-				break;
+				case UNBOUND:
+					//progressDialog.show();
+					break;
 
-			case TOCONTROL:
+				case TOCONTROL:
 
-				break;
+					break;
 
 				case PROGRESSDIAG:
 				progressDialog.setTitle("Loading");
@@ -403,24 +395,26 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					if (progressDialog.isShowing())
 					progressDialog.dismiss();
 					break;
-			case TOAST:
-				Toast.makeText(DeviceListActivity.this, msg.obj.toString(), Toast.LENGTH_LONG).show();
-				break;
 
-			case PULL_TO_REFRESH:
-				handler.sendEmptyMessage(GETLIST);
-				mSwipeLayout.setRefreshing(false);
-				mSwipeLayout1.setRefreshing(false);
+				case TOAST:
+					Toast.makeText(DeviceListActivity.this, msg.obj.toString(), Toast.LENGTH_LONG).show();
+					break;
 
-				break;
+				case PULL_TO_REFRESH:
 
-			case SHOWDIALOG:
+					mSwipeLayout.setRefreshing(false);
+					break;
+				case REFRESH_ICON_DISMISS:
+					mSwipeLayout.setRefreshing(false);
+					break;
 
-				String str="Provision to AP "+msg.obj.toString();
-				aDiaglogText.setText(str);
+				case SHOWDIALOG:
 
-				alertDialog.show();
-				break;
+					String str="Provision to AP "+msg.obj.toString();
+					aDiaglogText.setText(str);
+
+					alertDialog.show();
+					break;
 			}
 		};
 	};
@@ -469,6 +463,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 	protected  void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		///setTheme(R.style.CognitoAppTheme);
+
 		setContentView(R.layout.activity_gateway_list);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		//setTheme(R.style.AppTheme);
@@ -480,11 +475,13 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		progressDialog = new ProgressDialog(context);
 
 		Intent intent = getIntent();
+		uuid = intent.getStringExtra(ServiceConstant.CognitoUuid);
 		idToken = intent.getStringExtra("idToken");
-		Log.d(LOG_TAG, "Debug  idtoken="+idToken);
-		uuid = CognitoJWTParser.getClaim(idToken, "sub");
+		if (idToken != null) {
+			Log.d(LOG_TAG, "Debug  idtoken=" + idToken);
+			uuid = CognitoJWTParser.getClaim(idToken, "sub");
+		}
 		Log.d(LOG_TAG, ">>>>>>>>>>> user uuid = " + uuid);
-
 		username = AppHelper.getCurrUser();
 		user = AppHelper.getPool().getUser(username);
 
@@ -493,9 +490,18 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
         receiver = new gatewayListJsonMsgReceiver();
 
+		mSwipeLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				mSwipeLayout.setRefreshing(true);
+			}
+		});
+
 		onRefresh();
 
-		mSwipeLayout.setRefreshing(true);
+
+
+		//mSwipeLayout.setRefreshing(true);
 		/*
 		thing_name = AppHelper.getThingNamefromConfigFile(context);
 		for (int j = 0; j< thing_name.length; j++) {
@@ -597,19 +603,16 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	private void initView() {
 		svListGroup = (ScrollView) findViewById(R.id.svListGroup);
-		llNoDevice = (ScrollView) findViewById(R.id.llNoDevice);
-		imgNoDevice = (ImageView) findViewById(R.id.imgNoDevice);
-		btnNoDevice = (Button) findViewById(R.id.btnNoDevice);
-
 		icFoundDevices = findViewById(R.id.icFoundDevices);
 		slvFoundDevices = (SlideListView) icFoundDevices.findViewById(R.id.slideOnlineListView);
 		tvFoundDevicesListTitle = (TextView) icFoundDevices.findViewById(R.id.tvListViewTitle);
-		tvFoundDevicesListTitle.setText("Online Device Kit");
+		tvFoundDevicesListTitle.setText("Device Kit");
 		mSwipeLayout = (VerticalSwipeRefreshLayout) findViewById(R.id.id_swipe_ly);
 		mSwipeLayout.setOnRefreshListener(this);
+		mSwipeLayout.setProgressViewOffset(true, getResources().getDimensionPixelSize(R.dimen.refresher_offset),
+				getResources().getDimensionPixelSize(R.dimen.refresher_offset_end));
 
-		mSwipeLayout1 = (VerticalSwipeRefreshLayout) findViewById(R.id.id_swipe_ly1);
-		mSwipeLayout1.setOnRefreshListener(this);
+
 
 		// Set toolbar for this screen
 		toolbar = (Toolbar) findViewById(R.id.main_toolbar);
@@ -617,6 +620,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		TextView main_title = (TextView) findViewById(R.id.main_toolbar_title);
 		main_title.setText("Device List");
 		setSupportActionBar(toolbar);
+
 
 		// Set navigation drawer for this screen
 		mDrawer = (DrawerLayout) findViewById(R.id.gatewaylist_drawer_layout);
@@ -670,6 +674,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		// create alert dialog
 		alertDialog = alertDialogBuilder.create();
 
+		/*
 		Spinner spinner = (Spinner)promptsView.findViewById(R.id.spinner1);
 		final String[] devLoc = {"Kitchen", "Dinning Room", "Living Room", "Bedroom", "Bathroom"};
 		ArrayAdapter<String> lunchList = new ArrayAdapter<>(DeviceListActivity.this,
@@ -688,21 +693,17 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 			}
 		});
-
+		*/
 
 	}
 
 	private void initEvent() {
-
-		imgNoDevice.setOnClickListener(this);
-		btnNoDevice.setOnClickListener(this);
 
 		slvFoundDevices.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 
 
-				//Intent activity_intent = new Intent(DeviceListActivity.this, AwsProvisionKitActivity.class);
 				Intent activity_intent = new Intent(DeviceListActivity.this, WINC1500SecureWiFiBoardActivity.class);
 				Bundle extras = new Bundle();
 				extras.putString(ServiceConstant.DevMacAddr, foundDevicesList.get(position).getMacAddr());
@@ -730,9 +731,14 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 				break;
 			case R.id.action_QR_code:
 
-				Intent activity_intent = new Intent(DeviceListActivity.this, CaptureActivity.class);
-				activity_intent.putExtra(ServiceConstant.CallerCmd,"gatewayListActivity");
+				//Intent activity_intent = new Intent(DeviceListActivity.this, CaptureActivity.class);
+				//activity_intent.putExtra(ServiceConstant.CallerCmd,"gatewayListActivity");
+				//startActivity(activity_intent);
+
+				Intent activity_intent = new Intent(DeviceListActivity.this, NetworkProvisionStageOneActivity.class);
+				activity_intent.putExtra(ServiceConstant.CognitoUuid,uuid);
 				startActivity(activity_intent);
+
 
 				break;
 			case R.id.action_addDevice:
@@ -743,8 +749,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	private void UpdateUI() {
 
-			llNoDevice.setVisibility(View.GONE);
-			mSwipeLayout1.setVisibility(View.GONE);
 			svListGroup.setVisibility(View.VISIBLE);
 
 
@@ -760,9 +764,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.imgNoDevice:
-		case R.id.btnNoDevice:
-			break;
 
 		default:
 			break;
@@ -806,14 +807,9 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	}
 
-//	public void onRefresh() {
-//		handler.sendEmptyMessageDelayed(PULL_TO_REFRESH, 2000);
-//
-//	}
 
 	public void onRefresh() {
-		handler.sendEmptyMessageDelayed(PULL_TO_REFRESH, 2000);
-		Log.d(LOG_TAG, "Debug: gatewayLIstActivity Test77777777777");
+		handler.sendEmptyMessageDelayed(PULL_TO_REFRESH, 10000);
 
 		foundDevicesList.clear();
 		UpdateUI();
@@ -917,6 +913,8 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					}
 				}
 			}else if (intent.getAction().equals(ServiceConstant.JSONShadowMsgReport)) {
+
+				handler.sendEmptyMessage(REFRESH_ICON_DISMISS);
 				AwsShadowJsonMsg jsonShadowMsgObj = intent.getParcelableExtra(ServiceConstant.JSONShadowMsgObject);
 				if (jsonShadowMsgObj != null) {
 					Log.d(LOG_TAG, "Receive AWS Shadow JSON message");
@@ -952,13 +950,17 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 								else
 								{
 									Log.d(LOG_TAG, "Debug log2 " + thingList.get(i).getDeviceName());
-									router.setDeviceName(thingList.get(i).getDeviceName() + " Board");
+									router.setDeviceName(thingList.get(i).getDeviceName());
 								}
 
 						}
+						for (int i=0; i<report_info_shadow.size(); i++){
+							if (report_info_shadow.get(i).item.equals("macAddr"))
+								router.setMacAddr(report_info_shadow.get(i).value);
+						}
 
 
-						router.setMacAddr(split[2]);    //thing id
+						    //thing id
 						router.setDevType(split[2]);
 						router.setThingName(split[2]);
 						foundDevicesList.add(router);

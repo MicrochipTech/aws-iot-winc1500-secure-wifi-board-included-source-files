@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -39,6 +40,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -428,12 +430,6 @@ public class MainActivity extends AppCompatActivity {
         confirmActivity.putExtra("source","main");
         startActivityForResult(confirmActivity, 2);
 
-    }
-
-    private void launchUser() {
-        Intent userActivity = new Intent(this, UserActivity.class);
-        userActivity.putExtra("name", username);
-        startActivityForResult(userActivity, 4);
     }
 
     private void findCurrent() {

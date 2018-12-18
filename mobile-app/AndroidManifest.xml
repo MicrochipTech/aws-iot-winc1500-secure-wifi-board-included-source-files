@@ -37,10 +37,6 @@
         </activity>
 
         <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.UserActivity"
-            android:label="@string/title_activity_user"
-            android:theme="@style/CognitoAppTheme.NoActionBar" />
-        <activity
             android:name="com.amazonaws.mchp.awsprovisionkit.activity.RegisterUser"
             android:theme="@style/CognitoAppTheme.NoActionBar" />
         <activity
@@ -75,10 +71,7 @@
             android:name="com.amazonaws.mchp.awsprovisionkit.activity.AddAttributeActivity"
             android:label="@string/title_activity_add_attribute"
             android:theme="@style/CognitoAppTheme.NoActionBar" />
-        <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.DeviceSettings"
-            android:label="@string/title_activity_device_settings"
-            android:theme="@style/CognitoAppTheme.NoActionBar" />
+
         <activity
             android:name="com.amazonaws.mchp.awsprovisionkit.activity.DeviceListActivity"
             android:theme="@style/CognitoAppTheme.NoActionBar">
@@ -89,16 +82,27 @@
             android:theme="@style/CognitoAppTheme.NoActionBar"/>
 
         <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.ActivitySpeakerAudio">
-        </activity>
-
-        <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.AwsProvisionKitActivity"
+            android:name="com.amazonaws.mchp.awsprovisionkit.activity.WINC1500SecureWiFiBoardActivity"
             android:theme="@style/CognitoAppTheme.NoActionBar">
         </activity>
 
         <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.WINC1500SecureWiFiBoardActivity"
+            android:name="com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageOneActivity"
+            android:theme="@style/CognitoAppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name="com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageOneOneActivity"
+            android:theme="@style/CognitoAppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name="com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageTwoActivity"
+            android:theme="@style/CognitoAppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name="com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageThreeActivity"
             android:theme="@style/CognitoAppTheme.NoActionBar">
         </activity>
 

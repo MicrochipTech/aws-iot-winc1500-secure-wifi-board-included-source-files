@@ -59,11 +59,15 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
-	<style name="CognitoAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme1" parent="Theme.AppCompat.Light">
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
+    </style>
+	<style name="CognitoAppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/toolbar_background</item>
-        <item name="colorPrimaryDark">@color/toolbar_background</item>
+        <item name="colorPrimaryDark">@color/toolbar_background_dark</item>
         <item name="colorAccent">@color/toolbar_items</item>
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
     </style>
 
     <style name="AWSCognitoTheme" parent="AppTheme">
@@ -80,8 +84,9 @@
     </style>
 
     <style name="AppNavigationBar">
-        <item name="android:colorBackground">@color/toolbar_background</item>
+        <item name="android:colorBackground">@color/navigation_bar_color</item>
         <item name="android:textColor">@color/toolbar_items</item>
+
     </style>
 
     <style name="CognitoAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -91,6 +96,7 @@
     <style name="CognitoAppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
     </style>
 
     <style name="TextViewMessage">

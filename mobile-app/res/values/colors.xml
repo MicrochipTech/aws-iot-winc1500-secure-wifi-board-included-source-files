@@ -39,12 +39,13 @@
     <color name="dialog_background">#efefef</color>
     <color name="btn_remove_device_color">#51a0fc</color>
 
-	
-	<color name="toolbar_background">#404142</color>
-    <color name="toolbar_items">#CBCBCB</color>
+    <color name="navigation_bar_color">#ffffff</color>
+	<color name="toolbar_background">#ee2a24</color>
+    <color name="toolbar_background_dark">#1D1E1E</color>
+    <color name="toolbar_items">#ffffff</color>
     <color name="alert">#AC1600</color>
     <color name="success">#37A51C</color>
-    <color name="button_default">#329AD6</color>
+    <color name="button_default">#ee2a24</color>
     <color name="informative_message">#329AD6</color>
     <color name="button_pressed">#2A5C91</color>
     <color name="text_border_default">#303232</color>

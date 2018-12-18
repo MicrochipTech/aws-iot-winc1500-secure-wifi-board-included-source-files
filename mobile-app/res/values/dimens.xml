@@ -19,4 +19,7 @@
     <dimen name="activity_separation_large">150dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="refresher_offset">150dp</dimen>
+    <dimen name="refresher_offset_end">300dp</dimen>
 </resources>
+

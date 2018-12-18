@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activity.MainActivity">
+    tools:context="com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageTwo">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -30,11 +30,10 @@
         android:theme="@style/CognitoAppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:textAlignment="center"
             app:popupTheme="@style/CognitoAppTheme.PopupOverlay" >
             <TextView
                 android:layout_width="wrap_content"
@@ -42,14 +41,41 @@
                 android:layout_gravity="center"
                 android:layout_centerHorizontal="true"
                 android:textAlignment="center"
-                android:id="@+id/main_toolbar_title"
+                android:id="@+id/select_network_toolbar_title"
                 android:text="@string/Menu"
                 android:textColor="@color/toolbar_items"
                 android:textStyle="bold"
                 android:textSize="@dimen/action_bar_text" />
-        </android.support.v7.widget.Toolbar>
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="SCAN"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="20dp"
+                android:id="@+id/button_network_prov_by_scanning_QR"
+                android:background="@drawable/button_selector"
+                android:onClick="ScanTrigger"/>
+
+            <ProgressBar
+                android:id="@+id/pBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="right"
+                android:visibility="gone" />
+
+            </android.support.v7.widget.Toolbar>
+
 
 
     </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_network_provision_stage2" />
 
 </android.support.design.widget.CoordinatorLayout>

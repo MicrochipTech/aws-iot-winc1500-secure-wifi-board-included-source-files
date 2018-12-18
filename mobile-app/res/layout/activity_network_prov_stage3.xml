@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activity.MainActivity">
+    tools:context="com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageThreeActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -30,11 +30,10 @@
         android:theme="@style/CognitoAppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/main_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:textAlignment="center"
             app:popupTheme="@style/CognitoAppTheme.PopupOverlay" >
             <TextView
                 android:layout_width="wrap_content"
@@ -42,14 +41,15 @@
                 android:layout_gravity="center"
                 android:layout_centerHorizontal="true"
                 android:textAlignment="center"
-                android:id="@+id/main_toolbar_title"
+                android:id="@+id/forgot_password_toolbar_title"
                 android:text="@string/Menu"
                 android:textColor="@color/toolbar_items"
                 android:textStyle="bold"
                 android:textSize="@dimen/action_bar_text" />
-        </android.support.v7.widget.Toolbar>
-
+            </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_network_provision_stage3" />
 
 </android.support.design.widget.CoordinatorLayout>

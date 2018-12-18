@@ -4,5 +4,9 @@
         <item>Blue</item>
         <item>Green</item>
         <item>Yellow</item>
+        <item>Red</item>
+        <item>Cyan</item>
+        <item>Magenta</item>
+        <item>White</item>
     </string-array>
 </resources>
