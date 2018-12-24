@@ -713,7 +713,6 @@
       <Value>../src/ASF/sam0/drivers/system/power</Value>
       <Value>../src/ASF/thirdparty/wireless/ble_sdk/services/serial/uart</Value>
       <Value>../src/ASF/common2/services/delay/sam0</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/ble_services/ble_mgr</Value>
       <Value>../src/ASF/common/boards</Value>
       <Value>../src/ASF/common2/services/delay</Value>
       <Value>../src/ASF/sam0/utils/stdio/stdio_serial</Value>
@@ -804,6 +803,7 @@
       <Value>../src/env_sensor</Value>
       <Value>../src/ble_profile</Value>
       <Value>../src/qtouch</Value>
+      <Value>../src/ASF/thirdparty/wireless/ble_sdk/ble_services/ble_mgr</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -1091,6 +1091,25 @@
     <Folder Include="src\ASF\thirdparty\CMSIS\Include\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\GCC\" />
+    <Folder Include="src\ASF\thirdparty\wireless\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\inc\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\gcc\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\sam0\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\sam0\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\src\" />
+    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\utils\" />
     <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
@@ -1218,6 +1237,57 @@
     <Compile Include="src\ASF\sam0\drivers\usb\usb_sam_l\usb.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\ble_manager.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\ble_manager.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_api.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_errno.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_trace.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\platform.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\profiles.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\console_serial.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\sam0\console_serial.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\serial_drv.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\serial_drv.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\serial_fifo.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\serial_fifo.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\sam0\timer_hw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\timer_hw.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\src\platform.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\utils\ble_utils.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\aws_status.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1254,6 +1324,12 @@
     <Compile Include="src\cJSON\cJSON.h">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\gcc\libble_sdk.a">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\serial_drv.c.bak">
+      <SubType>compile</SubType>
+    </None>
     <None Include="src\config\conf_sleepmgr.h">
       <SubType>compile</SubType>
     </None>

@@ -239,7 +239,7 @@ void env_sensor_execute()
 		updateFlag |= PRESSURE_UPDATE_BIT; 
 	}
 		
-	//if (updateFlag > 0)
+	if (updateFlag > 0)
 		env_sensor_update_cb(environment_data, updateFlag);
 	
 }

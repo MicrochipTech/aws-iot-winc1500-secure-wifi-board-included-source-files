@@ -215,9 +215,9 @@ int main(void)
 #endif
 
 	
-	DBG_LOG("Initializing Wearable Demo Device");
+	DBG_LOG("Initializing Wi-Fi Smart Device Enablement Kit");
 	DBG_LOG("cpu_freq=%d\n",(int)system_cpu_clock_get_hz());
-	DBG_LOG("Firmware version: %s.%s", FIRMWARE_MAJOR_VER, FIRMWARE_MINOR_VER);
+	DBG_LOG("Firmware version: %s.%s.%s", FIRMWARE_MAJOR_VER, FIRMWARE_MINOR_VER, FIRMWARE_PATCH_VER);
 	
 	/* Initialize the BSP. */
 	nm_bsp_init();

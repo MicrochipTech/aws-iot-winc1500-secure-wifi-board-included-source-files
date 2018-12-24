@@ -50,6 +50,8 @@
 /* Development version */
 #define SW_VERSION_MINOR	0
 
+#define SW_VERSION_PATCH	0
+
 
 #define CRYPTO_LIB_MAJOR_VERSION  2    //! AWS IoT Zero Touch major version number
 #define CRYPTO_LIB_API_VERSION    2    //! AWS IoT Zero Touch API version number

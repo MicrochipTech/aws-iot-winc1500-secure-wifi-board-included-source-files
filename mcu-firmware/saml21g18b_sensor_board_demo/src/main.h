@@ -54,7 +54,8 @@ printf
 
 
 #define FIRMWARE_MAJOR_VER	"1"
-#define FIRMWARE_MINOR_VER	"2"
+#define FIRMWARE_MINOR_VER	"0"
+#define FIRMWARE_PATCH_VER	"0"
 
 
 /** Wi-Fi Settings */

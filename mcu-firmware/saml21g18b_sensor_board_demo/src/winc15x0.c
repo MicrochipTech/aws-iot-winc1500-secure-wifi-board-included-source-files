@@ -89,6 +89,11 @@ uint8 gDefaultSSID[M2M_MAX_SSID_LEN] = {0};
 uint8 gAuthType = M2M_WIFI_SEC_INVALID;
 uint8 gDefaultKey[M2M_MAX_PSK_LEN] = {0};
 uint8 gUuid[AWS_COGNITO_UUID_LEN] = {0};
+int8_t	g_button1_state = 0;
+int8_t	g_button2_state = 0;
+int8_t	g_button3_state = 0;
+uint32 g_pub_count = 0;
+
 
 /** Wi-Fi status variable. */
 bool gbConnectedWifi = false,receivedTime = false;
@@ -137,6 +142,7 @@ static uint32 g_ecdh_key_slot_index = 0;
 
 static sint8 ecdh_derive_client_shared_secret(tstrECPoint *server_public_key,
 uint8 *ecdh_shared_secret,
+
 tstrECPoint *client_public_key)
 {
 	sint8 status = M2M_ERR_FAIL;
@@ -660,37 +666,11 @@ static void EnvSensorCallbackHandler(environment_data_t sensor_data, unsigned ch
 #endif
 
 #ifdef USE_SHADOW
-	static uint32 count =0;
 	strcpy(node_info[cnt].dataType,"COUNT");
-	node_info[cnt].value = count++;
+	node_info[cnt].value = g_pub_count++;
 	cnt++;
 
 
-	//  Add BUTTON state to AWS shadow thing
-	strcpy(node_info[cnt].dataType,"BUTTON_1");
-	node_info[cnt].value = !port_pin_get_input_level (SW1_PIN);
-	cnt++;
-
-	strcpy(node_info[cnt].dataType,"BUTTON_2");
-	node_info[cnt].value = !port_pin_get_input_level (SW2_PIN);
-	cnt++;
-
-	strcpy(node_info[cnt].dataType,"BUTTON_3");
-	node_info[cnt].value = !port_pin_get_input_level (SW3_PIN);
-	cnt++;
-
-	//  Add LED state to AWS shadow thing
-	strcpy(node_info[cnt].dataType,"LED_R");
-	node_info[cnt].value = !port_pin_get_output_level (RED_LED);
-	cnt++;
-	
-	strcpy(node_info[cnt].dataType,"LED_G");
-	node_info[cnt].value = !port_pin_get_output_level (GREEN_LED);
-	cnt++;
-	
-	strcpy(node_info[cnt].dataType,"LED_B");
-	node_info[cnt].value = !port_pin_get_output_level (BLUE_LED);
-	cnt++;
 
 	item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
 	cloud_mqtt_publish(gPublish_Channel_shadow,item);
@@ -1486,9 +1466,78 @@ void getThingID(char* id)
 	memcpy(id, g_thing_name, sizeof(g_thing_name));
 }
 
+
+void buttonSW1Handle()
+{
+	cJSON* item;
+	NodeInfo node_info[2];
+	int8_t cnt = 0;
+	
+	strcpy(node_info[cnt].dataType,"COUNT");
+	node_info[cnt].value = g_pub_count++;
+	cnt++;
+	
+	g_button1_state = !g_button1_state;
+
+	//  Add BUTTON state to AWS shadow thing
+	strcpy(node_info[cnt].dataType,"BUTTON_1");
+	node_info[cnt].value = g_button1_state;
+	cnt++;
+
+	
+	item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
+	cloud_mqtt_publish(gPublish_Channel_shadow,item);
+	cJSON_Delete(item);
+	//unRegButtonPressDetectCallback(detSw0Sock);
+	
+}
+
+void buttonSW2Handle()
+{
+	cJSON* item;
+	NodeInfo node_info[2];
+	int8_t cnt = 0;
+	
+	strcpy(node_info[cnt].dataType,"COUNT");
+	node_info[cnt].value = g_pub_count++;
+	cnt++;
+	
+	g_button2_state = !g_button2_state;
+
+	//  Add BUTTON state to AWS shadow thing
+	strcpy(node_info[cnt].dataType,"BUTTON_2");
+	node_info[cnt].value = g_button2_state;
+	cnt++;
+
+	
+	item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
+	cloud_mqtt_publish(gPublish_Channel_shadow,item);
+	cJSON_Delete(item);
+	//unRegButtonPressDetectCallback(detSw0Sock);
+	
+}
+
 void buttonSW3Handle()
 {
-	DBG_LOG("[%s] In\n", __func__);
+	cJSON* item;
+	NodeInfo node_info[2];
+	int8_t cnt = 0;
+	
+	strcpy(node_info[cnt].dataType,"COUNT");
+	node_info[cnt].value = g_pub_count++;
+	cnt++;
+	
+	g_button3_state = !g_button3_state;
+
+	//  Add BUTTON state to AWS shadow thing
+	strcpy(node_info[cnt].dataType,"BUTTON_3");
+	node_info[cnt].value = g_button3_state;
+	cnt++;
+
+	
+	item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
+	cloud_mqtt_publish(gPublish_Channel_shadow,item);
+	cJSON_Delete(item);
 	//unRegButtonPressDetectCallback(detSw0Sock);
 	
 }
@@ -1529,6 +1578,10 @@ void configureSW3()
 	int buttonSock, button5SecSock;
 	buttonSock = regButtonShortPressDetectCallback(buttonSW3Handle,3);
 	button5SecSock = regButtonLongPressDetectCallback(buttonSW3LongPressHandle, 3);
+	
+	buttonSock = regButtonShortPressDetectCallback(buttonSW2Handle,2);
+	
+	buttonSock = regButtonShortPressDetectCallback(buttonSW1Handle,1);
 }
 
 
@@ -1707,8 +1760,9 @@ int wifiTaskExecute()
 #else
 			ret = cloud_mqtt_subscribe(gSubscribe_Channel, MQTTSubscribeCBCallbackHandler);
 #endif
-		
-			if (0)//ret == CLOUD_RC_SUCCESS)
+
+#ifndef USE_SHADOW		
+			if (1)//ret == CLOUD_RC_SUCCESS)
 			{
 				//strcpy(gUuid, "20aaa2de-297e-413f-9ace-a1bebfccf08b");
 				cloud_create_search_topic(gSearch_Channel, gUuid, SUBSCRIBE_SEARCH_TOPIC);
@@ -1723,6 +1777,7 @@ int wifiTaskExecute()
 			}
 			else
 				printf("Publish MQTT channel fail...\r\n");
+#endif
 			
 			wifi_states = WIFI_TASK_MQTT_RUNNING;
 			

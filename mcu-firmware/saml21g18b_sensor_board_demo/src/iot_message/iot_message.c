@@ -257,7 +257,6 @@ int iot_message_parser(char* json_msg, char* cmd, char* mac_addr, char* info)
 
 cJSON* iot_message_searchResp_with_temp_uv(char* device_type, char* mac_addr, int temp, int uv, char* device_name)
 {
-	printf("[%S] In \r\n", __func__);
 	cJSON *json2CloudData;
 	cJSON *json2CloudNodeData;
 	cJSON *json2CloudDataArray1;
@@ -294,7 +293,6 @@ cJSON* iot_message_searchResp_with_temp_uv(char* device_type, char* mac_addr, in
 
 cJSON* iot_message_searchResp(char* device_type, char* mac_addr, char* device_name)
 {
-	printf("[%S] In \r\n", __func__);
 	cJSON *json2CloudData;
 	
 	json2CloudData=cJSON_CreateObject();
@@ -317,7 +315,6 @@ cJSON* iot_message_searchResp(char* device_type, char* mac_addr, char* device_na
 
 cJSON* iot_message_reportAllInfo(char* device_type, char* mac_addr, int num_of_data, NodeInfo data[], char* device_name, unsigned char* uuid)
 {
-	printf("[%S] In \r\n", __func__);
 	cJSON *json2CloudData;
 	cJSON *json2CloudNodeData;
 	cJSON *json2CloudDataArray1;
@@ -358,7 +355,6 @@ cJSON* iot_message_reportAllInfo(char* device_type, char* mac_addr, int num_of_d
 
 cJSON* iot_message_reportInfo(char* device_type, char* mac_addr, int report_data_num, NodeInfo data_info[], char* device_name, unsigned char* uuid)
 {
-	printf("[%S] In \r\n", __func__);
 	cJSON *json2CloudData;
 	cJSON *json2CloudNodeData;
 	cJSON *json2CloudDataArray1;
@@ -398,7 +394,6 @@ cJSON* iot_message_reportInfo(char* device_type, char* mac_addr, int report_data
 
 cJSON* iot_message_reportInfo_shadow(char* device_type, char* mac_addr, int report_data_num, NodeInfo data_info[])
 {
-	printf("[%S] In \r\n", __func__);
 	cJSON *jsonObjReported;
 	cJSON *jsonObjState;
 	cJSON *jsonObj;
@@ -436,11 +431,9 @@ cJSON* iot_message_reportInfo_shadow(char* device_type, char* mac_addr, int repo
 
 cJSON* iot_message_reportDisconnect(int report_dev_num, NodeInfo endnode_info[])
 {
-	printf("[%S] In \r\n", __func__);
 	cJSON *json2CloudData;
 	cJSON *json2CloudNodeData;
 	cJSON *json2CloudDataArray1;
-	printf("%s In\n", __func__);
 	json2CloudData=cJSON_CreateObject();
 	json2CloudDataArray1=cJSON_CreateArray();
 
