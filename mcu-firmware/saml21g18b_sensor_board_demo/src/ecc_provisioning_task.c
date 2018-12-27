@@ -68,7 +68,7 @@
 #include "cert_def_3_device_csr.h"
 #include "stdio.h"
 #include "ecc_configure.h"
-#include "version.h"
+#include "main.h"
 #include "conf_board.h"
 #include "led.h"
 

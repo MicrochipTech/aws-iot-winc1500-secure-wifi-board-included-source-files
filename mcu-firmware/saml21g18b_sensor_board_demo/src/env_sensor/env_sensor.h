@@ -53,6 +53,22 @@
 #define UV_UPDATE_BIT	(1ul << 2)
 #define PRESSURE_UPDATE_BIT	(1ul << 3)
 
+#ifdef DEBUG_SUPPORT
+#define DBG_LOG		printf("\r\n");\
+printf
+#else
+#define DBG_LOG		ALL_UNUSED
+#endif
+
+typedef struct environment_data
+{
+	int16_t temperature;
+	uint16_t pressure;
+	uint32_t uv;
+	uint8_t humidity;
+}environment_data_t;
+
+
 void env_sensor_data_init(void);
 void get_env_sensor_data_for_display(environment_data_t *env_data);
 void env_sensor_execute(void);

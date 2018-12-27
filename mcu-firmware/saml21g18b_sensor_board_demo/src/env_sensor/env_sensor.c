@@ -53,13 +53,10 @@
 */
 /*- Includes ---------------------------------------------------------------*/
 #include <asf.h>
-#include "wearable.h"
 #include "env_sensor.h"
 #include "bme280\bme280_support.h"
 #include "conf_sensor.h"
 #include "veml60xx\veml60xx.h"
-#include "bhi160.h"
-#include "bhi160\bhy_uc_driver.h"
 
 #define TEMP_DISP_COUNTER	1	// update when same value is get 1 time
 #define HUM_DISP_COUNTER	1

@@ -397,9 +397,10 @@
     <custom>
       <ToolOptions>
         <InterfaceProperties>
-          <SwdClock>0</SwdClock>
+          <SwdClock>2000000</SwdClock>
         </InterfaceProperties>
-        <InterfaceName>SWD</InterfaceName>
+        <InterfaceName>
+        </InterfaceName>
       </ToolOptions>
       <ToolType>custom</ToolType>
       <ToolNumber>
@@ -705,13 +706,11 @@
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>../thirdparty/wireless/ble_sdk/apps/config/saml21</Value>
       <Value>../src/ASF/sam0/utils/header_files</Value>
       <Value>../src/ASF/sam0/drivers/tc</Value>
       <Value>../src/ASF/common/utils</Value>
       <Value>../src/ASF/sam0/drivers/system/pinmux</Value>
       <Value>../src/ASF/sam0/drivers/system/power</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/services/serial/uart</Value>
       <Value>../src/ASF/common2/services/delay/sam0</Value>
       <Value>../src/ASF/common/boards</Value>
       <Value>../src/ASF/common2/services/delay</Value>
@@ -719,11 +718,9 @@
       <Value>../src/ASF/sam0/drivers/port</Value>
       <Value>../src/ASF/sam0/drivers/sercom/usart</Value>
       <Value>../src/ASF/sam0/drivers/system/clock/clock_saml21</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/services/serial_fifo</Value>
       <Value>../src/ASF/sam0/boards</Value>
       <Value>../src/ASF/sam0/utils</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Include</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/utils</Value>
       <Value>../src/ASF/sam0/drivers/system/reset/reset_sam_l</Value>
       <Value>../src/config</Value>
       <Value>../src/ASF/thirdparty/CMSIS/Lib/GCC</Value>
@@ -731,14 +728,11 @@
       <Value>../src</Value>
       <Value>../src/ASF/sam0/boards/saml21_xplained_pro_b</Value>
       <Value>../src/ASF/sam0/utils/cmsis/saml21/include_b</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/inc</Value>
       <Value>../src/ASF/sam0/drivers/sercom</Value>
       <Value>../src/ASF/sam0/utils/preprocessor</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/services/console</Value>
       <Value>../src/ASF/sam0/drivers/system</Value>
       <Value>../src/ASF/common/services/serial</Value>
       <Value>../src/ASF/sam0/drivers/extint</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/services/timer</Value>
       <Value>../src/ASF/sam0/drivers/system/clock</Value>
       <Value>../src/ASF/sam0/drivers/system/power/power_sam_l</Value>
       <Value>../src/ASF/sam0/drivers/system/interrupt</Value>
@@ -801,9 +795,6 @@
       <Value>../src/button</Value>
       <Value>../src/led</Value>
       <Value>../src/env_sensor</Value>
-      <Value>../src/ble_profile</Value>
-      <Value>../src/qtouch</Value>
-      <Value>../src/ASF/thirdparty/wireless/ble_sdk/ble_services/ble_mgr</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -816,9 +807,7 @@
   <armgcc.linker.libraries.Libraries>
     <ListValues>
       <Value>libarm_cortexM0l_math</Value>
-      <Value>libble_sdk</Value>
       <Value>libm</Value>
-      <Value>libsaml21_qtouch_gcc</Value>
     </ListValues>
   </armgcc.linker.libraries.Libraries>
   <armgcc.linker.libraries.LibrarySearchPaths>
@@ -1091,25 +1080,6 @@
     <Folder Include="src\ASF\thirdparty\CMSIS\Include\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\" />
     <Folder Include="src\ASF\thirdparty\CMSIS\Lib\GCC\" />
-    <Folder Include="src\ASF\thirdparty\wireless\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\inc\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\gcc\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\sam0\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\sam0\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\src\" />
-    <Folder Include="src\ASF\thirdparty\wireless\ble_sdk\utils\" />
     <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
     <Folder Include="src\atcalib\" />
@@ -1139,7 +1109,6 @@
     <Folder Include="src\kit_protocol\" />
     <Folder Include="src\led\" />
     <Folder Include="src\parson_json\" />
-    <Folder Include="src\qtouch\" />
     <Folder Include="src\qtouch\" />
     <Folder Include="src\qtouch\" />
     <Folder Include="src\utilities\" />
@@ -1237,57 +1206,6 @@
     <Compile Include="src\ASF\sam0\drivers\usb\usb_sam_l\usb.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\ble_manager.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\ble_services\ble_mgr\ble_manager.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_api.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_errno.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\at_ble_trace.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\platform.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\inc\profiles.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\console_serial.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\console\sam0\console_serial.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\serial_drv.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\serial_drv.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\serial_fifo.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial_fifo\serial_fifo.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\sam0\timer_hw.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\services\timer\timer_hw.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\src\platform.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\ASF\thirdparty\wireless\ble_sdk\utils\ble_utils.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\aws_status.c">
       <SubType>compile</SubType>
     </Compile>
@@ -1324,12 +1242,6 @@
     <Compile Include="src\cJSON\cJSON.h">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\lib\cm0p\gcc\libble_sdk.a">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\ASF\thirdparty\wireless\ble_sdk\services\serial\uart\sam0\serial_drv.c.bak">
-      <SubType>compile</SubType>
-    </None>
     <None Include="src\config\conf_sleepmgr.h">
       <SubType>compile</SubType>
     </None>
@@ -1595,21 +1507,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\led\led.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch_api_ptc.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch_app.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\qtouch\touch_app.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\wifi_prov.c">
@@ -1961,9 +1858,6 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\i2c\i2c.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\version.h">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\ASF\sam0\drivers\wdt\quick_start\qs_wdt_basic.h">
@@ -2603,9 +2497,6 @@
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\cryptoauthlib\lib\tls\ec_cert-508.csr">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="src\qtouch\libsaml21_qtouch_gcc.a">
       <SubType>compile</SubType>
     </None>
     <None Include="src\qtouch\libsaml21_qtouch_gcc.a" />

@@ -48,20 +48,16 @@
 
 /*- Includes ---------------------------------------------------------------*/
 #include <asf.h>
-#include "platform.h"
-#include "at_ble_api.h"
-#include "timer_hw.h"
+//#include "platform.h"
+//#include "at_ble_api.h"
+//#include "timer_hw.h"
 #include "conf_serialdrv.h"
 #include "conf_board.h"
-#include "wearable.h"
 #include "rtc.h"
 #include "bme280\bme280_support.h"
 #include "conf_sensor.h"
 #include "veml60xx\veml60xx.h"
-#include "bhi160.h"
-#include "bhi160\bhy_uc_driver.h"
 #include "i2c.h"
-#include "serial_drv.h"
 #include "adc_measure.h"
 #include "driver/include/m2m_wifi.h"
 #include "socket/include/socket.h"

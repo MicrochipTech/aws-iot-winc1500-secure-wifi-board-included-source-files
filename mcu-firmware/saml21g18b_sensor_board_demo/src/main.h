@@ -57,6 +57,21 @@ printf
 #define FIRMWARE_MINOR_VER	"0"
 #define FIRMWARE_PATCH_VER	"0"
 
+#define CRYPTO_LIB_MAJOR_VERSION  2    //! AWS IoT Zero Touch major version number
+#define CRYPTO_LIB_API_VERSION    2    //! AWS IoT Zero Touch API version number
+#define CRYPTO_LIB_PATCH_VERSION  4    //! AWS IoT Zero Touch patch version number
+
+#define STRING2(x)  #x
+#define STRING(x)   STRING2(x)
+
+//! AWS IoT Zero Touch version string (Example: "1.0.0")
+#define VERSION_STRING       STRING(CRYPTO_LIB_MAJOR_VERSION) "." \
+STRING(CRYPTO_LIB_API_VERSION) "." \
+STRING(CRYPTO_LIB_PATCH_VERSION)
+
+//! AWS IoT Zero Touch long version string (Example: "AWS IoT Zero Touch Demo v1.0.0")
+#define VERSION_STRING_LONG  "AWS IoT Zero Touch Demo v" VERSION_STRING
+
 
 /** Wi-Fi Settings */
 #define MAIN_WLAN_SSID                    "LucNetwork_HiSpeed_24"//_HiSpeed_24"//"mchp_demo" /**< Destination SSID */

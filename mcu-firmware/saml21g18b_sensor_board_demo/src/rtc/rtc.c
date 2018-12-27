@@ -44,9 +44,6 @@
 /*- Includes ---------------------------------------------------------------*/
 #include <asf.h>
 #include "rtc.h"
-#include "touch_api_ptc.h"
-#include "touch_app.h"
-#include "wearable.h"
 #include "led.h"
 
 /**
@@ -107,7 +104,7 @@ uint16_t power_led_timer;
 void rtc_overflow_callback(void)
 {
 	uint16_t power_led_period = POWER_LED_PERIOD;
-	
+	//printf("[rtc_overflow_callback] In\r\n");
 	/* Do something on RTC overflow here */
 	rtc_count_clear_compare_match(&rtc_instance,RTC_COUNT_COMPARE_0);
 
@@ -186,7 +183,7 @@ void configure_rtc_count(void)
 	volatile uint16_t temp;
 	
 	struct rtc_count_events config_rtc_event
-		 = { .generate_event_on_periodic[DEF_LOWPOWER_SENSOR_EVENT_PERIODICITY_OFFSET] = true };
+		 = { .generate_event_on_periodic[6] = true };
 	struct rtc_count_config config_rtc_count;
 	rtc_count_get_config_defaults(&config_rtc_count);
 
@@ -198,11 +195,11 @@ void configure_rtc_count(void)
 	rtc_count_init(&rtc_instance, RTC, &config_rtc_count);
 
 	/* Enable RTC events */
-	config_rtc_event.generate_event_on_periodic[DEF_LOWPOWER_SENSOR_EVENT_PERIODICITY_OFFSET] = true;
+	config_rtc_event.generate_event_on_periodic[6] = true;
 	
 	rtc_count_enable_events(&rtc_instance, &config_rtc_event);
 
-	temp = TIME_PERIOD_1MSEC * DEF_TOUCH_MEASUREMENT_PERIOD_MS;
+	temp = TIME_PERIOD_1MSEC * 20;
 
 	rtc_count_set_compare(&rtc_instance,temp,RTC_COUNT_COMPARE_0);
 

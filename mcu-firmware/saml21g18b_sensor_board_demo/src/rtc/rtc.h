@@ -48,12 +48,10 @@
 #ifndef __RTC_H__
 #define __RTC_H__
 
-#include "touch_api_ptc.h"
 #include "conf_board.h"
 #include "rtc.h"
-
 /* macros */
-#define RTC_PERIOD DEF_TOUCH_MEASUREMENT_PERIOD_MS
+#define RTC_PERIOD 20u
 #define BLE_ADVERTISEMENT_TIMEOUT  60000u //10second
 #define TIME_PERIOD_1MSEC 1u
 

@@ -78,7 +78,6 @@
 #include "cmdset.h"
 #include "wifi_prov.h"
 #include "led.h"
-#include "wearable.h"
 #include "env_sensor.h"
 #include "nvm_handle.h"
 #include "button.h"
