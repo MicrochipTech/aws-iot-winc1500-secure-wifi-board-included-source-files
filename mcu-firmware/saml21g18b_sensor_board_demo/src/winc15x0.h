@@ -56,7 +56,9 @@
 #define SUBSCRIBE_TOPIC "dataControl"
 #define PUBLISH_TOPIC	"dataReport"
 #define SUBSCRIBE_TOPIC_SHADOW "shadow/update/delta"
+#define SUBSCRIBE_TOPIC_SHADOW_GET "shadow/get/accepted"
 #define PUBLISH_TOPIC_SHADOW	"shadow/update"
+#define PUBLISH_TOPIC_SHADOW_GET	"shadow/get"
 #define SUBSCRIBE_SEARCH_TOPIC "search"
 #define PUBLISH_SEARCH_RESP_TOPIC "searchResp"
 #define DEV_SEARCH_SUBSCRIBE_TOPIC "winc1500Iot/search"
@@ -113,7 +115,9 @@ char gSubscribe_Channel[MQTT_CHANNEL_LEN];
 char gPublish_Channel[MQTT_CHANNEL_LEN];
 
 char gSubscribe_Channel_shadow[MQTT_CHANNEL_LEN];
+char gSubscribe_Channel_shadow_get[MQTT_CHANNEL_LEN];
 char gPublish_Channel_shadow[MQTT_CHANNEL_LEN];
+char gPublish_Channel_shadow_get[MQTT_CHANNEL_LEN];
 
 
 char gSearch_Channel[MQTT_CHANNEL_LEN];

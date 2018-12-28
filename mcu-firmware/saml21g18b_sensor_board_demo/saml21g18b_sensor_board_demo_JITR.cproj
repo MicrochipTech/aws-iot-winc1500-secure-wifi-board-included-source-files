@@ -2499,7 +2499,9 @@
     <None Include="src\cryptoauthlib\lib\tls\ec_cert-508.csr">
       <SubType>compile</SubType>
     </None>
-    <None Include="src\qtouch\libsaml21_qtouch_gcc.a" />
+    <None Include="src\qtouch\libsaml21_qtouch_gcc.a">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

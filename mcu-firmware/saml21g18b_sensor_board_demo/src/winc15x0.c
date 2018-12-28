@@ -824,7 +824,6 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 	}
 	
 	json_key = cJSON_GetObjectItem(json_state,"LED_G");
-	printf("DBG command = %s\n", json_key->valueint);
 	if (json_key)
 	{
 		if (json_key->valueint)
@@ -837,7 +836,6 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 		cnt++;
 	}
 	json_key = cJSON_GetObjectItem(json_state,"LED_B");
-	printf("DBG command = %s\n", json_key->valueint);
 	if (json_key)
 	{
 		if (json_key->valueint)
@@ -851,7 +849,6 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 	}
 	
 	json_key = cJSON_GetObjectItem(json_state,"PA");
-	printf("DBG command = %s\n", json_key->valuestring);
 	if (json_key)
 	{
 printf("DBG command = PORTA\n");
@@ -914,6 +911,93 @@ printf("DBG command = %d\n", json_key->valueint);
 				
 	
 	}
+	
+	if (cnt){
+		item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
+		cloud_mqtt_publish(gPublish_Channel_shadow,item);
+		cJSON_Delete(item);
+	}
+	if (json)
+	cJSON_Delete(json);
+	
+	return;
+	
+}
+
+
+static void MQTTSubscribeCBCallbackHandler_shadow_get(MQTTCallbackParams params)
+{
+	printf("%s In\n", __func__);
+	printf("%.*s\t%.*s",
+	params.TopicNameLen, params.pTopicName, params.MessageParams.PayloadLen, params.MessageParams.pPayload);
+	printf("\n\r");
+	
+
+	//	cJSON* item=NULL;
+	//	char data_type[30];
+	//	int data_value;
+
+	cJSON *json;
+	cJSON *json_state;
+	cJSON *json_key;
+	cJSON *json_desired;
+	
+	Iot_Msg_Command cmd;
+	
+	cJSON* item;
+	NodeInfo node_info[4];
+	int8_t cnt = 0;
+	
+	
+	json=cJSON_Parse(params.MessageParams.pPayload);
+	
+	if (!json) {
+		printf("Error when decode json: [%s]\n",cJSON_GetErrorPtr());
+		return MSG_CMD_UNKNOWN;
+	}
+	json_state = cJSON_GetObjectItem(json,"state");
+	
+	json_desired = cJSON_GetObjectItem(json_state,"desired");
+	
+	json_key = cJSON_GetObjectItem(json_desired,"LED_R");
+	if (json_key)
+	{
+		if (json_key->valueint)
+		port_pin_set_output_level(RED_LED, 0);
+		else
+		port_pin_set_output_level(RED_LED, 1);
+		
+		strcpy(node_info[cnt].dataType,"LED_R");
+		node_info[cnt].value = !port_pin_get_output_level (RED_LED);
+		cnt++;
+	}
+	
+	json_key = cJSON_GetObjectItem(json_desired,"LED_G");
+	if (json_key)
+	{
+		if (json_key->valueint)
+		port_pin_set_output_level(GREEN_LED, 0);
+		else
+		port_pin_set_output_level(GREEN_LED, 1);
+
+		strcpy(node_info[cnt].dataType,"LED_G");
+		node_info[cnt].value = !port_pin_get_output_level (GREEN_LED);
+		cnt++;
+	}
+	json_key = cJSON_GetObjectItem(json_desired,"LED_B");
+	if (json_key)
+	{
+		if (json_key->valueint)
+		port_pin_set_output_level(BLUE_LED, 0);
+		else
+		port_pin_set_output_level(BLUE_LED, 1);
+
+		strcpy(node_info[cnt].dataType,"LED_B");
+		node_info[cnt].value = !port_pin_get_output_level (BLUE_LED);
+		cnt++;
+	}
+	
+	
 	
 	if (cnt){
 		item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
@@ -1693,7 +1777,9 @@ int wifiInit(void)
 
 /* This is using the deice ID g_thing_name */
 	cloud_create_topic_shadow(gSubscribe_Channel_shadow, DEVICE_TYPE, g_thing_name, SUBSCRIBE_TOPIC_SHADOW);
+	cloud_create_topic_shadow(gSubscribe_Channel_shadow_get, DEVICE_TYPE, g_thing_name, SUBSCRIBE_TOPIC_SHADOW_GET);
 	cloud_create_topic_shadow(gPublish_Channel_shadow, DEVICE_TYPE, g_thing_name, PUBLISH_TOPIC_SHADOW);
+	cloud_create_topic_shadow(gPublish_Channel_shadow_get, DEVICE_TYPE, g_thing_name, PUBLISH_TOPIC_SHADOW_GET);
 #endif		
 
 	
@@ -1756,6 +1842,11 @@ int wifiTaskExecute()
 			
 #ifdef USE_SHADOW
 			ret = cloud_mqtt_subscribe(gSubscribe_Channel_shadow, MQTTSubscribeCBCallbackHandler_shadow);
+			ret = cloud_mqtt_subscribe(gSubscribe_Channel_shadow_get, MQTTSubscribeCBCallbackHandler_shadow_get);
+			
+			cJSON *jsonObj;
+			jsonObj=cJSON_CreateObject();
+			cloud_mqtt_publish(gPublish_Channel_shadow_get,jsonObj);
 #else
 			ret = cloud_mqtt_subscribe(gSubscribe_Channel, MQTTSubscribeCBCallbackHandler);
 #endif
@@ -1770,7 +1861,9 @@ int wifiTaskExecute()
 				DBG_LOG("subscribe search channel: %s\n", gSearch_Channel);
 				ret = cloud_mqtt_subscribe(gSearch_Channel, MQTTSubscribeCBCallbackHandler);
 				if (ret == CLOUD_RC_SUCCESS)
+				{
 					wifi_states = WIFI_TASK_MQTT_RUNNING;
+				}
 				else
 					printf("Publish MQTT channel fail...\r\n");
 			}
@@ -1791,6 +1884,7 @@ int wifiTaskExecute()
 				delay_ms(1);
 				break;
 			}	
+
 			break;
 			
 		default:

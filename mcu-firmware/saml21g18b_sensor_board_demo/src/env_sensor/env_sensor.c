@@ -139,7 +139,7 @@ void env_sensor_execute()
 	
 	environment_data_t environment_data;
 	get_env_sensor_data_from_chip(&environment_data);
-	printf("DBG2: temperature = %d, humidity = %d, uv = %lu, pressure = %d\r\n", environment_data.temperature, environment_data.humidity, environment_data.uv, environment_data.pressure);
+	printf("DBG: temperature = %d, humidity = %d, uv = %lu, pressure = %d\r\n", environment_data.temperature, environment_data.humidity, environment_data.uv, environment_data.pressure);
 	
 	// check temperature
 	if (pre_temp != environment_data.temperature)
