@@ -41,6 +41,7 @@
           <option id="sam0.drivers.rtc" value="Add" config="count_callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.sercom.i2c.master" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="sam0.drivers.wdt" value="Add" config="callback" content-id="Atmel.ASF" />
+          <option id="sam0.drivers.tcc" value="Add" config="callback" content-id="Atmel.ASF" />
           <option id="common.utils" value="Add" config="" content-id="Atmel.ASF" />
           <option id="sam0.utils.cmsis.saml21.source.template" value="Add" config="" content-id="Atmel.ASF" />
         </options>
@@ -346,11 +347,22 @@
           <file path="src/ASF/common/services/usb/class/hid/device/generic/udi_hid_generic_desc.c" framework="" version="3.30.1" source="common\services\usb\class\hid\device\generic\udi_hid_generic_desc.c" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/common/services/usb/class/hid/device/generic/udi_hid_generic.h" framework="" version="3.30.1" source="common\services\usb\class\hid\device\generic\udi_hid_generic.h" changed="False" content-id="Atmel.ASF" />
           <file path="src/ASF/common/services/usb/class/hid/device/generic/udi_hid_generic_conf.h" framework="" version="3.30.1" source="common\services\usb\class\hid\device\generic\udi_hid_generic_conf.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/tcc_callback.c" framework="" version="3.36.1" source="sam0\drivers\tcc\tcc_callback.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/tcc.c" framework="" version="3.36.1" source="sam0\drivers\tcc\tcc.c" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_faultn/qs_tcc_faultn.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start_faultn\qs_tcc_faultn.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_buffering/qs_tcc_buffering.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start_buffering\qs_tcc_buffering.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_timer/qs_tcc_timer.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start_timer\qs_tcc_timer.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_faultx/qs_tcc_faultx.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start_faultx\qs_tcc_faultx.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_dma/qs_tcc_dma.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start_dma\qs_tcc_dma.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/tcc.h" framework="" version="3.36.1" source="sam0\drivers\tcc\tcc.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start_callback/qs_tcc_callback.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start_callback\qs_tcc_callback.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/quick_start/qs_tcc_basic.h" framework="" version="3.36.1" source="sam0\drivers\tcc\quick_start\qs_tcc_basic.h" changed="False" content-id="Atmel.ASF" />
+          <file path="src/ASF/sam0/drivers/tcc/tcc_callback.h" framework="" version="3.36.1" source="sam0\drivers\tcc\tcc_callback.h" changed="False" content-id="Atmel.ASF" />
         </files>
         <documentation help="http://asf.atmel.com/docs/3.28.2/thirdparty.wireless.ble_sdk.apps.startup_template.saml21_xplained_pro_b/html/index.html" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.36.1" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.37" />
         </dependencies>
         <project id="thirdparty.wireless.ble_sdk.apps.startup_template.saml21_xplained_pro_b" value="Add" config="" content-id="Atmel.ASF" />
         <board id="board.saml21_xplained_pro_b" value="Add" config="" content-id="Atmel.ASF" />
@@ -440,6 +452,7 @@
       <Value>SPI_CALLBACK_MODE=true</Value>
       <Value>USB_DEVICE_LPM_SUPPORT</Value>
       <Value>UDD_ENABLE</Value>
+      <Value>TCC_ASYNC=true</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -521,6 +534,7 @@
       <Value>../src/ASF/common/services/usb/class/hid</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize for size (-Os)</armgcc.compiler.optimization.level>
@@ -577,9 +591,10 @@
       <Value>../src/ASF/common/services/usb/class/hid</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAML21_XPLAINED_PRO -DENABLE_POWER_SAVE -DEXTINT_CALLBACK_MODE=true -DNEW_EVT_HANDLER -DSYSTICK_MODE -DTC_ASYNC=true -DUART_FLOWCONTROL_4WIRE_MODE=false -DUART_FLOWCONTROL_6WIRE_MODE=true -DUSART_CALLBACK_MODE=true -D__SAML21J18B__ -DRTC_COUNT_ASYNC=true -DEVENTS_INTERRUPT_HOOKS_MODE=true -DWDT_CALLBACK_MODE=true -DADC_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=true -DSPI_CALLBACK_MODE=true -DUSB_DEVICE_LPM_SUPPORT -DUDD_ENABLE</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAML21_XPLAINED_PRO -DENABLE_POWER_SAVE -DEXTINT_CALLBACK_MODE=true -DNEW_EVT_HANDLER -DSYSTICK_MODE -DTC_ASYNC=true -DUART_FLOWCONTROL_4WIRE_MODE=false -DUART_FLOWCONTROL_6WIRE_MODE=true -DUSART_CALLBACK_MODE=true -D__SAML21J18B__ -DRTC_COUNT_ASYNC=true -DEVENTS_INTERRUPT_HOOKS_MODE=true -DWDT_CALLBACK_MODE=true -DADC_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=true -DSPI_CALLBACK_MODE=true -DUSB_DEVICE_LPM_SUPPORT -DUDD_ENABLE -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../thirdparty/wireless/ble_sdk/apps/config/saml21</Value>
@@ -659,6 +674,7 @@
       <Value>../src/ASF/common/services/usb/class/hid</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
 </ArmGcc>
@@ -702,6 +718,7 @@
       <Value>ATCA_HAL_I2C</Value>
       <Value>KIT_PROTOCOL_MESSAGE_MAX=1000</Value>
       <Value>AWS_JITR</Value>
+      <Value>TCC_ASYNC=true</Value>
     </ListValues>
   </armgcc.compiler.symbols.DefSymbols>
   <armgcc.compiler.directories.IncludePaths>
@@ -795,6 +812,7 @@
       <Value>../src/button</Value>
       <Value>../src/led</Value>
       <Value>../src/env_sensor</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -853,10 +871,11 @@
       <Value>../src/ASF/common/services/usb/class/hid</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.assembler.general.IncludePaths>
   <armgcc.assembler.debugging.DebugLevel>Default (-g)</armgcc.assembler.debugging.DebugLevel>
-  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAML21_XPLAINED_PRO -DENABLE_POWER_SAVE -DEXTINT_CALLBACK_MODE=true -DNEW_EVT_HANDLER -DSYSTICK_MODE -DTC_ASYNC=true -DUART_FLOWCONTROL_4WIRE_MODE=false -DUART_FLOWCONTROL_6WIRE_MODE=true -DUSART_CALLBACK_MODE=true -D__SAML21J18B__ -DRTC_COUNT_ASYNC=true -DEVENTS_INTERRUPT_HOOKS_MODE=true -DWDT_CALLBACK_MODE=true -DADC_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=true -DSPI_CALLBACK_MODE=true -DUSB_DEVICE_LPM_SUPPORT -DUDD_ENABLE</armgcc.preprocessingassembler.general.AssemblerFlags>
+  <armgcc.preprocessingassembler.general.AssemblerFlags>-DARM_MATH_CM0PLUS=true -DBOARD=SAML21_XPLAINED_PRO -DENABLE_POWER_SAVE -DEXTINT_CALLBACK_MODE=true -DNEW_EVT_HANDLER -DSYSTICK_MODE -DTC_ASYNC=true -DUART_FLOWCONTROL_4WIRE_MODE=false -DUART_FLOWCONTROL_6WIRE_MODE=true -DUSART_CALLBACK_MODE=true -D__SAML21J18B__ -DRTC_COUNT_ASYNC=true -DEVENTS_INTERRUPT_HOOKS_MODE=true -DWDT_CALLBACK_MODE=true -DADC_CALLBACK_MODE=true -DI2C_MASTER_CALLBACK_MODE=true -DSPI_CALLBACK_MODE=true -DUSB_DEVICE_LPM_SUPPORT -DUDD_ENABLE -DTCC_ASYNC=true</armgcc.preprocessingassembler.general.AssemblerFlags>
   <armgcc.preprocessingassembler.general.IncludePaths>
     <ListValues>
       <Value>../thirdparty/wireless/ble_sdk/apps/config/saml21</Value>
@@ -936,6 +955,7 @@
       <Value>../src/ASF/common/services/usb/class/hid</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device</Value>
       <Value>../src/ASF/common/services/usb/class/hid/device/generic</Value>
+      <Value>../src/ASF/sam0/drivers/tcc</Value>
     </ListValues>
   </armgcc.preprocessingassembler.general.IncludePaths>
   <armgcc.preprocessingassembler.debugging.DebugLevel>Default (-Wa,-g)</armgcc.preprocessingassembler.debugging.DebugLevel>
@@ -1033,6 +1053,14 @@
     <Folder Include="src\ASF\sam0\drivers\system\power\power_sam_l\" />
     <Folder Include="src\ASF\sam0\drivers\system\reset\" />
     <Folder Include="src\ASF\sam0\drivers\system\reset\reset_sam_l\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_buffering\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_callback\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_dma\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_faultn\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_faultx\" />
+    <Folder Include="src\ASF\sam0\drivers\tcc\quick_start_timer\" />
     <Folder Include="src\ASF\sam0\drivers\tc\" />
     <Folder Include="src\ASF\sam0\drivers\tc\tc_sam_l_c\" />
     <Folder Include="src\ASF\sam0\drivers\usb\" />
@@ -1192,6 +1220,39 @@
       <SubType>compile</SubType>
     </None>
     <None Include="src\ASF\sam0\drivers\usb\usb.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_faultn\qs_tcc_faultn.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_buffering\qs_tcc_buffering.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_timer\qs_tcc_timer.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_faultx\qs_tcc_faultx.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_dma\qs_tcc_dma.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start_callback\qs_tcc_callback.h">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="src\ASF\sam0\drivers\tcc\quick_start\qs_tcc_basic.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\tcc\tcc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\sam0\drivers\tcc\tcc.h">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="src\ASF\sam0\drivers\tcc\tcc_callback.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <None Include="src\ASF\sam0\drivers\tcc\tcc_callback.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="src\ASF\sam0\drivers\usb\stack_interface\usb_device_udd.c">

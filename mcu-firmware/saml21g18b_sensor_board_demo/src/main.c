@@ -178,9 +178,52 @@ void initialise_gpio(void)
 	port_pin_set_output_level(PIN_PA21, 0);
 }
 
+struct tcc_module tcc_instance;
+static void configure_tcc(void)
+{
+	//! [setup_config]
+	struct tcc_config config_tcc;
+	//! [setup_config]
+	//! [setup_config_defaults]
+	tcc_get_config_defaults(&config_tcc, TCC0);
+	//! [setup_config_defaults]
+
+	//! [setup_change_config]
+	config_tcc.counter.period = 0xFFFF;
+	config_tcc.compare.wave_generation = TCC_WAVE_GENERATION_SINGLE_SLOPE_PWM;
+	config_tcc.compare.match[0] = 0x1000;
+	config_tcc.compare.match[1] = 0x1000;
+	config_tcc.compare.match[3] = 0x1000;
+	//! [setup_change_config]
+
+	//! [setup_change_config_pwm]
+	config_tcc.pins.enable_wave_out_pin[0] = true;
+	config_tcc.pins.wave_out_pin[0]        = PIN_PA14;
+	config_tcc.pins.wave_out_pin_mux[0]    = MUX_PA14F_TCC0_WO4;
+	
+	config_tcc.pins.enable_wave_out_pin[1] = true;
+	config_tcc.pins.wave_out_pin[1]        = PIN_PA15;
+	config_tcc.pins.wave_out_pin_mux[1]    = MUX_PA15F_TCC0_WO5;
+	
+	config_tcc.pins.enable_wave_out_pin[3] = true;
+	config_tcc.pins.wave_out_pin[3]        = PIN_PA19;
+	config_tcc.pins.wave_out_pin_mux[3]    = MUX_PA19F_TCC0_WO3;
+	//! [setup_change_config_pwm]
+
+	//! [setup_set_config]
+	tcc_init(&tcc_instance, TCC0, &config_tcc);
+	//! [setup_set_config]
+
+	//! [setup_enable]
+	tcc_enable(&tcc_instance);
+	//! [setup_enable]
+}
+
 /* main function */
 int main(void)
 {
+	/* Configure TCC for LED light intensity*/
+	configure_tcc();
 
 	/* Initialize RTC */
 	rtc_init();
@@ -252,10 +295,10 @@ int main(void)
 
 	wifiInit();
 
-	env_sensor_data_init();
+	//env_sensor_data_init();
 	while (1) {
          
-		 zero_touch_provisioning_task();
+		zero_touch_provisioning_task();
 		/* Handle pending events from network controller. */
 		wifiTaskExecute();
 		
@@ -269,8 +312,6 @@ int main(void)
 				env_sensor_execute();
 			
 		}
-		//led_ctrl_execute();
-		
 		
 	}
 

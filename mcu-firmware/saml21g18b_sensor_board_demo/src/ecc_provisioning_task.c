@@ -1767,7 +1767,7 @@ void ecc_provisioning_task()
 		
 		
         case AWS_STATE_ATECCx08A_INIT:
-			printf("AWS_STATE_ATECCx08A_INIT\r\n");
+			printf("\r\nAWS_STATE_ATECCx08A_INIT\r\n");
 			
 	#if 1
             /**

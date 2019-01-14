@@ -120,6 +120,9 @@ extern NodeInfo multiSpkDevice;
 
 wifi_nvm_data_t wifi_nvm_data ={0};
 
+extern void setColor (uint8_t LED_COLOR ,int value );
+uint g_red_led_value= 0, g_green_led_value=0, g_blue_led_value=1, g_light_state=1, g_publish_init_state = 0;
+uint g_light_intensity = 100;
 
 #define WIFI_UPDATE_DEVICE_STATUS_TIME			(2000)
 
@@ -141,7 +144,6 @@ static uint32 g_ecdh_key_slot_index = 0;
 
 static sint8 ecdh_derive_client_shared_secret(tstrECPoint *server_public_key,
 uint8 *ecdh_shared_secret,
-
 tstrECPoint *client_public_key)
 {
 	sint8 status = M2M_ERR_FAIL;
@@ -797,7 +799,7 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 	Iot_Msg_Command cmd;
 	
 	cJSON* item;
-	NodeInfo node_info[4];
+	NodeInfo node_info[7];
 	int8_t cnt = 0;
 	
 	
@@ -809,45 +811,135 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 	}
 	json_state = cJSON_GetObjectItem(json,"state");
 	
-	json_key = cJSON_GetObjectItem(json_state,"LED_R");
-	printf("DBG command = %s\n", json_key->valueint);
+	json_key = cJSON_GetObjectItem(json_state,"LED_INTENSITY");
 	if (json_key)
 	{
-		if (json_key->valueint)
-		port_pin_set_output_level(RED_LED, 0);
-		else
-		port_pin_set_output_level(RED_LED, 1);
+		g_light_intensity = json_key->valueint;
 		
+		if (g_red_led_value)
+			setColor(LED_COLOR_RED,g_light_intensity);
+		else
+			setColor(LED_COLOR_RED,0);
+		
+		if (g_green_led_value)
+			setColor(LED_COLOR_GREEN,g_light_intensity);
+		else
+			setColor(LED_COLOR_GREEN,0);
+		
+		if (g_blue_led_value)
+			setColor(LED_COLOR_BLUE,g_light_intensity);
+		else
+			setColor(LED_COLOR_BLUE,0);
+			
+		strcpy(node_info[cnt].dataType,"LED_INTENSITY");
+		node_info[cnt].value = json_key->valueint;
+		cnt++;
+		
+	}
+	
+	
+	json_key = cJSON_GetObjectItem(json_state,"LED_R");
+	if (json_key)
+	{
 		strcpy(node_info[cnt].dataType,"LED_R");
-		node_info[cnt].value = !port_pin_get_output_level (RED_LED);
+		node_info[cnt].value = json_key->valueint;
+		g_red_led_value = json_key->valueint;
+		
+		if (g_red_led_value)
+			setColor(LED_COLOR_RED,g_light_intensity);
+		else
+			setColor(LED_COLOR_RED,0);
+			
 		cnt++;
 	}
 	
 	json_key = cJSON_GetObjectItem(json_state,"LED_G");
 	if (json_key)
 	{
-		if (json_key->valueint)
-		port_pin_set_output_level(GREEN_LED, 0);
-		else
-		port_pin_set_output_level(GREEN_LED, 1);
-
 		strcpy(node_info[cnt].dataType,"LED_G");
-		node_info[cnt].value = !port_pin_get_output_level (GREEN_LED);
+		node_info[cnt].value = json_key->valueint;
+		g_green_led_value = json_key->valueint;
+		
+		if (g_green_led_value)
+			setColor(LED_COLOR_GREEN,g_light_intensity);
+		else
+			setColor(LED_COLOR_GREEN,0);
+		
 		cnt++;
 	}
 	json_key = cJSON_GetObjectItem(json_state,"LED_B");
 	if (json_key)
 	{
-		if (json_key->valueint)
-		port_pin_set_output_level(BLUE_LED, 0);
-		else
-		port_pin_set_output_level(BLUE_LED, 1);
-
 		strcpy(node_info[cnt].dataType,"LED_B");
-		node_info[cnt].value = !port_pin_get_output_level (BLUE_LED);
+		node_info[cnt].value = json_key->valueint;
+		g_blue_led_value = json_key->valueint;
+		
+		if (g_blue_led_value)
+			setColor(LED_COLOR_BLUE,g_light_intensity);
+		else
+			setColor(LED_COLOR_BLUE,0);
+		
 		cnt++;
 	}
 	
+	json_key = cJSON_GetObjectItem(json_state,"Light");
+	if (json_key)
+	{
+		strcpy(node_info[cnt].dataType,"Light");
+		node_info[cnt].value = json_key->valueint;
+		g_light_state = json_key->valueint;
+		
+		if (g_light_state)
+		{
+			if (g_blue_led_value)
+			setColor(LED_COLOR_BLUE,g_light_intensity);
+			else
+			setColor(LED_COLOR_BLUE,0);
+			
+			if (g_green_led_value)
+			setColor(LED_COLOR_GREEN,g_light_intensity);
+			else
+			setColor(LED_COLOR_GREEN,0);
+			
+			if (g_red_led_value)
+			setColor(LED_COLOR_RED,g_light_intensity);
+			else
+			setColor(LED_COLOR_RED,0);
+		}
+		else
+		{
+			setColor(LED_COLOR_BLUE,0);
+			setColor(LED_COLOR_GREEN,0);
+			setColor(LED_COLOR_RED,0);
+		}
+		
+		cnt++;
+	}
+#if 0
+	json_key = cJSON_GetObjectItem(json_state,"Light");
+	if(json_key)
+	{
+		if (json_key->valueint == 0)
+		{
+			printf("OFF\n");
+			g_light_state = 0;
+			setColor(LED_COLOR_RED,0);
+			setColor(LED_COLOR_GREEN,0);
+			setColor(LED_COLOR_BLUE,0);
+		}else
+		{
+			printf("ON\n");
+			g_light_state = 1;
+			setColor(LED_COLOR_RED,g_red_led_value);
+			setColor(LED_COLOR_GREEN,g_green_led_value);
+			setColor(LED_COLOR_BLUE,g_blue_led_value);
+
+		}
+		strcpy(node_info[cnt].dataType,"Light");
+		node_info[cnt].value = g_light_state;
+		cnt++;
+	}
+#endif
 	json_key = cJSON_GetObjectItem(json_state,"PA");
 	if (json_key)
 	{
@@ -950,62 +1042,182 @@ static void MQTTSubscribeCBCallbackHandler_shadow_get(MQTTCallbackParams params)
 	
 	
 	json=cJSON_Parse(params.MessageParams.pPayload);
-	
 	if (!json) {
 		printf("Error when decode json: [%s]\n",cJSON_GetErrorPtr());
 		return MSG_CMD_UNKNOWN;
 	}
 	json_state = cJSON_GetObjectItem(json,"state");
-	
 	json_desired = cJSON_GetObjectItem(json_state,"desired");
-	
-	json_key = cJSON_GetObjectItem(json_desired,"LED_R");
-	if (json_key)
+	if (json_desired)
 	{
-		if (json_key->valueint)
-		port_pin_set_output_level(RED_LED, 0);
-		else
-		port_pin_set_output_level(RED_LED, 1);
 		
-		strcpy(node_info[cnt].dataType,"LED_R");
-		node_info[cnt].value = !port_pin_get_output_level (RED_LED);
-		cnt++;
+		json_key = cJSON_GetObjectItem(json_desired,"LED_INTENSITY");
+		if (json_key)
+		{
+			g_light_intensity = json_key->valueint;
+			
+			if (g_red_led_value)
+			setColor(LED_COLOR_RED,g_light_intensity);
+			else
+			setColor(LED_COLOR_RED,0);
+			
+			if (g_green_led_value)
+			setColor(LED_COLOR_GREEN,g_light_intensity);
+			else
+			setColor(LED_COLOR_GREEN,0);
+			
+			if (g_blue_led_value)
+			setColor(LED_COLOR_BLUE,g_light_intensity);
+			else
+			setColor(LED_COLOR_BLUE,0);
+			
+			strcpy(node_info[cnt].dataType,"LED_INTENSITY");
+			node_info[cnt].value = json_key->valueint;
+			cnt++;
+		}
+		
+		
+		json_key = cJSON_GetObjectItem(json_desired,"LED_R");
+		if (json_key)
+		{
+			strcpy(node_info[cnt].dataType,"LED_R");
+			node_info[cnt].value = json_key->valueint;
+			g_red_led_value = json_key->valueint;
+			
+			if (g_red_led_value)
+			{
+				setColor(LED_COLOR_RED,g_light_intensity);
+			}
+			else
+			setColor(LED_COLOR_RED,0);
+			
+			cnt++;
+		}
+		
+		json_key = cJSON_GetObjectItem(json_desired,"LED_G");
+		if (json_key)
+		{
+			strcpy(node_info[cnt].dataType,"LED_G");
+			node_info[cnt].value = json_key->valueint;
+			g_green_led_value = json_key->valueint;
+			
+			if (g_green_led_value)
+			setColor(LED_COLOR_GREEN,g_light_intensity);
+			else
+			setColor(LED_COLOR_GREEN,0);
+			
+			cnt++;
+		}
+		json_key = cJSON_GetObjectItem(json_desired,"LED_B");
+		if (json_key)
+		{
+			strcpy(node_info[cnt].dataType,"LED_B");
+			node_info[cnt].value = json_key->valueint;
+			g_blue_led_value = json_key->valueint;
+			
+			if (g_blue_led_value)
+			setColor(LED_COLOR_BLUE,g_light_intensity);
+			else
+			setColor(LED_COLOR_BLUE,0);
+			
+			cnt++;
+		}
+		
+		json_key = cJSON_GetObjectItem(json_desired,"Light");
+		if (json_key)
+		{
+			strcpy(node_info[cnt].dataType,"Light");
+			node_info[cnt].value = json_key->valueint;
+			g_light_state = json_key->valueint;
+			
+			if (g_light_state)
+			{
+				
+			
+				if (g_blue_led_value)
+					setColor(LED_COLOR_BLUE,g_light_intensity);
+				else
+					setColor(LED_COLOR_BLUE,0);
+					
+				if (g_green_led_value)
+					setColor(LED_COLOR_GREEN,g_light_intensity);
+				else
+					setColor(LED_COLOR_GREEN,0);
+					
+				if (g_red_led_value)
+					setColor(LED_COLOR_RED,g_light_intensity);
+				else
+					setColor(LED_COLOR_RED,0);
+			}
+			else
+			{
+				setColor(LED_COLOR_BLUE,0);
+				setColor(LED_COLOR_GREEN,0);
+				setColor(LED_COLOR_RED,0);
+			}
+			
+			cnt++;
+		}
+		
+		if (cnt){
+			item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
+			cloud_mqtt_publish(gPublish_Channel_shadow,item);
+			cJSON_Delete(item);
+		}
+		
 	}
 	
-	json_key = cJSON_GetObjectItem(json_desired,"LED_G");
-	if (json_key)
+	if (json)
 	{
-		if (json_key->valueint)
-		port_pin_set_output_level(GREEN_LED, 0);
-		else
-		port_pin_set_output_level(GREEN_LED, 1);
-
-		strcpy(node_info[cnt].dataType,"LED_G");
-		node_info[cnt].value = !port_pin_get_output_level (GREEN_LED);
-		cnt++;
+		cJSON_Delete(json);
 	}
-	json_key = cJSON_GetObjectItem(json_desired,"LED_B");
-	if (json_key)
+	
+	
+	if (g_publish_init_state)
 	{
-		if (json_key->valueint)
-		port_pin_set_output_level(BLUE_LED, 0);
-		else
-		port_pin_set_output_level(BLUE_LED, 1);
-
-		strcpy(node_info[cnt].dataType,"LED_B");
-		node_info[cnt].value = !port_pin_get_output_level (BLUE_LED);
-		cnt++;
-	}
-	
-	
-	
-	if (cnt){
-		item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, cnt, &node_info);
+		
+		g_publish_init_state = 0;
+		NodeInfo node[8];
+		int i= 0;
+		
+		strcpy(node[i].dataType,"BUTTON_1");
+		node[i].value = g_button1_state;	
+		i++;
+		
+		strcpy(node[i].dataType,"BUTTON_2");
+		node[i].value = g_button2_state;
+		i++;
+		
+		strcpy(node[i].dataType,"BUTTON_3");
+		node[i].value = g_button3_state;
+		i++;
+		
+		strcpy(node[i].dataType,"LED_R");
+		node[i].value = g_red_led_value;
+		i++;
+		
+		strcpy(node[i].dataType,"LED_G");
+		node[i].value = g_green_led_value;
+		i++;
+		
+		strcpy(node[i].dataType,"LED_B");
+		node[i].value = g_blue_led_value;
+		i++;
+		
+		strcpy(node[i].dataType,"LED_INTENSITY");
+		node[i].value = g_light_intensity;
+		i++;
+		
+		strcpy(node[i].dataType,"Light");
+		node[i].value = g_light_state;
+		i++;
+		
+		item = iot_message_reportInfo_shadow(DEVICE_TYPE, gAwsMqttClientId, i, &node);
+		printf("publish the init value to the channel\r\n");
 		cloud_mqtt_publish(gPublish_Channel_shadow,item);
 		cJSON_Delete(item);
 	}
-	if (json)
-	cJSON_Delete(json);
+	
 	
 	return;
 	
@@ -1379,6 +1591,7 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
 			else
 			{
 				gbConnectedWifi = false;
+				m2m_wifi_disconnect();
 				m2m_wifi_connect((char *)gDefaultSSID, strlen((char *)gDefaultSSID), \
 				gAuthType, (char *)gDefaultKey, M2M_WIFI_CH_ALL);
 			}
@@ -1656,7 +1869,7 @@ void detectWiFiMode()
 	//detSw0Sock = regButtonPressDetectCallback(buttonSW0Handle);
 }
 
-void configureSW3()
+void configureSW()
 {
 	int buttonSock, button5SecSock;
 	buttonSock = regButtonShortPressDetectCallback(buttonSW3Handle,3);
@@ -1675,7 +1888,7 @@ int wifiInit(void)
 	tstrWifiInitParam param;
 	int8_t ret;
 
-	configureSW3();
+	configureSW();
 	
 	/* Initialize Wi-Fi parameters structure. */
 	memset((uint8_t *)&param, 0, sizeof(tstrWifiInitParam));
@@ -1706,8 +1919,8 @@ int wifiInit(void)
 
 
 	
-	DBG_LOG("gSubscribe_Channel: %s\r\n", gSubscribe_Channel);
-	DBG_LOG("gPublish_Channel: %s\r\n", gPublish_Channel);
+	//DBG_LOG("gSubscribe_Channel: %s\r\n", gSubscribe_Channel);
+	//DBG_LOG("gPublish_Channel: %s\r\n", gPublish_Channel);
 	
 	if (gDefaultSSID[0]==0xFF || gDefaultSSID[0]==0x0 )	// Read nothing from flash, assign default value
 	{
@@ -1722,8 +1935,6 @@ int wifiInit(void)
 	
 	register_env_sensor_udpate_callback_handler(EnvSensorCallbackHandler);
 	
-	//regButtonPress5sTimeoutCallback(buttonSW0Handle);
-
 	#if AWS_JITR
 	sint8 wifi_status = M2M_SUCCESS;
 	
@@ -1770,10 +1981,6 @@ int wifiInit(void)
 	#endif
 
 #ifdef USE_SHADOW	
-/*  This is using the MAC address of the WINC1500 as the THING name
-	cloud_create_topic_shadow(gSubscribe_Channel_shadow, DEVICE_TYPE, gAwsMqttClientId, SUBSCRIBE_TOPIC_SHADOW);
-	cloud_create_topic_shadow(gPublish_Channel_shadow, DEVICE_TYPE, gAwsMqttClientId, PUBLISH_TOPIC_SHADOW);
-*/
 
 /* This is using the deice ID g_thing_name */
 	cloud_create_topic_shadow(gSubscribe_Channel_shadow, DEVICE_TYPE, g_thing_name, SUBSCRIBE_TOPIC_SHADOW);
@@ -1792,7 +1999,7 @@ int wifiTaskExecute()
 {	
 	Cloud_RC ret = CLOUD_RC_NONE_ERROR;
     ATCA_STATUS atca_status = ATCA_STATUS_UNKNOWN;
-    char  hostname[SLOT8_HOSTNAME_SIZE];
+    static char  hostname[SLOT8_HOSTNAME_SIZE];
     uint32_t hostname_length = sizeof(hostname);
     
 	m2m_wifi_handle_events(NULL);
@@ -1817,8 +2024,9 @@ int wifiTaskExecute()
 			/* Connect to router. */
             readWiFiSettingFromMemory();
 			gu8WiFiMode = APP_STA;
+			m2m_wifi_disconnect();
 			m2m_wifi_connect((char *)gDefaultSSID, strlen(gDefaultSSID), gAuthType, (char *)gDefaultKey, M2M_WIFI_CH_ALL);
-			led_ctrl_set_color(LED_COLOR_GREEN, LED_MODE_BLINK_FAST);//Luc
+			//led_ctrl_set_color(LED_COLOR_GREEN, LED_MODE_BLINK_FAST);//Luc
 			wifi_states = WIFI_TASK_IDLE;
 			break;
 			
@@ -1841,12 +2049,15 @@ int wifiTaskExecute()
 		case WIFI_TASK_MQTT_SUBSCRIBE:
 			
 #ifdef USE_SHADOW
-			ret = cloud_mqtt_subscribe(gSubscribe_Channel_shadow, MQTTSubscribeCBCallbackHandler_shadow);
 			ret = cloud_mqtt_subscribe(gSubscribe_Channel_shadow_get, MQTTSubscribeCBCallbackHandler_shadow_get);
+			ret = cloud_mqtt_subscribe(gSubscribe_Channel_shadow, MQTTSubscribeCBCallbackHandler_shadow);
+			
 			
 			cJSON *jsonObj;
 			jsonObj=cJSON_CreateObject();
 			cloud_mqtt_publish(gPublish_Channel_shadow_get,jsonObj);
+			cJSON_Delete(jsonObj);
+			g_publish_init_state = 1;
 #else
 			ret = cloud_mqtt_subscribe(gSubscribe_Channel, MQTTSubscribeCBCallbackHandler);
 #endif

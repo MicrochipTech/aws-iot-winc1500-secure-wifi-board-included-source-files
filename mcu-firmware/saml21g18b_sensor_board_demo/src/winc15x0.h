@@ -79,7 +79,7 @@
 
 #define AP_TCP_SERVER_PORT				8899
 #define MQTT_CLIENT_ID_LEN				13
-#define MQTT_CHANNEL_LEN				90
+#define MQTT_CHANNEL_LEN				100
 
 #ifdef AWS_JITR
 char g_mqtt_client_id[129];

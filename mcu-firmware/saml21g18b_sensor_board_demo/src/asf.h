@@ -100,10 +100,6 @@
 #include <sercom.h>
 #include <sercom_interrupt.h>
 
-// From module: SERCOM USART - Serial Communications (Callback APIs)
-#include <usart.h>
-#include <usart_interrupt.h>
-
 // From module: SERCOM I2C - Master Mode I2C (Callback APIs)
 #include <i2c_common.h>
 #include <i2c_master.h>
@@ -136,6 +132,14 @@
 #include <saml/sleepmgr.h>
 #include <sleepmgr.h>
 
+// From module: TCC - Timer Counter for Control Applications (Callback APIs)
+#include <tcc.h>
+#include <tcc_callback.h>
+
+// From module: TCC - Timer Counter for Control Applications (Callback APIs)
+#include <tcc.h>
+#include <tcc_callback.h>
+
 // From module: USB - Universal Serial Bus
 #include <usb.h>
 
@@ -162,6 +166,7 @@
 
 // From module: USART - Serial interface- SAM implementation for devices with only USART
 #include <serial.h>
+
 
 // From module: WDT - Watchdog Timer (Callback APIs)
 #include <wdt.h>
