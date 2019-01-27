@@ -382,6 +382,7 @@ public class WlanAdapter {
 				}
 				break;
 			case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
+
 				if (scanWaitingFlag)
 					mWifiList = mWifi.getScanResults();
 

@@ -112,6 +112,8 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
         Bundle extras = intent.getExtras();
         uuid = extras.getString(ServiceConstant.CognitoUuid);
 
+        Log.d(LOG_TAG, "Debug:  uuid= "+uuid);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -310,6 +312,7 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
                 scanStage = 0;
 
                 if (rdata == null) {
+                    MyHelper.d(">>>> Scan AP fail ....");
                     return false;
                 }
                 cnt--;
@@ -320,6 +323,9 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
             // add scan result to the list
             for ( ScanResult sr : rdata) {
                 if (null == sr.SSID || sr.SSID.isEmpty())
+                    continue;
+
+                if (sr.SSID.contains("WiFiSmartDevice_"))
                     continue;
 
                 APDevice ap = new APDevice();
@@ -377,7 +383,7 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
             else if (result.equals("scan_fail")) {
                 MyHelper.d(">>>> Fail to scan");
             }
-            mWifiAdapter.unRegister();
+            //mWifiAdapter.unRegister();
 
         }
 

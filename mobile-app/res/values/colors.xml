@@ -42,7 +42,7 @@
     <color name="navigation_bar_color">#ffffff</color>
 	<color name="toolbar_background">#ee2a24</color>
     <color name="toolbar_background_dark">#1D1E1E</color>
-    <color name="toolbar_items">#ffffff</color>
+    <color name="toolbar_items">#1D1E1E</color>
     <color name="alert">#AC1600</color>
     <color name="success">#37A51C</color>
     <color name="button_default">#ee2a24</color>

@@ -5,21 +5,15 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mchp.awsprovisionkit.model.APDevice;
-import  com.amazonaws.mchp.awsprovisionkit.model.AwsRouter;
 import  com.amazonaws.mchp.awsprovisionkit.R;
-import com.amazonaws.mchp.awsprovisionkit.task.json.AwsJsonMsg;
 
 @SuppressLint("InflateParams")
 public class apListAdapter extends BaseAdapter {

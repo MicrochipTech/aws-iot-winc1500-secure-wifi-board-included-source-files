@@ -1,30 +1,18 @@
 package com.amazonaws.mchp.awsprovisionkit.activity;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,33 +24,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amazonaws.mchp.awsprovisionkit.base.MyThreadPool;
-import com.amazonaws.mchp.awsprovisionkit.model.AwsZeroTouchProvisionKitDevice;
+import com.amazonaws.mchp.awsprovisionkit.model.WiFiSmartDevice;
 import com.amazonaws.mchp.awsprovisionkit.model.itemInfo;
-import com.amazonaws.mchp.awsprovisionkit.opensource.downloader.asyn.AsyncTask;
 import com.amazonaws.mchp.awsprovisionkit.task.json.AwsShadowJsonMsg;
-import com.amazonaws.mchp.awsprovisionkit.task.net.MsgData;
-import com.amazonaws.mchp.awsprovisionkit.task.net.MsgMulticast;
-import com.amazonaws.mchp.awsprovisionkit.task.net.MyConfig;
-import com.amazonaws.mchp.awsprovisionkit.task.net.MyHelper;
 import com.amazonaws.mchp.awsprovisionkit.task.net.WlanAdapter;
 import com.amazonaws.mchp.awsprovisionkit.task.ui.*;
 import com.amazonaws.mchp.awsprovisionkit.utils.*;
@@ -70,13 +44,10 @@ import com.amazonaws.mchp.awsprovisionkit.task.json.AwsJsonMsg;
 import com.amazonaws.mchp.awsprovisionkit.service.AwsService;
 import com.amazonaws.mchp.awsprovisionkit.R;
 import com.amazonaws.mchp.awsprovisionkit.task.ui.SlideListView;
-import com.amazonaws.mchp.awsprovisionkit.model.AwsRouter;
+import com.amazonaws.mchp.awsprovisionkit.model.AwsDevice;
 import com.amazonaws.mchp.awsprovisionkit.adapter.*;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUser;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser;
-
-import zxing.CaptureActivity;
-
 
 @SuppressLint("HandlerLeak")
 public class DeviceListActivity  extends AppCompatActivity implements OnClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -95,51 +66,21 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 	/** The sv ListGroup */
 	private ScrollView svListGroup;
 
-	TextView aDiaglogText;
-	private View aDiagView;
+	private DeviceListAdapter myadapter;
 
-	/** 适配器 */
-	gatewayListAdapter myadapter;
+	private List<AwsDevice> foundDevicesList;
 
-	/** 设备列表分类 */
-	List<AwsRouter> foundDevicesList;
+	private static List<String> boundMessage;
 
-	/** 设备热点名称列表 */
-	ArrayList<String> softNameList;
-
-	/** 与APP绑定的设备的ProductKey */
-	private List<String> ProductKeyList;
-
-	Intent intent;
-
-	public static List<String> boundMessage;
-
-	public ProgressDialog progressDialog;
-
-	protected static final int GETLIST = 0;
-
+	private ProgressDialog progressDialog;
 
 	protected static final int UPDATALIST = 1;
-
-
-	protected static final int TOCONTROL = 2;
-
-
 	protected static final int TOAST = 3;
-
 	/* Display progress diaglog */
 	protected static final int PROGRESSDIAG = 4;
 	protected static final int PROGRESSDIAG_DISMISS = 5;
 	protected static final int REFRESH_ICON_DISMISS = 6;
-
 	protected static final int BOUND = 9;
-
-
-	protected static final int UNBOUND = 99;
-
-	protected static final int SHOWDIALOG = 999;
-
-	private static final int PULL_TO_REFRESH = 888;
 
 	private String idToken;
 	private CognitoUser user;
@@ -147,228 +88,26 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	private VerticalSwipeRefreshLayout mSwipeLayout;
 
-	private AlertDialog.Builder alertDialogBuilder;
-	private AlertDialog alertDialog;
-
-	private View promptsView;
-
-	private 	EditText userInput;
-
-	private LayoutInflater li;
 	private NavigationView nDrawer;
 	private DrawerLayout mDrawer;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Toolbar toolbar;
-
     private Integer mPubCounter;
-
-	gatewayListJsonMsgReceiver receiver;
-
-	WlanAdapter mWifiAdapter = null;
+	private deviceListJsonMsgReceiver receiver;
+	private WlanAdapter mWifiAdapter = null;
 
 	final Context context = this;
-	String provision_passphrase;
-	public String devName;
-	public WifiConfiguration currentApInfo = null;
     public String uuid;
 
-
 	String[] thing_name = new String[10];
-	ArrayList<AwsZeroTouchProvisionKitDevice> thingList = new ArrayList<AwsZeroTouchProvisionKitDevice>();
-	int number_of_thing = 0;
-	private String filename = "config.txt";
-	private String filepath = "MyFileStorage";
-	File myExternalFile;
-
-
-	private class NetworkProvisionTask extends AsyncTask<String, Integer, String> {
-
-		public Boolean isStoped = false;
-		//private WifiConfiguration currentApInfo = null;
-
-		private void printProgressDiagMsg(String text)
-		{
-
-			Message msg = new Message();
-			msg.what = PROGRESSDIAG;
-			msg.obj = text;
-			handler.sendMessage(msg);
-
-		}
-		private void clearProgressDiagMsg()
-		{
-
-			Message message = new Message();
-			message.what = PROGRESSDIAG_DISMISS;
-			handler.sendMessage(message);
-
-		}
-		private ScanResult searchTargetDevice(List<ScanResult> list, String ssid)
-		{
-
-			for ( ScanResult sr : list) {
-				if (null == sr.SSID || sr.SSID.isEmpty())
-					continue;
-				if (sr.SSID.equals(ssid)) {
-					return sr;
-				}
-			}
-			return null;
-		}
-		@Override
-		protected String doInBackground(String... params) {
-			MyHelper.d(">>>> Start doInBackground ....");
-
-			/* Stage 1: Scan the device AP */
-			if (params[0].equals("stage1")) {
-
-				printProgressDiagMsg("Scanning Device...");
-				List<ScanResult> rdata = mWifiAdapter.tryGetWifiList();
-				if (isStoped || this.isCancelled())
-					return null;
-
-				if (rdata == null) {
-					return null;
-				}
-				ArrayList<ScanResult> data = new ArrayList<ScanResult>();
-				String targetSsid = "AWSZeroTouchKit_" + params[1];
-
-				ScanResult sr = searchTargetDevice(rdata, targetSsid);
-				if (sr == null)
-					return MyConfig.ERR_ScanAPFail;
-
-				currentApInfo = mWifiAdapter.getCurrentAPInfo();
-
-				printProgressDiagMsg("Connecting Device...");
-				Boolean r1 = mWifiAdapter.tryConnectWlan(sr, "12345678");
-				if (r1)
-					MyHelper.d(">>>> Success connected to wifi, SSID= " + sr.SSID);
-				else
-					return MyConfig.ERR_ConnectDevFail;
-
-				return "stage1"; 	// finish stage1 to scan the deivce, then show alertDiag for user to enter password
-			}
-			else
-			{
-				MyHelper.d(">>>> Start stage 2 ....");
-				if (params[1].length()<8)
-					return "passphase len is worng";
-
-				// send discovery command
-				String result1, result2;
-				MyHelper.d(">>>> Start stage 2-1: send DiscoveryCmd to device");
-				result1 = this.sendDiscoveryCmd();
-				if (MyConfig.Success_ConnectDev == result1) {
-					MyHelper.d(">>>> Start stage 2-2: send provision data to device");
-					result2 = this.networkProvision();
-				}
-				else
-					return result1;
-
-				if (result2.equals(MyConfig.ERR_SendProvDataFail))
-					return result2;
-
-				mWifiAdapter. removeCurrentAP();
-				return  "stage2";	// success finish stage 2
-			}
-		}
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
-
-			if (result.equals("stage1")) {
-				MyHelper.d(">>>> Finish stage 1: Scan and connect to device");
-				Message msg = new Message();
-				msg.what = SHOWDIALOG;
-				msg.obj = currentApInfo.SSID;
-				handler.sendMessage(msg);
-			}
-			else if (result.equals("stage2")){
-				MyHelper.d(">>>> Finish stage 2: finish provisioning");
-				printProgressDiagMsg("Provisioning...");
-				Boolean r1 = mWifiAdapter.tryConnectWlan(currentApInfo);
-			}
-			else if (result.equals(MyConfig.ERR_ScanAPFail))
-			{
-				MyHelper.d(">>>> Fail stage 1: fail to scan the device");
-				printProgressDiagMsg(result);
-				//ToDo: Add delay to cancel the diaglog
-			}
-			else{
-				printProgressDiagMsg(result);
-				Boolean r1 = mWifiAdapter.tryConnectWlan(currentApInfo);
-			}
-		}
-
-		public void tryStop() {
-			this.isStoped = true;
-			try {
-				if (this.getStatus() != Status.FINISHED)
-					this.cancel(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		String sendDiscoveryCmd() {
-			MsgData msgData = MsgMulticast.single().tryDiscovery1();
-			if (msgData == null)
-				return MyConfig.ERR_ConnectDevFail;
-
-			if (msgData.hasError()) {
-				MyHelper.d(">>>> tryGetPlugInfo log2");
-				return msgData.getError();
-			} else {
-				String mac = msgData.MAC;
-				String thingID = msgData.ThingID;
-				printProgressDiagMsg("Provisioning...");
-
-				MyHelper.d(">>>> Get device Mac="+ mac);
-				MyHelper.d(">>>> Get device ThingID="+ thingID);
-
-				Intent subscribe_intent = new Intent(DeviceListActivity.this, AwsService.class);
-				subscribe_intent.putExtra(ServiceConstant.DevMacAddr,thingID);
-				subscribe_intent.putExtra(ServiceConstant.DevName,devName);
-				subscribe_intent.setAction(ServiceConstant.UpdateAcctInfoToDB);
-				startService(subscribe_intent);
-
-			}
-
-			return MyConfig.Success_ConnectDev;
-		}
-
-		String networkProvision() {
-			MsgData msgData = MsgMulticast.single().tryDiscovery2(currentApInfo, provision_passphrase, uuid);
-			if (msgData == null)
-				return MyConfig.ERR_SendProvDataFail ;
-
-			return MyConfig.Success_SendProvData;
-		}
-	}
-
+	ArrayList<WiFiSmartDevice> thingList = new ArrayList<WiFiSmartDevice>();
 
 	Handler handler = new Handler() {
-		private AlertDialog myDialog;
-		private TextView dialog_name;
 
 		public void handleMessage(android.os.Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
-				case GETLIST:
-
-					break;
-
 				case UPDATALIST:
-					//if (progressDialog.isShowing()) {
-					//	progressDialog.cancel();
-					//}
 					UpdateUI();
 					break;
 
@@ -376,19 +115,11 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 					break;
 
-				case UNBOUND:
-					//progressDialog.show();
-					break;
-
-				case TOCONTROL:
-
-					break;
-
 				case PROGRESSDIAG:
-				progressDialog.setTitle("Loading");
-				progressDialog.setMessage(msg.obj.toString());
-				progressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
-				progressDialog.show();
+					progressDialog.setTitle("Loading");
+					progressDialog.setMessage(msg.obj.toString());
+					progressDialog.setCancelable(false); // disable dismiss by tapping outside of the dialog
+					progressDialog.show();
 				break;
 
 				case PROGRESSDIAG_DISMISS:
@@ -400,79 +131,33 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					Toast.makeText(DeviceListActivity.this, msg.obj.toString(), Toast.LENGTH_LONG).show();
 					break;
 
-				case PULL_TO_REFRESH:
-
-					mSwipeLayout.setRefreshing(false);
-					break;
 				case REFRESH_ICON_DISMISS:
 					mSwipeLayout.setRefreshing(false);
-					break;
-
-				case SHOWDIALOG:
-
-					String str="Provision to AP "+msg.obj.toString();
-					aDiaglogText.setText(str);
-
-					alertDialog.show();
 					break;
 			}
 		};
 	};
 
-	private void writeToFile(String data,Context context) {
-		try {
-			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
-			outputStreamWriter.write(data);
-			outputStreamWriter.close();
-		}
-		catch (IOException e) {
-			Log.e("Exception", "File write failed: " + e.toString());
-		}
-	}
-	private String readFromFile(Context context) {
 
-		String ret = "";
+	private void sendScanThingIDCmd(){
 
-		try {
-			InputStream inputStream = context.openFileInput("config.txt");
-
-			if ( inputStream != null ) {
-				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-				BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-				String receiveString = "";
-				StringBuilder stringBuilder = new StringBuilder();
-
-				while ( (receiveString = bufferedReader.readLine()) != null ) {
-					stringBuilder.append(receiveString);
-				}
-
-				inputStream.close();
-				ret = stringBuilder.toString();
-			}
-		}
-		catch (FileNotFoundException e) {
-			Log.e("login activity", "File not found: " + e.toString());
-		} catch (IOException e) {
-			Log.e("login activity", "Can not read file: " + e.toString());
-		}
-
-		Log.e("login activity", "re: " + ret);
-		return ret;
+		Intent intent_arg = new Intent(DeviceListActivity.this, AwsService.class);
+		intent_arg.putExtra(ServiceConstant.CognitoUuid,uuid);
+		intent_arg.setAction(ServiceConstant.ScanThingID);
+		startService(intent_arg);
 	}
 
 	protected  void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		///setTheme(R.style.CognitoAppTheme);
 
-		setContentView(R.layout.activity_gateway_list);
+		setContentView(R.layout.activity_device_list);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		//setTheme(R.style.AppTheme);
-		//setContentView(R.layout.activity_gateway_list);
-		handler.sendEmptyMessage(GETLIST);
-		foundDevicesList = new ArrayList<AwsRouter>();
+		foundDevicesList = new ArrayList<AwsDevice>();
 		boundMessage = new ArrayList<String>();
 		mWifiAdapter = new WlanAdapter(this);
 		progressDialog = new ProgressDialog(context);
+		receiver = new deviceListJsonMsgReceiver();
 
 		Intent intent = getIntent();
 		uuid = intent.getStringExtra(ServiceConstant.CognitoUuid);
@@ -485,10 +170,10 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		username = AppHelper.getCurrUser();
 		user = AppHelper.getPool().getUser(username);
 
+		sendScanThingIDCmd();
+
 		initView();
 		initEvent();
-
-        receiver = new gatewayListJsonMsgReceiver();
 
 		mSwipeLayout.post(new Runnable() {
 			@Override
@@ -499,31 +184,12 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 		onRefresh();
 
-
-
-		//mSwipeLayout.setRefreshing(true);
-		/*
-		thing_name = AppHelper.getThingNamefromConfigFile(context);
-		for (int j = 0; j< thing_name.length; j++) {
-			if (thing_name[j] != null)
-				Log.e(LOG_TAG, ">>>>>>>>>-- thing_name = " + thing_name[j]);
-		}
-		*/
-		String test_value = AppHelper.getStringfromConfigFile(context, "COGNITO_POOL_ID");
-		Log.e(LOG_TAG, ">>>>>>>>>-- COGNITO_POOL_ID = " + test_value);
-
-		Intent subscribe_intent = new Intent(DeviceListActivity.this, AwsService.class);
-		subscribe_intent.putExtra(ServiceConstant.CognitoUuid,uuid);
-		subscribe_intent.setAction(ServiceConstant.ScanThingID);
-		startService(subscribe_intent);
-
 	}
 
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(LOG_TAG, "Debug: gatewayLIstActivity 8888888888888888888");
         IntentFilter filter = new IntentFilter(ServiceConstant.CloudStatus);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         filter.addAction(ServiceConstant.JSONMsgReport);
@@ -531,19 +197,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		filter.addAction(ServiceConstant.ThingIDListReport);
         registerReceiver(receiver, filter);
 
-		if (boundMessage.size() != 0) {
 
-			if (boundMessage.get(0) == "QR Mac") {
-				if (boundMessage.get(1) == "invalid")
-					Toast.makeText(DeviceListActivity.this, "Wrong devices", Toast.LENGTH_SHORT).show();
-				else {
-					Toast.makeText(DeviceListActivity.this, "add dev: "+boundMessage.get(1), Toast.LENGTH_LONG).show();
-
-                    NetworkProvisionTask taskScanDevAP = new NetworkProvisionTask();
-                    taskScanDevAP.executeOnExecutor(MyThreadPool.getExecutor(), "stage1", boundMessage.get(1));
-				}
-			}
-		}
 	}
 
 	@Override
@@ -552,7 +206,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		boundMessage.clear();
 
 		mPubCounter = 0;
-		handler.removeCallbacks(publishPublishSearchCmd);
+		handler.removeCallbacks(publishShadowGetCmd);
 
         unregisterReceiver(receiver);
 		// TODO GosMessageHandler.getSingleInstance().SetHandler(null);
@@ -623,77 +277,17 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 
 		// Set navigation drawer for this screen
-		mDrawer = (DrawerLayout) findViewById(R.id.gatewaylist_drawer_layout);
+		mDrawer = (DrawerLayout) findViewById(R.id.devicelist_drawer_layout);
 		mDrawerToggle = new ActionBarDrawerToggle(this,mDrawer, toolbar, R.string.nav_drawer_open, R.string.nav_drawer_close);
 		mDrawer.addDrawerListener(mDrawerToggle);
 		mDrawerToggle.syncState();
-		nDrawer = (NavigationView) findViewById(R.id.nav_gatewaylist_view);
+		nDrawer = (NavigationView) findViewById(R.id.nav_devicelist_view);
 		setNavDrawer();
 
 		View navigationHeader = nDrawer.getHeaderView(0);
 		TextView navHeaderSubTitle = (TextView) navigationHeader.findViewById(R.id.textViewNavUserSub);
 		navHeaderSubTitle.setText(username);
 
-		li = LayoutInflater.from(context);
-		promptsView = li.inflate(R.layout.content_new_ssid_password, null);
-		aDiaglogText = (TextView)promptsView.findViewById(R.id.aDiagTextView1);
-		aDiaglogText.setText("");
-
-		alertDialogBuilder = new AlertDialog.Builder(
-				context);
-
-		// set prompts.xml to alertdialog builder
-		alertDialogBuilder.setView(promptsView);
-
-		userInput = (EditText) promptsView
-				.findViewById(R.id.editTextDialogUserInput);
-
-		// set dialog message for network provision
-		alertDialogBuilder
-				.setCancelable(false)
-				.setPositiveButton("OK",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,int id) {
-								MyHelper.d(">>>Password="+userInput.getText());
-
-								provision_passphrase = userInput.getText().toString();
-
-                                NetworkProvisionTask taskNetworkProvsion = new NetworkProvisionTask();
-								taskNetworkProvsion.executeOnExecutor(MyThreadPool.getExecutor(), "stage2", provision_passphrase);
-
-								dialog.cancel();
-							}
-						})
-				.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,int id) {
-								dialog.cancel();
-							}
-						});
-
-		// create alert dialog
-		alertDialog = alertDialogBuilder.create();
-
-		/*
-		Spinner spinner = (Spinner)promptsView.findViewById(R.id.spinner1);
-		final String[] devLoc = {"Kitchen", "Dinning Room", "Living Room", "Bedroom", "Bathroom"};
-		ArrayAdapter<String> lunchList = new ArrayAdapter<>(DeviceListActivity.this,
-				android.R.layout.simple_spinner_dropdown_item,
-				devLoc);
-		spinner.setAdapter(lunchList);
-		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				Log.d(LOG_TAG, "your selection is " + devLoc[position]);
-				devName = devLoc[position];
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-
-			}
-		});
-		*/
 
 	}
 
@@ -704,7 +298,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 			public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 
 
-				Intent activity_intent = new Intent(DeviceListActivity.this, WINC1500SecureWiFiBoardActivity.class);
+				Intent activity_intent = new Intent(DeviceListActivity.this, WiFiSmartDeviceCtrlActivity.class);
 				Bundle extras = new Bundle();
 				extras.putString(ServiceConstant.DevMacAddr, foundDevicesList.get(position).getMacAddr());
 				extras.putString(ServiceConstant.ThingName,foundDevicesList.get(position).getThingName());
@@ -718,7 +312,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		//getMenuInflater().inflate(R.menu.devicelist_login, menu);
 		getMenuInflater().inflate(R.menu.devicelist_menu, menu);
 		return true;
 	}
@@ -730,10 +323,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 			case android.R.id.home:
 				break;
 			case R.id.action_QR_code:
-
-				//Intent activity_intent = new Intent(DeviceListActivity.this, CaptureActivity.class);
-				//activity_intent.putExtra(ServiceConstant.CallerCmd,"gatewayListActivity");
-				//startActivity(activity_intent);
 
 				Intent activity_intent = new Intent(DeviceListActivity.this, NetworkProvisionStageOneActivity.class);
 				activity_intent.putExtra(ServiceConstant.CognitoUuid,uuid);
@@ -749,13 +338,13 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	private void UpdateUI() {
 
-			svListGroup.setVisibility(View.VISIBLE);
+		svListGroup.setVisibility(View.VISIBLE);
 
 
 		if (foundDevicesList.isEmpty()) {
 			slvFoundDevices.setVisibility(View.GONE);
 		} else {
-			myadapter = new gatewayListAdapter(this, foundDevicesList);
+			myadapter = new DeviceListAdapter(this, foundDevicesList);
 			slvFoundDevices.setAdapter(myadapter);
 			slvFoundDevices.setVisibility(View.VISIBLE);
 		}
@@ -779,9 +368,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		return false;
 	}
 
-	/**
-	 * 双击退出函数
-	 */
+
 	private static Boolean isExit = false;
 
 	public void exitBy2Click() {
@@ -809,27 +396,24 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 
 	public void onRefresh() {
-		handler.sendEmptyMessageDelayed(PULL_TO_REFRESH, 10000);
+		handler.sendEmptyMessageDelayed(REFRESH_ICON_DISMISS, 10000);
 
 		foundDevicesList.clear();
 		UpdateUI();
 
-        mPubCounter = 1;    // Publish Search command for 3 time
-        handler.post(publishPublishSearchCmd);
-
-
-
+        mPubCounter = 1;    // Publish Search command for 1 time
+        handler.post(publishShadowGetCmd);
 
 	}
 
 
-    private Runnable publishPublishSearchCmd= new Runnable() {
+    private Runnable publishShadowGetCmd= new Runnable() {
         public void run() {
 
             if (mPubCounter > 0) {
                 mPubCounter --;
 
-				Log.d(LOG_TAG, "Debug: publishPublishSearchCmd thingList.size="+thingList.size());
+				Log.d(LOG_TAG, "Debug: [publishShadowGetCmd] thingList.size="+thingList.size());
 
 
 				for (int j = 0; j<thingList.size(); j++) {
@@ -846,8 +430,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 								startService(subscribe_intent);
 							}
 						}, j*500);
-						//startService(subscribe_intent);
-						//handler.postDelayed(this, 2500);
 					}
 				}
 
@@ -857,7 +439,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
         }
     };
 
-	private class gatewayListJsonMsgReceiver extends BroadcastReceiver {
+	private class deviceListJsonMsgReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 
@@ -878,9 +460,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					startService(subscribe_intent);
 				}
 				else if (connMessage.equals("Re-Connecting")) {
-					///Message message = new Message();
-					///message.what = PROGRESSDIAG_DISMISS;
-					///handler.sendMessage(message);
 				}
 
 			} else if (intent.getAction().equals(ServiceConstant.JSONMsgReport)) {
@@ -890,7 +469,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					jsonMsgObj.printDebugLog();
 					int i, deviceExist=0;
 
-					AwsRouter router;
+					AwsDevice router;
 					if (jsonMsgObj.getCmd().equals(AwsJsonMsg.AWS_JSON_COMMAND_SEARCHRESP)) {
 						for (i = 0; i < foundDevicesList.size(); i++) {
 							if (foundDevicesList.get(i).getMacAddr().equals(jsonMsgObj.getMacAddr())) {
@@ -898,7 +477,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 							}
 						}
 						if (deviceExist == 0) {
-							router = new AwsRouter();
+							router = new AwsDevice();
 							if (jsonMsgObj.getDevType().equals(AwsJsonMsg.AWS_JSON_DEVTYPE_WIFISENSORBOARD)) {
 								Log.d(LOG_TAG, "Debug: getDeviceName=" + jsonMsgObj.getMacAddr());
 								router.setDeviceName(jsonMsgObj.getDeviceName());
@@ -938,18 +517,16 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					}
 
 					if (found == false) {
-						AwsRouter router = new AwsRouter();
+						AwsDevice router = new AwsDevice();
 
-						router.setDeviceName("AWS Zero Touch Kit");    //default
+						router.setDeviceName("WiFi Smart Device");    //default
 						for (int i = 0; i < thingList.size(); i++) {
 							if (split[2].equals(thingList.get(i).getThingID()))
 								if (thingList.get(i).getDeviceName().equals("null")) {
-									Log.d(LOG_TAG, "Debug log1");
-									router.setDeviceName("Secure Wi-Fi Board");
+									router.setDeviceName("WiFi Smart Device");
 								}
 								else
 								{
-									Log.d(LOG_TAG, "Debug log2 " + thingList.get(i).getDeviceName());
 									router.setDeviceName(thingList.get(i).getDeviceName());
 								}
 
@@ -960,7 +537,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 						}
 
 
-						    //thing id
+						//thing id
 						router.setDevType(split[2]);
 						router.setThingName(split[2]);
 						foundDevicesList.add(router);
@@ -983,7 +560,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					for (int i=0; i< arr.size(); i++)
 					{
 						if (arr.get(i).contains("thingName")){
-							AwsZeroTouchProvisionKitDevice thing = new AwsZeroTouchProvisionKitDevice();
+							WiFiSmartDevice thing = new WiFiSmartDevice();
 							String[] split = arr.get(i).split(":");
 
 
@@ -1006,7 +583,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					Log.i("List", "Passed Array List :: " + arr);
 				}
 				onRefresh();
-				//handler.post(publishPublishSearchCmd);
 
 
 			}

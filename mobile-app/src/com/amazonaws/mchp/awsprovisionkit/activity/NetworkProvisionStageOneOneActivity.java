@@ -108,6 +108,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         uuid = extras.getString(ServiceConstant.CognitoUuid);
+        Log.d(LOG_TAG, "Debug:  uuid= "+uuid);
 
         init();
     }
@@ -222,7 +223,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
             //    return -1;
             //}
             ArrayList<ScanResult> data = new ArrayList<ScanResult>();
-            String targetSsid = "AWSZeroTouchKit_" + mac_addr;
+            String targetSsid = "WiFiSmartDevice_" + mac_addr;
 
             //ScanResult sr = searchTargetDevice(rdata, targetSsid);
             //if (sr == null)
@@ -269,7 +270,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
                 cnt--;
             } while (rdata.size() == 0 && (cnt>  0));
 
-            String targetSsid = "AWSZeroTouchKit_";
+            String targetSsid = "WiFiSmartDevice_";
 
             ScanResult sr = searchTargetDevice(rdata, targetSsid);
             if (sr == null)

@@ -8,5 +8,6 @@
         <item>Cyan</item>
         <item>Magenta</item>
         <item>White</item>
+        <item>Off</item>
     </string-array>
 </resources>

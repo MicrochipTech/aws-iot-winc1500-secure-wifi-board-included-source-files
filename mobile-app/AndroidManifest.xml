@@ -67,10 +67,6 @@
             android:name="com.amazonaws.mchp.awsprovisionkit.activity.VerifyActivity"
             android:label="@string/title_activity_verify"
             android:theme="@style/CognitoAppTheme.NoActionBar" />
-        <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.AddAttributeActivity"
-            android:label="@string/title_activity_add_attribute"
-            android:theme="@style/CognitoAppTheme.NoActionBar" />
 
         <activity
             android:name="com.amazonaws.mchp.awsprovisionkit.activity.DeviceListActivity"
@@ -82,7 +78,7 @@
             android:theme="@style/CognitoAppTheme.NoActionBar"/>
 
         <activity
-            android:name="com.amazonaws.mchp.awsprovisionkit.activity.WINC1500SecureWiFiBoardActivity"
+            android:name="com.amazonaws.mchp.awsprovisionkit.activity.WiFiSmartDeviceCtrlActivity"
             android:theme="@style/CognitoAppTheme.NoActionBar">
         </activity>
 

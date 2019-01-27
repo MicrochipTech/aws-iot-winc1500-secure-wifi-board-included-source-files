@@ -549,7 +549,7 @@ public final class MyHelper {
 				}
 
 				WifiInfo wifiinfo = wifimanage.getConnectionInfo();
-				if (!wifiinfo.getSSID().contains("AWSZeroTouchKit")) {
+				if (!wifiinfo.getSSID().contains("WiFiSmartDevice")) {
 					Thread.sleep(500);
 					continue;
 				}

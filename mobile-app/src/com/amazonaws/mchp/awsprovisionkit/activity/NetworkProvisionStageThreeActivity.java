@@ -42,8 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mchp.awsprovisionkit.base.MyThreadPool;
-import com.amazonaws.mchp.awsprovisionkit.model.AwsRouter;
-import com.amazonaws.mchp.awsprovisionkit.model.AwsZeroTouchProvisionKitDevice;
 import com.amazonaws.mchp.awsprovisionkit.model.itemInfo;
 import com.amazonaws.mchp.awsprovisionkit.opensource.downloader.asyn.AsyncTask;
 import com.amazonaws.mchp.awsprovisionkit.service.AwsService;
@@ -116,6 +114,8 @@ public class NetworkProvisionStageThreeActivity extends AppCompatActivity {
         ap_sec = extras.getString(ServiceConstant.ApSec);
         uuid = extras.getString(ServiceConstant.CognitoUuid);
         init();
+
+        Log.d(LOG_TAG, "Debug:  uuid= "+uuid);
     }
 
 

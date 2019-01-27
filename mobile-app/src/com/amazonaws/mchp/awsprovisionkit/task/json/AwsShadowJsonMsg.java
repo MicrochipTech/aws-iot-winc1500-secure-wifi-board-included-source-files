@@ -93,6 +93,7 @@ public class AwsShadowJsonMsg implements Parcelable {
             "macAddr",
             "hum",
             "temp",
+            "uv",
             "pressure",
             "COUNT",
             "BUTTON_1",
@@ -100,7 +101,10 @@ public class AwsShadowJsonMsg implements Parcelable {
             "BUTTON_3",
             "LED_R",
             "LED_G",
-            "LED_B"
+            "LED_B",
+            "LED_INTENSITY",
+            "Light",
+            "State",
     };
 
 
@@ -236,7 +240,7 @@ public class AwsShadowJsonMsg implements Parcelable {
         if (msg.equals(AWS_JSON_COMMAND_GENERATE_DESIRE_MSG)){
             try {
                 for (int i = 0; i<desire_info.size(); i++) {
-                    if (desire_info.get(i).item.equals("LED_R") || desire_info.get(i).item.equals("LED_G") || desire_info.get(i).item.equals("LED_B")) // special handling for winc1500 secure wifi board of Masters
+                    if (desire_info.get(i).item.equals("LED_R") || desire_info.get(i).item.equals("LED_G") || desire_info.get(i).item.equals("LED_B") || desire_info.get(i).item.equals("LED_INTENSITY") || desire_info.get(i).item.equals("Light")) // special handling for winc1500 secure wifi board of Masters
                         jObj_lv3.put(desire_info.get(i).item, Integer.valueOf(desire_info.get(i).value));
                     else
                         jObj_lv3.put(desire_info.get(i).item, desire_info.get(i).value); // only update 1 device info, so hardcode to 0

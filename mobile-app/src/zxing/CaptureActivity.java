@@ -104,9 +104,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			case START_BIND:
 				String[] strings = (String[]) msg.obj;
 				for (String string : strings) {
-					if (caller.equals("gatewayListActivity"))
-						DeviceListActivity.boundMessage.add(string);
-					else if (caller.equals("networkProvisionActivity"))
+					if (caller.equals("networkProvisionActivity"))
 						NetworkProvisionStageOneActivity.boundMessage.add(string);
 
 					Log.d(TAG, "Camera output = "+ string);
