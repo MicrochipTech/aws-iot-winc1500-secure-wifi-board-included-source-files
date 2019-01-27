@@ -123,17 +123,17 @@ void toggleLED()
 static inline void turnOnLED(void)
 {
 	gu8OnOffState = 1;
-	port_pin_set_output_level(BLUE_LED, gu8Blue);
-	port_pin_set_output_level(GREEN_LED, gu8Green);
-	port_pin_set_output_level(RED_LED, gu8Red);
+	tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR,gu8Red ? 0xFFFF :0 );
+	tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG,gu8Green ? 0xFFFF : 0);
+	tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB,gu8Blue ? 0xFFFF : 0);
 }
 
 static inline void turnOffLED(void)
 {
 	gu8OnOffState = 0;
-	port_pin_set_output_level(BLUE_LED, 1);
-	port_pin_set_output_level(GREEN_LED, 1);
-	port_pin_set_output_level(RED_LED, 1);
+	tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF);
+	tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF);
+	tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF);
 }
 
 void initialise_led(void)

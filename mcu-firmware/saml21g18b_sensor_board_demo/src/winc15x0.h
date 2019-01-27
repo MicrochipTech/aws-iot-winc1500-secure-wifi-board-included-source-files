@@ -74,7 +74,7 @@
 
 #define HEX2ASCII(x) (((x) >= 10) ? (((x) - 10) + 'A') : ((x) + '0'))
 #define MAIN_WLAN_SSID_OFFSET    22                     /* < Attach MAC addr after this offset in SSID */
-#define AP_WLAN_SSID	"AWSZeroTouchKit_F8F005F3659B"
+#define AP_WLAN_SSID	"WiFiSmartDevice_F8F005F3659B"
 
 
 #define AP_TCP_SERVER_PORT				8899
