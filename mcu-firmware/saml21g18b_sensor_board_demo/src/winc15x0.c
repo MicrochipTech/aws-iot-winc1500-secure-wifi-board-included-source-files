@@ -891,6 +891,7 @@ static void MQTTSubscribeCBCallbackHandler_shadow(MQTTCallbackParams params)
 		
 		if (g_light_state)
 		{
+			
 			if (g_blue_led_value)
 			setColor(LED_COLOR_BLUE,g_light_intensity);
 			else
@@ -1587,6 +1588,11 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
 					led_ctrl_set_color(LED_COLOR_BLUE, LED_MODE_BLINK_NORMAL);
 					wifiSwitchtoSTA();	// Switch to STA mode if required
 				}
+				else
+				{
+					led_ctrl_set_mode(LED_MODE_BLINK_NORMAL);
+					close_app_socket();
+				}
 			}
 			else
 			{
@@ -1684,6 +1690,7 @@ static void wifiSwitchtoAP(void)
 	
 	gAPEnabled = 1;
 	wifi_states = WIFI_TASK_IDLE;
+	set_prov_state(PROV_WAITING);
 }
 
 void readWiFiSettingFromMemory(void)
@@ -1846,14 +1853,14 @@ void buttonSW3LongPressHandle()
 		case WIFI_TASK_MQTT_RUNNING:
 		case WIFI_TASK_MQTT_SUBSCRIBE:
 			cloud_disconnect();
-			m2m_wifi_disconnect();
+			///m2m_wifi_disconnect();
 			wifi_states = WIFI_TASK_SWITCH_TO_AP;
 			break;
 			
 		case WIFI_TASK_CONNECT_CLOUD:
 		case WIFI_TASK_SWITCHING_TO_STA:
 		case WIFI_TASK_IDLE:
-			m2m_wifi_disconnect();
+			///m2m_wifi_disconnect();
 			wifi_states = WIFI_TASK_SWITCH_TO_AP;
 			break;
 		default: 
@@ -2009,6 +2016,7 @@ int wifiTaskExecute()
 		case WIFI_TASK_SWITCH_TO_AP:
 			
 			led_ctrl_set_color(LED_COLOR_RED, LED_MODE_BLINK_NORMAL);
+			m2m_wifi_disconnect();
 			wifiSwitchtoAP();
 			gu8WiFiMode = APP_AP;
 			wifi_states = WIFI_TASK_SWITCHING_TO_AP;

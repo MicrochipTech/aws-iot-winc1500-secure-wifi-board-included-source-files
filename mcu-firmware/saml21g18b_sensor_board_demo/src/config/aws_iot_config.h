@@ -48,7 +48,7 @@
 
 // Get from console
 // =================================================
-#define AWS_IOT_MQTT_HOST              "a1nwxjdmwiwtr2.iot.us-east-1.amazonaws.com" // To be Modified based on the user account
+#define AWS_IOT_MQTT_HOST              "xxxxxxxxxxxxxx.iot.us-east-1.amazonaws.com" // To be Modified based on the user account
 #define AWS_IOT_MQTT_PORT               8883
 #define AWS_IOT_MQTT_CLIENT_ID         "SAMD21_MQTT"
 #define AWS_IOT_MY_THING_NAME          "SAMD21_MQTT"
