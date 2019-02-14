@@ -203,7 +203,11 @@ void env_sensor_execute()
 	//if (((uv_cnt >= UV_DISP_COUNTER) && gu32Disp_uv != pre_uv) || (uv_not_equal_cnt >1))
 	//if (((uv_cnt >= UV_DISP_COUNTER) && gu32Disp_uv!= pre_uv))
 	int update_uv = 0;
-	if (((gu32Disp_uv/1000000) > (pre_uv/1000000)))
+	if (gu32Disp_uv == 0)	//update the value during initialization
+	{
+		update_uv = 1;
+	}
+	else if (((gu32Disp_uv/1000000) > (pre_uv/1000000)))
 	{
 		if ((gu32Disp_uv/1000000) - (pre_uv/1000000) > 4)
 			update_uv = 1;
