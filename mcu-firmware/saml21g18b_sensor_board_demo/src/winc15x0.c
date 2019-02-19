@@ -1596,6 +1596,7 @@ static void wifi_cb(uint8_t u8MsgType, void *pvMsg)
 			}
 			else
 			{
+				led_ctrl_set_color(LED_COLOR_BLUE, LED_MODE_BLINK_NORMAL);
 				gbConnectedWifi = false;
 				m2m_wifi_disconnect();
 				m2m_wifi_connect((char *)gDefaultSSID, strlen((char *)gDefaultSSID), \
@@ -2100,9 +2101,11 @@ int wifiTaskExecute()
 			ret = cloud_mqtt_yield(100);
 			if(CLOUD_RC_NETWORK_ATTEMPTING_RECONNECT == ret){
 				printf("-->sleep reconnect\r\n");
+				led_ctrl_set_mode(LED_MODE_BLINK_FAST);
 				delay_ms(1);
 				break;
 			}	
+			led_ctrl_set_mode(LED_MODE_TURN_ON);
 
 			break;
 			

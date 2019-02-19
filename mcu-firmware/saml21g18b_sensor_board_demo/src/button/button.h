@@ -6,7 +6,7 @@
 #ifndef __BUTTON_H__
 #define __BUTTON_H__
 
-#define TIMEOUT_COUNTER_BUTTON_DEBOUNCE		(50)		//200ms
+#define TIMEOUT_COUNTER_BUTTON_DEBOUNCE		(1)		//1ms
 #define TIMEOUT_COUNTER_5S		(5*1000)		//5seconds
 #define MAX_CB_INDEX			3
 #define NUMBER_OF_BUTTON		3

@@ -77,14 +77,26 @@ void setColor (uint8_t LED_COLOR ,int value )
 	{
 		case LED_COLOR_RED:
 		printf("LED_RED, val=%d\r\n", value);
+		if (value > 0)
+			gu8Red = 0;
+		else
+			gu8Red = 1;
 		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF - ((guIntensity *0xffff)/100 & 0xffff));
 		break;
 		case LED_COLOR_GREEN:
 		printf("LED_GREEN, val=%d\r\n", value);
+		if (value > 0)
+			gu8Green = 0;
+		else
+			gu8Green = 1;
 		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF - ((guIntensity * 0xffff)/100 & 0xffff));
 		break;
 		case LED_COLOR_BLUE:
 		printf("LED_BLUE, val=%d\r\n", value);
+		if (value > 0)
+			gu8Blue = 0;
+		else
+			gu8Blue = 1;
 		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF - ((guIntensity * 0xffff)/100 & 0xffff));
 		break;
 		
@@ -167,6 +179,7 @@ Led_Color led_ctrl_get_color()
 
 void led_ctrl_set_color(Led_Color color, Led_Mode mode)
 {
+	
 	switch(color)
 	{
 		case LED_COLOR_BLUE:

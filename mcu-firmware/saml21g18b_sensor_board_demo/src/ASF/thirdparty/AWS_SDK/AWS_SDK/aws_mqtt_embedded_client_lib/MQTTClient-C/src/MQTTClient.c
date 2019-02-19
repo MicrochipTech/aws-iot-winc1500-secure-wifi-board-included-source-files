@@ -360,7 +360,8 @@ MQTTReturnCode handleReconnect(Client *c) {
     c->currentReconnectWaitInterval *= 2;
 
     if(MAX_RECONNECT_WAIT_INTERVAL < c->currentReconnectWaitInterval) {
-        return MQTT_RECONNECT_TIMED_OUT;
+		c->currentReconnectWaitInterval = MAX_RECONNECT_WAIT_INTERVAL;		// keep attempt to reconnect rather than return timeout error
+        //return MQTT_RECONNECT_TIMED_OUT;
     }
     countdown_ms(&(c->reconnectDelayTimer), c->currentReconnectWaitInterval);
     return rc;
