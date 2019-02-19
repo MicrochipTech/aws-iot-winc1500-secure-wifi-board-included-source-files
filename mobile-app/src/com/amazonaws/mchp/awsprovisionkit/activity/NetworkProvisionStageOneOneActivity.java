@@ -142,6 +142,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        Log.d(LOG_TAG, "onResume");
         if (boundMessage.size() != 0) {
 
             if (boundMessage.get(0) == "QR Mac") {
@@ -154,6 +155,10 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
                     NetworkProvisionStageOneOneActivity.ConnectTargetBoardTask taskConnectDev = new NetworkProvisionStageOneOneActivity.ConnectTargetBoardTask();
                     taskConnectDev.executeOnExecutor(MyThreadPool.getExecutor(), "scanQR", boundMessage.get(1));
                 }
+            }
+            else if (boundMessage.get(0) == "remove current AP") {
+                Log.d(LOG_TAG, "remove current AP");
+                mWifiAdapter.removeCurrentAP();
             }
         }
     }
@@ -247,6 +252,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
         {
 
             for ( ScanResult sr : list) {
+                MyHelper.d(">>>> searchTargetDevice, ssid=" + sr.SSID);
                 if (null == sr.SSID || sr.SSID.isEmpty())
                     continue;
                 if (sr.SSID.contains(ssid)) {
@@ -290,6 +296,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
             MyHelper.d(">>>> Start doInBackground ....");
 
             currentApInfo = mWifiAdapter.getCurrentAPInfo();
+            mWifiAdapter.doRegister();
 
 
             if (params[0].equals("scanQR")) {
@@ -342,7 +349,7 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
             else if (result.equals("searchDevice_fail"))
             {
                 MyHelper.d(">>>> fail to scan the device");
-                printProgressDiagMsg(result);
+                printProgressDiagMsg("Search device fail.. try again..");
                 mWifiAdapter.tryConnectWlan(currentApInfo);
                 handler.sendEmptyMessageDelayed(PROGRESSDIAG_DISMISS, 6000);
             }

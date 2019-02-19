@@ -509,7 +509,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 					boolean found = false;
 					for (int i=0; i< foundDevicesList.size(); i++)
 					{
-						if (foundDevicesList.get(i).getMacAddr().equals(split[2]))
+						if (foundDevicesList.get(i).getThingName().equals(split[2]))
 						{
 							found = true;
 							break;

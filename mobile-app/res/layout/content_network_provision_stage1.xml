@@ -32,7 +32,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:scaleType="fitXY"
-        android:src="@drawable/board_pic_network_provisiong_mode" />
+        android:src="@drawable/board_pic_network_provision_mode" />
 
     <Space
         android:layout_width="match_parent"

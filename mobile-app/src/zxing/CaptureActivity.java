@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 
 import com.amazonaws.mchp.awsprovisionkit.R;
 import com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageOneActivity;
+import com.amazonaws.mchp.awsprovisionkit.activity.NetworkProvisionStageOneOneActivity;
 import com.amazonaws.mchp.awsprovisionkit.utils.ServiceConstant;
 import com.amazonaws.mchp.awsprovisionkit.activity.DeviceListActivity;
 import com.google.zxing.Result;
@@ -105,7 +106,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 				String[] strings = (String[]) msg.obj;
 				for (String string : strings) {
 					if (caller.equals("networkProvisionActivity"))
-						NetworkProvisionStageOneActivity.boundMessage.add(string);
+						NetworkProvisionStageOneOneActivity.boundMessage.add(string);
 
 					Log.d(TAG, "Camera output = "+ string);
 				}

@@ -26,13 +26,12 @@
     tools:context="com.amazonaws.mchp.awsprovisionkit.activity.MainActivity">
 
     <ImageView
-        android:layout_width="110dp"
-        android:layout_height="110dp"
         android:id="@+id/imageViewAppMainCognitoIcon"
+        android:layout_width="182dp"
+        android:layout_height="96dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/mchp_logo"
-        android:scaleType="fitXY"/>
+        android:src="@drawable/microchip_logo_vertical_black_red" />
 
     <Space
         android:layout_width="match_parent"

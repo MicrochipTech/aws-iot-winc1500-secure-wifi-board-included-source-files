@@ -123,8 +123,7 @@
         android:id="@+id/textViewUserForgotPassword"
         android:clickable="true"
         android:layout_below="@+id/button_network_prov_by_search"
-        android:layout_alignParentEnd="true"
-        android:onClick="forgotPassword"/>
+        android:layout_alignParentEnd="true"/>
 
 
 

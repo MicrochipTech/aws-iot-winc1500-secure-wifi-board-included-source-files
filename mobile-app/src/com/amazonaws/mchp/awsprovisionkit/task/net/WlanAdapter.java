@@ -74,6 +74,7 @@ public class WlanAdapter {
 		if (null == context || null == this.mReceiver)
 			return;
 		try {
+			MyHelper.d(">>>> unRegister receiver");
 			context.unregisterReceiver(this.mReceiver);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,6 +87,7 @@ public class WlanAdapter {
 			return;
 
 		if (null == this.mReceiver) {
+			MyHelper.d(">>>> create receiver");
 			this.mReceiver = new WifiReceiver();
 		}
 
@@ -276,33 +278,22 @@ public class WlanAdapter {
 
 			this.mWifi.disconnect();
 
-			int tryTimes = 2;
+
 			WifiConfiguration network = null;
-			while (tryTimes-- > 0) {
-				network = WlanHelper.getWifiConfiguration(scanResult, this.mWifi);
-				if (null == network)
-					break;
 
-				MyHelper.d(">>>> try01 connect to configed SSID=" + scanResult.SSID);
+			network = WlanHelper.getWifiConfiguration(scanResult, this.mWifi);
 
-				Boolean r2 = WlanHelper.connectToConfiguredNetwork(this.mWifi, network);
-				if (!r2)
-					break;
-
-				this.waitingNetworkChange();
-				if (WlanHelper.isConnectedTo(scanResult.SSID, this.mWifi))
-					MyHelper.d(">>>> try01 connect success to" + scanResult.SSID);
-					return true;
-			}
 
 			if (null != network) {
 				network = WlanHelper.getWifiConfiguration(scanResult, this.mWifi);
 				if (null != network) {
+					MyHelper.d(">>>> try02 remove configed network ID=" + network.networkId);
 					this.mWifi.removeNetwork(network.networkId);
 					this.mWifi.saveConfiguration();
 					MyHelper.d(">>>> try02 remove configed SSID=" + scanResult.SSID);
 				}
 			}
+
 
 			Boolean rr = WlanHelper.connectNewConfig(this.mWifi, scanResult, password);
 

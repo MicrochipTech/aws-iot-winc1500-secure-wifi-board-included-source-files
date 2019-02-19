@@ -70,7 +70,7 @@ public class NetworkProvisionStageThreeActivity extends AppCompatActivity {
     protected static final int PROGRESSDIAG= 1;
     protected static final int PROGRESSDIAG_DISMISS= 2;
     protected static final int TOAST = 3;
-
+    protected static final int QUITTODEVICELIST = 4;
 
     public ProgressDialog progressDialog;
     final Context context = this;
@@ -169,8 +169,8 @@ public class NetworkProvisionStageThreeActivity extends AppCompatActivity {
         Message message = new Message();
         message.what = PROGRESSDIAG_DISMISS;
         handler.sendMessage(message);
-
     }
+
 
     private class NetworkProvisionTask extends AsyncTask<String, Integer, String> {
 
@@ -252,6 +252,8 @@ public class NetworkProvisionStageThreeActivity extends AppCompatActivity {
             }
             else{
                 printProgressDiagMsg(result);
+                handler.sendEmptyMessageDelayed(QUITTODEVICELIST, 6000);
+                mWifiAdapter.removeCurrentAP();
                 //Boolean r1 = mWifiAdapter.tryConnectWlan(currentApInfo);
             }
             mWifiAdapter.unRegister();
@@ -277,6 +279,14 @@ public class NetworkProvisionStageThreeActivity extends AppCompatActivity {
                 case PROGRESSDIAG_DISMISS:
                     if (progressDialog.isShowing())
                         progressDialog.dismiss();
+                    break;
+                case QUITTODEVICELIST:
+                    if (progressDialog.isShowing())
+                        progressDialog.dismiss();
+
+                    Intent intent2DevListActivity = new Intent(NetworkProvisionStageThreeActivity.this, DeviceListActivity.class);
+                    intent2DevListActivity.putExtra(ServiceConstant.CognitoUuid, uuid);
+                    startActivity(intent2DevListActivity);
                     break;
                 case TOAST:
                     Toast.makeText(NetworkProvisionStageThreeActivity.this, msg.obj.toString(), Toast.LENGTH_LONG).show();

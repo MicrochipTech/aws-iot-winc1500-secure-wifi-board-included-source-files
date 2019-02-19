@@ -284,6 +284,9 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
     public void onPause() {
         super.onPause();
         Log.d(LOG_TAG, ">>> onPause");
+        //mWifiAdapter.removeCurrentAP();
+        mWifiAdapter.unRegister();
+        NetworkProvisionStageOneOneActivity.boundMessage.add("remove current AP");
     }
 
     private void exit() {
