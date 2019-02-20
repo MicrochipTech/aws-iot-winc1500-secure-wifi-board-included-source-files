@@ -61,7 +61,9 @@ unsigned char gu8Blue;
 unsigned char gu8Red;
 unsigned char gu8Green;
 unsigned char gu8OnOffState;
-unsigned char guIntensity;
+unsigned char gu8BlueIntensity;
+unsigned char gu8RedIntensity;
+unsigned char gu8GreenIntensity;
 Led_Mode gu8LedMode;
 Led_Color gu8Color;
 
@@ -72,32 +74,34 @@ Led_Color gu8Color;
 extern tcc_instance;
 void setColor (uint8_t LED_COLOR ,int value )
 {
-	guIntensity = value;
 	switch (LED_COLOR)
 	{
 		case LED_COLOR_RED:
 		printf("LED_RED, val=%d\r\n", value);
+		gu8RedIntensity = value;
 		if (value > 0)
 			gu8Red = 0;
 		else
 			gu8Red = 1;
-		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF - ((guIntensity *0xffff)/100 & 0xffff));
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF - ((gu8RedIntensity *0xffff)/100 & 0xffff));
 		break;
 		case LED_COLOR_GREEN:
 		printf("LED_GREEN, val=%d\r\n", value);
+		gu8GreenIntensity = value;
 		if (value > 0)
 			gu8Green = 0;
 		else
 			gu8Green = 1;
-		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF - ((guIntensity * 0xffff)/100 & 0xffff));
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF - ((gu8GreenIntensity * 0xffff)/100 & 0xffff));
 		break;
 		case LED_COLOR_BLUE:
 		printf("LED_BLUE, val=%d\r\n", value);
+		gu8BlueIntensity = value;
 		if (value > 0)
 			gu8Blue = 0;
 		else
 			gu8Blue = 1;
-		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF - ((guIntensity * 0xffff)/100 & 0xffff));
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF - ((gu8BlueIntensity * 0xffff)/100 & 0xffff));
 		break;
 		
 	}
@@ -114,10 +118,7 @@ void toggleLED()
 		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF);
 		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF);
 		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF);
-		
-		//		port_pin_set_output_level(BLUE_LED, 1);
-		//		port_pin_set_output_level(GREEN_LED, 1);
-		//		port_pin_set_output_level(RED_LED, 1);
+
 	}
 	else
 	{
@@ -126,18 +127,28 @@ void toggleLED()
 		tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG,gu8Green ? 0xFFFF : 0);
 		tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB,gu8Blue ? 0xFFFF : 0);
 
-		//		port_pin_set_output_level(BLUE_LED, gu8Blue);
-		//		port_pin_set_output_level(GREEN_LED, gu8Green);
-		//		port_pin_set_output_level(RED_LED, gu8Red);
 	}
 }
 
 static inline void turnOnLED(void)
 {
 	gu8OnOffState = 1;
-	tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR,gu8Red ? 0xFFFF :0 );
-	tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG,gu8Green ? 0xFFFF : 0);
-	tcc_set_compare_value (&tcc_instance,TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB,gu8Blue ? 0xFFFF : 0);
+
+	if (gu8Red == 0)
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF - ((gu8RedIntensity *0xffff)/100 & 0xffff));
+	else
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELR),0xFFFF - ((0 *0xffff)/100 & 0xffff));
+		
+	if (gu8Green == 0)
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF - ((gu8GreenIntensity *0xffff)/100 & 0xffff));
+	else
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELG),0xFFFF - ((0 *0xffff)/100 & 0xffff));
+	
+	if (gu8Blue == 0)
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF - ((gu8BlueIntensity *0xffff)/100 & 0xffff));	
+	else
+		tcc_set_compare_value (&tcc_instance,(enum tcc_match_capture_channel)(TCC_MATCH_CAPTURE_CHANNEL_0 + CONF_PWM_CHANNELB),0xFFFF - ((0 *0xffff)/100 & 0xffff));	
+
 }
 
 static inline void turnOffLED(void)
@@ -154,20 +165,10 @@ void initialise_led(void)
 	gu8Green = 1;
 	gu8Red = 1;
 	gu8Color = LED_COLOR_BLUE;
-	guIntensity = 100;
+	gu8BlueIntensity = 100;
+	gu8RedIntensity = 0;
+	gu8GreenIntensity = 0;
 	
-#if 0
-	/* led port pin initialization */
-	struct port_config config_port_pin;
-	port_get_config_defaults(&config_port_pin);
-	config_port_pin.direction = PORT_PIN_DIR_OUTPUT;
-	port_pin_set_config(BLUE_LED, &config_port_pin);
-	port_pin_set_config(GREEN_LED, &config_port_pin);
-	port_pin_set_config(RED_LED, &config_port_pin);
-	port_pin_set_output_level(BLUE_LED, gu8Blue);
-	port_pin_set_output_level(GREEN_LED, gu8Green);
-	port_pin_set_output_level(RED_LED, gu8Red);
-#endif
 }
 
 
@@ -183,52 +184,52 @@ void led_ctrl_set_color(Led_Color color, Led_Mode mode)
 	switch(color)
 	{
 		case LED_COLOR_BLUE:
-		gu8Blue = 0;
-		gu8Green = 1;
-		gu8Red = 1;
-		gu8Color = LED_COLOR_BLUE;
+			gu8Blue = 0;
+			gu8Green = 1;
+			gu8Red = 1;
+			gu8Color = LED_COLOR_BLUE;
 		break;
 		case LED_COLOR_GREEN:
-		gu8Blue = 1;
-		gu8Green = 0;
-		gu8Red = 1;
-		gu8Color = LED_COLOR_GREEN;
+			gu8Blue = 1;
+			gu8Green = 0;
+			gu8Red = 1;
+			gu8Color = LED_COLOR_GREEN;
 		break;
 		case LED_COLOR_RED:
-		gu8Blue = 1;
-		gu8Green = 1;
-		gu8Red = 0;
-		gu8Color = LED_COLOR_RED;
+			gu8Blue = 1;
+			gu8Green = 1;
+			gu8Red = 0;
+			gu8Color = LED_COLOR_RED;
 		break;
 		case LED_COLOR_YELLOW:
-		gu8Blue = 1;
-		gu8Green = 0;
-		gu8Red = 0;
-		gu8Color = LED_COLOR_YELLOW;
+			gu8Blue = 1;
+			gu8Green = 0;
+			gu8Red = 0;
+			gu8Color = LED_COLOR_YELLOW;
 		break;
 		case LED_COLOR_Magneta:
-		gu8Blue = 0;
-		gu8Green = 1;
-		gu8Red = 0;
-		gu8Color = LED_COLOR_Magneta;
+			gu8Blue = 0;
+			gu8Green = 1;
+			gu8Red = 0;
+			gu8Color = LED_COLOR_Magneta;
 		break;
 		case LED_COLOR_Cyan:
-		gu8Blue = 0;
-		gu8Green = 0;
-		gu8Red = 1;
-		gu8Color = LED_COLOR_Cyan;
+			gu8Blue = 0;
+			gu8Green = 0;
+			gu8Red = 1;
+			gu8Color = LED_COLOR_Cyan;
 		break;
 		case LED_COLOR_WHTIE:
-		gu8Blue = 0;
-		gu8Green = 0;
-		gu8Red = 0;
-		gu8Color = LED_COLOR_WHTIE;
+			gu8Blue = 0;
+			gu8Green = 0;
+			gu8Red = 0;
+			gu8Color = LED_COLOR_WHTIE;
 		break;
 		case LED_COLOR_BLACK:
-		gu8Blue = 1;
-		gu8Green = 1;
-		gu8Red = 1;
-		gu8Color = LED_COLOR_BLACK;
+			gu8Blue = 1;
+			gu8Green = 1;
+			gu8Red = 1;
+			gu8Color = LED_COLOR_BLACK;
 		break;
 		
 		default:
