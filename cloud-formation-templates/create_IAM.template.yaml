@@ -1,5 +1,42 @@
+Parameters:
+  UserName:
+    Type: String
+    Description: Username of the account the kit will be run from.
+    Default: ZTUser
+  UserPassword:
+    Type: String
+    Description: Password of the account the kit will be run from.
+    MinLength: 4
 
 Resources:
+  KitUser:
+    Type: AWS::IAM::User
+    Properties:
+      Path: "/"
+      UserName: !Ref UserName
+      LoginProfile:
+        Password: !Ref UserPassword
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaFullAccess
+        - arn:aws:iam::aws:policy/AWSIoTFullAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/AmazonCognitoPowerUser
+      Policies:
+        - PolicyName: "CloudFormationPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "cloudformation:*"
+                Resource: "*"
+
+  KitUserKeyPair:
+    Type: "AWS::IAM::AccessKey"
+    Properties:
+      UserName:
+        !Ref KitUser
+  
   ZTLambdaJITRRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -52,7 +89,7 @@ Resources:
           import boto3
           import botocore
           iot = boto3.client('iot')
-          ZT_THING_TYPE_NAME = 'microchip-zero-touch-kit'
+          ZT_THING_TYPE_NAME = 'wifi-smart-device-enablement-kit'
           def lambda_handler(event, context):
               region = os.environ['AWS_DEFAULT_REGION']
               account_id = event['awsAccountId']
@@ -153,4 +190,12 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "iot.amazonaws.com"
 
-
+Outputs:
+  UserName:
+    Value: !Ref UserName
+  UserPassword:
+    Value: !Ref UserPassword
+  AccessKey:
+    Value: !Ref KitUserKeyPair
+  SecretAccessKey:
+    Value: !GetAtt KitUserKeyPair.SecretAccessKey
