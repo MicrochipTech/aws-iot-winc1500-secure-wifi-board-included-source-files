@@ -1,308 +1,259 @@
 'use strict';
-
 var jwt_decode = require("jwt-decode");
 const main_table = 'SensorBoardAcctTable';
 
-/* ----------------------- IoT Configuration -------------------------------- */
 
 var config = {};
 
-config.IOT_BROKER_ENDPOINT = "at5oi5gztccgr.iot.us-east-1.amazonaws.com".toLowerCase();
+config.IOT_BROKER_ENDPOINT = "a1nwxjdmwiwtr2.iot.us-east-1.amazonaws.com".toLowerCase();
 
 config.IOT_BROKER_REGION = "us-east-1";
 
-//config.IOT_THING_NAME = "89600207b3eba6d86e2847a136ad18128eb7f1a7";  //Sensor board #2  DRY6 account
-config.IOT_THING_NAME = "c922c14c3e65b718aa8ddb835603a7af88af77f9";  //Sensor board Rev C0 DR6 Account
-//config.IOT_THING_NAME = "2f5554c82bdc77dc086cafaf1464c70539d6ff3e";  //Sensor board Rev C0 DR6 Account
+config.IOT_THING_NAME = "WINC1500_1";
 
 // Load AWS SDK libraries
 var AWS = require('aws-sdk');
 
 AWS.config.region = config.IOT_BROKER_REGION;
 
-// Initialize client for IoT
-var iotData = new AWS.IotData({endpoint : config.IOT_BROKER_ENDPOINT});
+
 
 // Initialize client for DynamoDB
 var docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 /* -------------------- end: IoT Configuration ------------------------------ */
 
-
-function getCongitoUUID(token)
-{
-  var accessToken;
-  accessToken = jwt_decode(token);
-  return accessToken.sub; 
-}
-/* -------------------- end: Get Cognito UUID from the access token --------------- */
-
-/* ------------ Helpers that buil the link account responses --------------------- */
-
-function buildLinkAccountSpeechletResponse(title, output, repromptText, shouldEndSession)
-{
-var response =     {
-        outputSpeech : {
-            type : 'PlainText',
-            text : output,
-            ssml: "<speak> " + output + " </speak>"
-        },
-        card :{
-            type : 'LinkAccount',
-            title : `Sensor Board`,
-            content : title,
-        },
-        reprompt :{
-            outputSpeech :
-            {
-                type : 'PlainText',
-                text : repromptText,
-            },
-        },
-        shouldEndSession,
-    };
-;
-    return response;
-
-}
 /*----------------Get Cognito UUID from the access token-------------------*/
-function getCongitoUUID(token)
+function getCognitoUUID(token)
 {
   var accessToken;
+  //return token;
+  //token = 'eyJraWQiOiJrdCs2Q09xWkg2Q0JNOE1ZZ3hjMzFOSk95YnRQM0Z4cTJMQ2hVaFU1N1pBPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxOTg0NzEwNC0yNGY0LTQ4MDMtYTdhNi02NTk1OTNiZmQxODYiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6InByb2ZpbGUiLCJhdXRoX3RpbWUiOjE1MzIzODA1MzcsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2g2OVpDTEtKciIsImV4cCI6MTUzMjM4NDEzNywiaWF0IjoxNTMyMzgwNTM3LCJ2ZXJzaW9uIjoyLCJqdGkiOiI4NzZlZDcyYS1iNGFiLTQwODUtODdiZi00NGYxNzE0N2NmZWYiLCJjbGllbnRfaWQiOiIybDhtazNyNDl0NDllYms4Z2o1bWxhZDgxYSIsInVzZXJuYW1lIjoiTHVjQXJjaGFtYmF1bHQifQ.PO_Q2noF53QakM4Upc8M22d6DK1_Yqb4uuFSk7ENX10NnxQPHMc1sXondpLZo-NZXmqNEIK5dkNeL18jtaMPq-ndfbJZyaliJYwx7-fASF0LIXtjy9EZiFCgJTpdcojnNr9hPcFevHJvCRGZ0wfk1DdSYjJ9Xv5XwUuNBQUW9sRe5sXJoECRSDj7Tf5mnOrBkr96U5ZVM6g08RmogGMoXTOgvjOb3S7BI7jzynvTCb8UJVJA_1RPipDxFUcQavcSDJJu0NWKd8_CNBG3MjDJsCgKxPK7jJPKQev_bPqkdCqtR0HFaWes-EYGeZFPlBu55k-uRHWC0G0bGqCr0JLMSA';
   accessToken = jwt_decode(token);
   return accessToken.sub; 
 }
-/* -------------------- end: Get Cognito UUID from the access token --------------- */
 
-/* ------------ Helpers that build all of the responses --------------------- */
+// Initialize client for IoT
+var iotData = new AWS.IotData({endpoint : config.IOT_BROKER_ENDPOINT});
+var iot = new AWS.Iot({endpoint : config.IOT_BROKER_ENDPOINT});
+var done = false;
 
-function buildSpeechletResponse(title, output, repromptText, shouldEndSession, cardType)
+function set_aws_iot(LEDState, LEDIntensity, response, callback)
 {
-var response =     {
-        outputSpeech : {
-            //type : 'PlainText',
-            type : 'SSML',
-            text : output,
-            //ssml: "<speak>" + output + "<break time=\"3s\"/>" + output + "</speak>"
-            ssml: "<speak>" + output + "</speak>"
-        },
-        card :{
-            type : cardType,
-            title : `Sensor Board`,
-            content : title,
-        },
-        reprompt :{
-            outputSpeech :
-            {
-                type : 'PlainText',
-                text : repromptText,
-                ssml: "<speak> " + output + " </speak>"
-            },
-        },
-        shouldEndSession,
-    };
-;
-    return response;
+    console.log("HERE1", JSON.stringify(response));
 
-}
-
-function buildResponse(sessionAttributes, speechletResponse)
-{
-var response =     {
-        version:
-        '1.0',
-        sessionAttributes,
-        response : speechletResponse,
-    };
-    return response;
-
-
-}
-
-/* ---------- end: Helpers that build all of the responses ------------------ */
-
-/* ----------- Functions that control the skill's behavior ------------------ */
-
-function getWelcomeResponse(callback)
-{
-
-    // If we wanted to initialize the session to have some attributes we could add those here.
-    const sessionAttributes = {Session:"New session"};
-    const cardTitle = 'Welcome  to Microchip Sensor board';
-    const speechOutput = 'Welcome to Microchip Sensor board Skill. This skill is used to control and get the sensor data from WINC1500 Secure Wi-Fi Board showed in Microchip Master workshop';
-            
-    // If the user either does not reply to the welcome message or says something that is not understood, they will be prompted again with this text.
-    const repromptText = 'Please tell me if you want the light on or off by saying, turn the light on';
-    const shouldEndSession = false;
-    const cardType = 'Simple';
-
-    callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, cardType));
-
-}
-
-function getUnknownResponse(callback)
-{
-
-    // If we wanted to initialize the session to have some attributes we could add those here.
-    const sessionAttributes = {Session:"New session"};
-    const cardTitle = '';
-    const speechOutput = 'Please try again or say help for a list of possible commands';
-            
-    // If the user either does not reply to the welcome message or says something that is not understood, they will be prompted again with this text.
-    const repromptText = 'Please try again or say help for a list of possible commands';
-    const shouldEndSession = false;
-
-    callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-
-}
-
-getHelpResponse
-function getHelpResponse(callback)
-{
-
-    // If we wanted to initialize the session to have some attributes we could add those here.
-    const sessionAttributes = {};
-    
-    const speechOutput = 'The options are. Ask Sensor board to turn the light red, green, blue, yellow, on or off.'+
-                            ' You can ask what is the temperature or humidity,'+
-                            ' the light state or color,' +
-                            ' or you can ask what are the buttons state.';
-    const cardTitle = speechOutput;        
-    // If the user either does not reply to the welcome message or says something that is not understood, they will be prompted again with this text.
-    const repromptText = 'Please tell me if you want the light on or off by saying, turn the light on';
-    const shouldEndSession = false;
-    const cardType = 'Simple';
-
-    callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, cardType));
-
-}
-
-
-function createFavoriteLEDStatusAttributes(desiredLEDStatus)
-{
- var response =     {
-        desiredLEDStatus,
-    };
-    
-    return response;
-
-
-}
-
-/**
- * Sets the LED state
- */
-function setGPIO(intent, session, callback, thingId)
-{
-
-    console.log("Slots =>", intent.slots);
-    
-    var cardTitle = intent.name;
-    let saml21PORT = intent.slots.port.value;
-    let desiredGPIOSlotValue = intent.slots.number.value;
-    let set_clear_GPIO = intent.slots.ioState.value;
-    let shadowLED_R = 0;
-    let shadowLED_G = 0;
-    let shadowLED_B = 0;
-    let repromptText = '';
-    let sessionAttributes = {};    
-    
-                                    
-    const shouldEndSession = false;
-    let speechOutput = '';
-    
-    saml21PORT = saml21PORT.replace('.', '');
-    saml21PORT = saml21PORT.toUpperCase();
-    desiredGPIOSlotValue = parseInt (desiredGPIOSlotValue);
-    if (
-        ((saml21PORT === 'A')&&  ((desiredGPIOSlotValue === 17)||(desiredGPIOSlotValue === 20)||(desiredGPIOSlotValue === 21)))
-        ||((saml21PORT === 'B')&&  ((desiredGPIOSlotValue === 22)||(desiredGPIOSlotValue === 23)))
-        )
+    if (1)//desiredLEDStatus)
     {
-        speechOutput = "PORT \"" + saml21PORT + "\"   " + desiredGPIOSlotValue + " will be " + set_clear_GPIO ;
-        cardTitle = speechOutput;
-    }else
-    {
-        speechOutput = "PORT \"" + saml21PORT + "\" " + desiredGPIOSlotValue +" is not available.  PORT 'a' 17 20 21, and PORT 'b' 22 and 23 are available. " + '<break time="1s"/>'  + "Please provide other command";
-        cardTitle = "PORT \"" + saml21PORT + "\" " + desiredGPIOSlotValue +" is not available.  PORT 'a' 17 20 21, and PORT 'b' 22 and 23 are available";
-        const cardType = 'Simple';
-        
-        callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, cardType));
-        return;
-    }
-   
-    if (!((saml21PORT === 'A')||(saml21PORT ==='B')))
-    {
- 
-        speechOutput = "Only PORT A and B are available." + '<break time="1s"/>'  + " Please provide other command";
-        cardTitle = "Only PORT A and B are available";
-        const cardType = 'Simple';
-        
-        callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, cardType));
-        return;
-    
-    
-    }
-    
-    var payloadObj = {"state" :
-        { "desired" :
-            { 
-                
-            }}};
-    var PORTbit = "P"+saml21PORT;
-    desiredGPIOSlotValue = (set_clear_GPIO == "clear") ? (0-desiredGPIOSlotValue):(desiredGPIOSlotValue);
-    
-
-    payloadObj.state.desired = {[PORTbit]: desiredGPIOSlotValue};
-        
-    speechOutput = speechOutput + '<break time="1s"/>'  + " Please provide other command";
-    console.log("Alexa will say =>",speechOutput);
 
 
+        if (LEDState == "NULL")
+        {
+            var payloadObj = {"state" :
+            { "desired" :
+                { "LED_INTENSITY": LEDIntensity
+                }}};
+        }else if (LEDIntensity == "NULL")
+        {
+            payloadObj = {"state" :
+            { "desired" :
+                { 
+                  "Light":LEDState
+                }}};
+        }else
+        {
+          payloadObj = {"state" :
+            { "desired" :
+                { "LED_INTENSITY": LEDIntensity,
+                  "Light":LEDState
+                }}};  
+        }
+        //console.log("myDevice =>",response.event);
+        var myDevice = response.endpoint.endpointId;
+        
+        
         //Prepare the parameters of the update call
-        var paramsUpdate = {
-    
-            "thingName" : thingId,
-            "payload" : JSON.stringify(payloadObj)
-    
-        };
-    
-        // Update IoT Device Shadow
-        console.log("AWS-IOT => ",paramsUpdate);
         
+        var paramsUpdate = {
+
+            "thingName" : myDevice,
+            "payload" : JSON.stringify(payloadObj)
+
+        };
+
+        // Update IoT Device Shadow
+        console.log("AWS-IOT => ", paramsUpdate);
+
         iotData.updateThingShadow(paramsUpdate, function(err, data)
         {
-    
+
+            done = true;
             if (err)
             {
                 console.log(err); // Handle any errors
             } else
             {
-                console.log("UpdateThingShadow=>",data);
-                console.log("Calling callback from updateThingShadow returns");
+                console.log("AWS-IOT returned value=>", data);
+                var shadowData = JSON.parse(data.payload);
                 
-                callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-                //context.succeed(buildResponse(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession)));
-            
-                console.log("buildSpeechletResponse returns =>",buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-                console.log("returning from callback from updateThingShadow returns");
-                
-            }
+            paramsUpdate = {
+                "thingName" : myDevice,
+            };
+            iotData.getThingShadow(paramsUpdate, function(err, data)
+            {
     
-        });
-        
-            
-        //repromptText = "I'm not sure if you want the light on or off. You can tell me if you " +
-                'want the light on or off by saying, turn the light on';
+                done = true;
+                if (err)
+                {
+                    console.log(err); // Handle any errors
+                } else
+                {
+                    console.log("AWS-IOT returned value=>", data);
+                    
+                    var shadowData = JSON.parse(data.payload);
+                    //console.log("LED state is =>",shadowData.state.desired.setLED);
+                    //console.log("LED state is =>",data.payload);
+                    
+                    var ErrorResponse = {
+                    "event": {
+                        "header": {
+                          "namespace": "Alexa",
+                          "name": "ErrorResponse",
+                          "messageId": "abc-123-def-456",
+                          "correlationToken": "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg==",
+                          "payloadVersion": "3"
+                        },
+                        "endpoint":{
+                            "endpointId":myDevice
+                        },
+                        "payload": {
+                          "type": "ENDPOINT_UNREACHABLE",
+                          "message": "Unable to reach endpoint 12345 because it appears to be offline"
+                        }
+                      }
+                    };
+                    
+                    
+                    if (shadowData.state.reported.State == "offline")
+                    {
+                        console.log("ErrorResponse => ",ErrorResponse);
+                        callback(ErrorResponse);
+                        return;
+                    }
+    
+                    callback(response);
+    
+                }
+    
+            });
 
-    //callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
+                //callback(response);
+            }
+
+        });
+
+    } else
+    {
+
+
+    }
+    //while (done != true);
+
+}
+function get_aws_iot(responseReportState, callback)
+{
+    console.log("get_aws_iot() => ", JSON.stringify(responseReportState));
+    
+    if (1)//desiredLEDStatus)
+    {
+        var myDevice = responseReportState.event.endpoint.endpointId;
+        //Prepare the parameters of the update call
+        var paramsUpdate = {
+
+            "thingName" : myDevice
+
+        };
+
+        // Update IoT Device Shadow
+        console.log("AWS-IOT => ", paramsUpdate);
+        
+
+
+        iotData.getThingShadow(paramsUpdate, function(err, data)
+        {
+
+            done = true;
+            if (err)
+            {
+                console.log(err); // Handle any errors
+            } else
+            {
+                console.log("AWS-IOT returned value=>", data);
+                
+                var shadowData = JSON.parse(data.payload);
+                //console.log("LED state is =>",shadowData.state.desired.setLED);
+                //console.log("LED state is =>",data.payload);
+                
+  var ErrorResponse = {
+                "event": {
+                    "header": {
+                      "namespace": "Alexa",
+                      "name": "ErrorResponse",
+                      "messageId": "abc-123-def-456",
+                      "correlationToken": "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg==",
+                      "payloadVersion": "3"
+                    },
+                    "endpoint":{
+                        "endpointId":myDevice
+                    },
+                    "payload": {
+                      "type": "ENDPOINT_UNREACHABLE",
+                      "message": "Unable to reach endpoint 12345 because it appears to be offline"
+                    }
+                  }
+                };
+                
+                
+                if (shadowData.state.reported.State == "disconnected")
+                {
+                    console.log("ErrorResponse => ",ErrorResponse);
+                    callback(ErrorResponse);
+                    return;
+                }
+
+                var lightIntensity = shadowData.state.reported.LED_INTENSITY;
+
+                var ledstate = shadowData.state.reported.Light;
+                if (ledstate == 0)
+                {
+                    //Value for PowerController "ON" or "OFF"
+                    responseReportState.context.properties[0].value = "OFF";
+                    //Value for PowerLevelController,  value between 0-100 %
+                    responseReportState.context.properties[1].value = lightIntensity;
+                    console.log("Light is OFF",JSON.stringify(responseReportState.context.properties));
+                }else
+                {    
+                    //Value for PowerController "ON" or "OFF"
+                    responseReportState.context.properties[0].value = "ON";
+                    //Value for PowerLevelController,  value between 0-100 %
+                    responseReportState.context.properties[1].value = lightIntensity;
+                    console.log("Light is ON",JSON.stringify(responseReportState.context.properties));
+                }
+                console.log("The responseReportState will be ", JSON.stringify(responseReportState));
+                callback(responseReportState);
+
+            }
+
+        });
+
+    } else
+    {
+
+
+    }
+    //while (done != true);
 
 }
 
-
-/**
- * Sets the LED state
- */
 function scanThingId(cognitoUuid)
 {
 
@@ -343,647 +294,614 @@ function scanThingId(cognitoUuid)
     
     return null;
 }
-/**
- * Sets the LED state
- */
-function setLEDState(intent, session, callback, thingId)
+function handleDiscovery(request, context)
 {
-
-    const cardTitle = "Change LED value";//intent.name;
-    const desiredLEDStateSlot = intent.slots.lightState;
-    let shadowLED_R = 0;
-    let shadowLED_G = 0;
-    let shadowLED_B = 0;
-    let repromptText = '';
-    let sessionAttributes = {};                                    
-                                    
-    const shouldEndSession = false;
-    let speechOutput = '';
-
-
-    if (desiredLEDStateSlot)
-    {
-
-        const desiredLEDState = desiredLEDStateSlot.value;
-        sessionAttributes = createFavoriteLEDStatusAttributes(desiredLEDState);
+    //var myGlobalEndPointArray = [];
+    var myEndPointID = {
+            "endpointId" : "test1",
+            "manufacturerName" : "Microchip Technologies Inc.",
+            "friendlyName" : "Sensor Board",
+            "description" : "Sensor Board RGB light",
+            "displayCategories" : ["LIGHT"],
+            "cookie" : {
+                "key1" : "arbitrary key/value pairs for skill to reference this endpoint.",
+                "key2" : "There can be multiple entries",
+                "key3" : "but they should only be used for reference purposes.",
+                "key4" : "This is not a suitable place to maintain current endpoint state."
+            },
+            "capabilities" :
+            [
+            {
+                "type" : "AlexaInterface",
+                "interface" : "Alexa",
+                "version" : "3"
+            },
+            {
+                "interface" : "Alexa.PowerController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            }
+            ]
+        };
         
-        repromptText = ""; //You can ask me if the light is on or off by saying, is the light on or off?";
-        
-
-        
-        
-        if ((desiredLEDState == 'red'))
+    var myDevices = {
+        "endpoints" :
+        [
         {
-            shadowLED_R = 1;
-            shadowLED_G = 0;
-            shadowLED_B = 0;
-            speechOutput = "The Sensor board light is red. " + '<break time="2s"/>'  + "Please provide other command" ;
-            
-        }else
-        if ((desiredLEDState == 'green'))
-        {
-            shadowLED_R = 0;
-            shadowLED_G = 1;
-            shadowLED_B = 0;
-            speechOutput = "The Sensor board  light is green. " + '<break time="2s"/>'  + "Please provide other command" ;
-            
-        }else
-        if ((desiredLEDState == 'blue'))
-        {
-            shadowLED_R = 0;
-            shadowLED_G = 0;
-            shadowLED_B = 1;
-            speechOutput = "The Sensor board light is blue. " + '<break time="2s"/>'  + "Please provide other command";
-            
-        }else
-        if ((desiredLEDState == 'yellow'))
-        {
-            shadowLED_R = 1;
-            shadowLED_G = 1;
-            shadowLED_B = 0;
-            speechOutput = "The Sensor board  light is yellow. " + '<break time="2s"/>'  + "Please provide other command";
-            
-        }else
-        if ((desiredLEDState == 'white')||(desiredLEDState == 'on')||(desiredLEDState == 'open'))
-        {
-            shadowLED_R = 1;
-            shadowLED_G = 1;
-            shadowLED_B = 1;
-            speechOutput = "The Sensor board  light is " + desiredLEDState + '<break time="2s"/>'  + " Please provide other command";
-            
-        }else
-        if ((desiredLEDState == 'off')||(desiredLEDState == 'close'))
-        {
-            shadowLED_R = 0;
-            shadowLED_G = 0;
-            shadowLED_B = 0;
-            speechOutput = "The Sensor board  light has been turned off" + '<break time="2s"/>'  + "Please provide other command";
-            
-        }else
-        {
-            speechOutput = "I'm not sure what you want. Please try again.";
-            repromptText = "I'm not sure what you want. You can tell me if you " +
-                'want the light blue, red, green, white or off';
-            callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-            return;
+            "endpointId" : "test1",
+            "manufacturerName" : "Microchip Technologies Inc.",
+            "friendlyName" : "Sensor Board",
+            "description" : "Sensor Board RGB light",
+            "displayCategories" : ["LIGHT"],
+            "cookie" : {
+                "key1" : "arbitrary key/value pairs for skill to reference this endpoint.",
+                "key2" : "There can be multiple entries",
+                "key3" : "but they should only be used for reference purposes.",
+                "key4" : "This is not a suitable place to maintain current endpoint state."
+            },
+            "capabilities" :
+            [
+            {
+                "type" : "AlexaInterface",
+                "interface" : "Alexa",
+                "version" : "3"
+            },
+            {
+                "interface" : "Alexa.PowerController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            },
+            {
+                "interface" : "Alexa.PowerLevelController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            }
+            ]
+        },{
+            "endpointId" : "test1",
+            "manufacturerName" : "Microchip Technologies Inc.",
+            "friendlyName" : "Sensor Board",
+            "description" : "Sensor Board RGB light",
+            "displayCategories" : ["LIGHT"],
+            "cookie" : {
+                "key1" : "arbitrary key/value pairs for skill to reference this endpoint.",
+                "key2" : "There can be multiple entries",
+                "key3" : "but they should only be used for reference purposes.",
+                "key4" : "This is not a suitable place to maintain current endpoint state."
+            },
+            "capabilities" :
+            [
+            {
+                "type" : "AlexaInterface",
+                "interface" : "Alexa",
+                "version" : "3"
+            },
+            {
+                "interface" : "Alexa.PowerController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            },
+            {
+                "interface" : "Alexa.PowerLevelController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            }
+            ]
+        },{
+            "endpointId" : "test1",
+            "manufacturerName" : "Microchip Technologies Inc.",
+            "friendlyName" : "Sensor Board",
+            "description" : "Sensor Board RGB light",
+            "displayCategories" : ["LIGHT"],
+            "cookie" : {
+                "key1" : "arbitrary key/value pairs for skill to reference this endpoint.",
+                "key2" : "There can be multiple entries",
+                "key3" : "but they should only be used for reference purposes.",
+                "key4" : "This is not a suitable place to maintain current endpoint state."
+            },
+            "capabilities" :
+            [
+            {
+                "type" : "AlexaInterface",
+                "interface" : "Alexa",
+                "version" : "3"
+            },
+            {
+                "interface" : "Alexa.PowerController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            },
+            {
+                "interface" : "Alexa.PowerLevelController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            }
+            ]
+        },{
+            "endpointId" : "test1",
+            "manufacturerName" : "Microchip Technologies Inc.",
+            "friendlyName" : "Sensor Board",
+            "description" : "Sensor Board RGB light",
+            "displayCategories" : ["LIGHT"],
+            "cookie" : {
+                "key1" : "arbitrary key/value pairs for skill to reference this endpoint.",
+                "key2" : "There can be multiple entries",
+                "key3" : "but they should only be used for reference purposes.",
+                "key4" : "This is not a suitable place to maintain current endpoint state."
+            },
+            "capabilities" :
+            [
+            {
+                "type" : "AlexaInterface",
+                "interface" : "Alexa",
+                "version" : "3"
+            },
+            {
+                "interface" : "Alexa.PowerController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            },
+            {
+                "interface" : "Alexa.PowerLevelController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            }
+            ]
+        },{
+            "endpointId" : "test1",
+            "manufacturerName" : "Microchip Technologies Inc.",
+            "friendlyName" : "Sensor Board",
+            "description" : "Sensor Board RGB light",
+            "displayCategories" : ["LIGHT"],
+            "cookie" : {
+                "key1" : "arbitrary key/value pairs for skill to reference this endpoint.",
+                "key2" : "There can be multiple entries",
+                "key3" : "but they should only be used for reference purposes.",
+                "key4" : "This is not a suitable place to maintain current endpoint state."
+            },
+            "capabilities" :
+            [
+            {
+                "type" : "AlexaInterface",
+                "interface" : "Alexa",
+                "version" : "3"
+            },
+            {
+                "interface" : "Alexa.PowerController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            },
+            {
+                "interface" : "Alexa.PowerLevelController",
+                "version" : "3",
+                "type" : "AlexaInterface",
+                "properties" :
+                {
+                    "supported" : [
+                    {
+                        "name" : "powerState"
+                    }
+                    ],
+                    "retrievable" : true
+                }
+            }
+            ]
         }
         
-        /*
-         * Update AWS IoT
-         */
-        
-        console.log("Alexa will say =>",speechOutput);
-        var payloadObj = {"state" :
-            { "desired" :
-                { "LED_R" : shadowLED_R,
-                  "LED_G" : shadowLED_G,
-                  "LED_B" : shadowLED_B
-                    
-                }}};
-
-        //Prepare the parameters of the update call
-        var paramsUpdate = {
-
-            "thingName" : thingId,
-            "payload" : JSON.stringify(payloadObj)
-
-        };
-
-        // Update IoT Device Shadow
-        console.log("AWS-IOT => ",paramsUpdate);
-        
-        iotData.updateThingShadow(paramsUpdate, function(err, data)
-        {
-
-            if (err)
-            {
-                console.log(err); // Handle any errors
-            } else
-            {
-                console.log("UpdateThingShadow=>",data);
-                console.log("Calling callback from updateThingShadow returns");
-                
-                callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-                //context.succeed(buildResponse(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession)));
-            
-                console.log("buildSpeechletResponse returns =>",buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-                console.log("returning from callback from updateThingShadow returns");
-                
-            }
-
-        });
-        
-        
-    } else
-    {
-
-        speechOutput = "I'm not sure if you want the light on or off. Please try again.";
-        repromptText = "I'm not sure if you want the light on or off. You can tell me if you " +
-                'want the light on or off by saying, turn the light on';
-
-    }
-
-    //callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession));
-
-}
-
-function getLEDStatusFromShadow(intent, session, callback, thingId) {
-    let cardTitle = "Get LED";
-    let desiredLEDStatus ="Test";
-    const repromptText = null;
-    const sessionAttributes = {};
-    let shouldEndSession = false;
-    let speechOutput = '';
-
-
-    
-    //Prepare the parameters of the update call
-    var paramsUpdate = {
-        "thingName" : thingId,
-        //"payload" : JSON.stringify(payloadObj)
+        ]
     };
-    console.log("thingName=>",thingId);
-    iotData.getThingShadow(paramsUpdate, function(err, data)
-        {
-
-            if (err)
-            {
-                console.log(err); // Handle any errors
-            } else
-            {
-                console.log(data);
-                var newdata = JSON.parse(data.payload);
-                console.log("LED RED state is =>",newdata.state.reported.LED_R);
-                console.log("LED GREEN state is =>",newdata.state.reported.LED_G);
-                console.log("LED BLEU state is =>",newdata.state.reported.LED_B);
-                //console.log("LED state is =>",data.payload);
-                var redLED = newdata.state.reported.LED_R;
-                var greenLED = newdata.state.reported.LED_G;
-                var blueLED = newdata.state.reported.LED_B;
-                var ledState;
-                
-                if (intent.slots.lightType.value == "state")
-                {
-                    if(redLED == 0 && greenLED == 0 && blueLED == 0)
-                        ledState ="off";
-                    else
-                        ledState ="on";
-                    
-                    speechOutput = `The Sensor Board light is ${ledState}.` +  `<break time="2s"/>`  + ` Please provide other command`
-                
-                }else
-                if (intent.slots.lightType.value == "color")
-                {
-                    if (redLED == 1 && greenLED == 0 && blueLED == 0)
-                        ledState = "red";
-                    else 
-                    if (redLED == 0 && greenLED == 1 && blueLED == 0)
-                        ledState = "green";
-                    else 
-                    if (redLED == 0 && greenLED == 0 && blueLED == 1)
-                        ledState = "blue";
-                    else 
-                    if (redLED == 1 && greenLED == 1 && blueLED == 1)
-                        ledState = "white";
-                    else 
-                    if (redLED == 0 && greenLED == 0 && blueLED == 0)
-                        ledState = "black";
-                    else 
-                    if (redLED == 1 && greenLED == 1 && blueLED == 0)
-                        ledState = "yellow";
-                    
-                    speechOutput = `The Sensor Board light is ${ledState}.` +  `<break time="2s"/>`  + ` Please provide other command`
-                
-                }else
-                    speechOutput = "Ask me, what is the light color or state";
-     
-                
-                
-                //shouldEndSession = true;
-                console.log("UpdateThingShadow=>",data);
-                console.log("Calling callback from updateThingShadow returns");
-                
-                //callback(sessionAttributes, buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
-                callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-                
-                console.log("buildSpeechletResponse returns =>",buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession, "Simple"));
-                console.log("returning from callback from updateThingShadow returns");
-                
-            }
-
-        });
-
-
-    // Setting repromptText to null signifies that we do not want to reprompt the user.
-    // If the user does not respond or says something that is not understood, the session
-    // will end.
-    //callback(sessionAttributes, buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
-
-}
-function getButtonStatusFromShadow(intent, session, callback, thingId) {
-
-    let cardTitle = "Get BUTTON";
-    let desiredLEDStatus;
-    let repromptText = null;
-    const sessionAttributes = {};
-    let shouldEndSession = false;
-    let speechOutput = '';
-
-
-    
-    //Prepare the parameters of the update call
-    var paramsUpdate = {
-        "thingName" : thingId,
-        //"payload" : JSON.stringify(payloadObj)
-    };
-    
-    iotData.getThingShadow(paramsUpdate, function(err, data)
-        {
-
-            if (err)
-            {
-                console.log(err); // Handle any errors
-            } else
-            {
-                console.log(data);
-                var newdata = JSON.parse(data.payload);
-                console.log("BUTTON_1 state is =>",newdata.state.reported.BUTTON_1);
-                console.log("BUTTON_2 state is =>",newdata.state.reported.BUTTON_2);
-                console.log("BUTTON_3 state is =>",newdata.state.reported.BUTTON_3);
-                //console.log("LED state is =>",data.payload);
-                var buttonstate = newdata.state.reported.setLED;
-                var button1 = "up";
-                var button2 = "up";
-                var button3 = "up";
-                if (newdata.state.reported.BUTTON_1 == 0)
-                    button1 = "down";
-                if (newdata.state.reported.BUTTON_2 == 0)
-                    button2 = "down";
-                if (newdata.state.reported.BUTTON_3 == 0)
-                    button3 = "down";
-                speechOutput = "The button states are, button1 is "+ button1 +
-                                                    ",button2 is " + button2 +
-                                                    ",button3 is " + button3 + ' <break time="2s"/>'  + " Please provide other command?";
-                
-                repromptText = "Any other command";
-                //shouldEndSession = true;
-                callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-
-            }
-
-        });
-
-
-    // Setting repromptText to null signifies that we do not want to reprompt the user.
-    // If the user does not respond or says something that is not understood, the session
-    // will end.
-    //callback(sessionAttributes, buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
-
-}
-
-function getSensorStatusFromShadow(intent, session, callback, thingId) {
-
-    let cardTitle = "Get SENSOR";
-    let desiredLEDStatus;
-    const repromptText = null;
-    const sessionAttributes = {};
-    let shouldEndSession = false;
-    let speechOutput = '';
-
-
-    
-    //Prepare the parameters of the update call
-    var paramsUpdate = {
-        "thingName" : thingId,
-        //"payload" : JSON.stringify(payloadObj)
-    };
-    
-    iotData.getThingShadow(paramsUpdate, function(err, data)
-        {
-
-            if (err)
-            {
-                console.log(err); // Handle any errors
-            } else
-            {
-                console.log(data);
-                var newdata = JSON.parse(data.payload);
-                console.log("Temperature value is =>",newdata.state.reported.temp);
-                console.log("BUTTON_2 state is =>",newdata.state.reported.hum);
-                //console.log("LED state is =>",data.payload);
-                
-                if (intent.slots.sensorType.value == "temperature")
-                {
-                    speechOutput = 'The temperature is '+ parseFloat((newdata.state.reported.temp/100)*1.8 + 32).toFixed(1) + " degrees Farenheit. " + ' <break time="2s"/>'  + "Please provide other command" ;
-                }else
-                if (intent.slots.sensorType.value == "humidity")
-                {
-                    speechOutput = 'The humidity is '+ newdata.state.reported.hum + " percent. " + ' <break time="2s"/>'  + "Please provide other command";
-                }else
-                    speechOutput = 'Ask me,  what is the temperature or humidity';
-                    
-                //shouldEndSession = true;
-                callback(sessionAttributes, buildSpeechletResponse(cardTitle, speechOutput, repromptText, shouldEndSession, "Simple"));
-
-            }
-
-        });
-
-
-    // Setting repromptText to null signifies that we do not want to reprompt the user.
-    // If the user does not respond or says something that is not understood, the session
-    // will end.
-    //callback(sessionAttributes, buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession));
-
-}
-
-/* --------- end: Functions that control the skill's behavior --------------- */
-
-
-/* ----------------------------- Events ------------------------------------- */
-
-/**
- * Called when the session starts.
- */
-function onSessionStarted(sessionStartedRequest, session)
-{
-    console.log(`onSessionStarted requestId = ${sessionStartedRequest.requestId}, sessionId = ${session.sessionId}
-    `);
-}
-
-/**
- * Called when the user launches the skill without specifying what they want.
- */
-function onLaunch(launchRequest, session, callback)
-{
-
-    console.log(`onLaunch requestId = ${launchRequest.requestId}, sessionId = ${session.sessionId}
-    `);
-
-    // Dispatch to your skill's launch.
-    console.log("Calling getWelcomeResponse");
-
-    getWelcomeResponse(callback);
-
-}
-
-function handleSessionEndRequest(callback) {
-
-    const cardTitle = 'Session Ended';
-    const speechOutput = 'Thank you for using Microchip Sensor board skill. Have a nice day!';
-    // Setting this to true ends the session and exits the skill.
-    const shouldEndSession = true;
-
-    callback({}, buildSpeechletResponse(cardTitle, speechOutput, null, shouldEndSession, "Simple"));
-
-}
-
-function deviceTooMuchResponse(intentName, callback)
-{
-    const sessionAttributes = {};
-    let speechOutput = "More than one device are register to your account, we cannot report the status";
-    let repromptText = "";
-    let shouldEndSession = false;
-      
-      callback(sessionAttributes, buildSpeechletResponse(intentName, speechOutput, repromptText, shouldEndSession, "Simple"));
-    
-}
-
-function handleAcctNotLinkCase(intentRequest, session, callback)
-{
-    const intent = intentRequest.intent;
-    const intentName = intentRequest.intent.name;
-    
-    if (intentName === 'LEDStateChangeIntent' || intentName === 'GPIOControl' || intentName === 'WhatsLEDStatusIntent' || intentName === 'WhatsButtonStatusIntent' || intentName === 'WhatsSensorStatusIntent')
-    {
-        const sessionAttributes = {};
-        let speechOutput = "Account is not linked. The link account card was delivered to home section, please complete the account linking by following the steps showed in the link account card";
-        let repromptText = "";
-        let shouldEndSession = true;
-                      
-        callback(sessionAttributes, buildSpeechletResponse("LinkAccount", speechOutput, repromptText, shouldEndSession, "LinkAccount"));
-    }
-    else if ((intentName === 'AMAZON.HelpIntent')) {
-        getHelpResponse(callback);
-                        
-    }
-    else if (intentName === 'AMAZON.StopIntent' || intentName === 'AMAZON.CancelIntent') {
-        handleSessionEndRequest(callback);
-        
-    } 
-    else if(intentName === 'closeSession')
-    {
-        handleSessionEndRequest(callback);
-    }
-    else 
-    {
-        //throw new Error('Invalid intent');
-        getUnknownResponse(callback);
-    }
-}
-/**
- * Called when the user specifies an intent for this skill.
- */
-function onIntent(intentRequest, session, callback)
-{
-
-    console.log(`onIntent requestId = ${intentRequest.requestId}, sessionId = ${session.sessionId}
-    `);
-
-    const intent = intentRequest.intent;
-    const intentName = intentRequest.intent.name;
-    
-    console.log("inIntent =>",intentName);
-    
-    if (session.user.accessToken == null)
-    {
-        handleAcctNotLinkCase(intentRequest, session, callback);
-        
-         return;
-    }
-    
-    const congitoUUID = getCongitoUUID(session.user.accessToken);
+    console.log("Discovery request =>:",request);
+    console.log("Discovery request.directive.payload =>:",request.directive.payload);
+    console.log("Discovery request.directive.payload.scope.token =>:",request.directive.payload.scope.token);
+    const congitoUUID = getCognitoUUID(request.directive.payload.scope.token);
     console.log("congitoUUID =>",congitoUUID);
-    //var result = scanThingId(congitoUUID);
-    
-    if (intentName === 'LEDStateChangeIntent' || intentName === 'GPIOControl' || intentName === 'WhatsLEDStatusIntent' || intentName === 'WhatsButtonStatusIntent' || intentName === 'WhatsSensorStatusIntent')
-    {
-        
-        var scanParams = {
+    var scanParams = {
             TableName: main_table,
             //ProjectionExpression: "#yr, title, info.rating",
             FilterExpression: "#cognitoUUID = :cognitoUUID",
             ExpressionAttributeNames: {
                 "#cognitoUUID": "cognitoUUID",
-            },
+        },
             ExpressionAttributeValues: {
-                 ":cognitoUUID": congitoUUID,
+                ":cognitoUUID": congitoUUID,
             }
         };
     
+    console.log("scanParams =>",scanParams);
         
-        docClient.scan(scanParams, onScan);
-        function onScan(err, data) {
-            if (err) {
-                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-            } 
-            else
-            {
-                console.log("Scan succeeded.");
-                console.log("data => ",data);
-                  if (data.Items.length == 0)
-                  {
-                      console.error("Cannot find devices for this congito account");
-                      const sessionAttributes = {};
-                      let speechOutput = "Your device cannot be found";
-                      let repromptText = "";
-                      let shouldEndSession = false;
-                      
-                      callback(sessionAttributes, buildSpeechletResponse(intent.name, speechOutput, repromptText, shouldEndSession, "Simple"));
-                     
-                  }
-                  else
-                  {
-                        console.log("Able to find " + data.Items.length + " device");
-    
-                        console.log("thing ID =>",data.Items[0].thingID);
-                        // Dispatch to your skill's intent handlers
-                        // Dispatch to your skill's intent handlers
+    docClient.scan(scanParams, function(err, data) {
+        if (err) {
+            console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+        } 
+        else
+        {
+            console.log("Scan succeeded.");
+            console.log("data => ",data);
+              if (data.Items.length == 0)
+              {
+                  console.error("Cannot find devices for this congito account");
+                 
+              }
+              else
+              {
+                    console.log("Able to find " + data.Items.length + " device");
+                    console.log("data.Items " + JSON.stringify(data.Items));
+
+                    for ( var i =0; i < data.Items.length; i++)
+                    {
+                        //myEndPointID.endpointId = data.Items[i].thingID;
+                        //console.log("myEndPointID",JSON.stringify(myEndPointID));
+                        myDevices.endpoints[i].endpointId = data.Items[i].thingID;
+                        myDevices.endpoints[i].friendlyName = data.Items[i].deviceName;
                         
-                        if (intentName === 'LEDStateChangeIntent') {
-                            if (data.Items.length > 1)
-                                deviceTooMuchResponse(intent.name, callback);
-                            else
-                                setLEDState(intent, session, callback, data.Items[0].thingID);
-                            
-                        }
-                        else if (intentName === 'GPIOControl') {
-                            if (data.Items.length > 1)
-                                deviceTooMuchResponse(intent.name, callback);
-                            else
-                                setGPIO(intent, session, callback, data.Items[0].thingID);
-        
-                        }
-                        else if (intentName === 'WhatsLEDStatusIntent') {
-                            if (data.Items.length > 1)
-                                deviceTooMuchResponse(intent.name, callback);
-                            else
-                                getLEDStatusFromShadow(intent, session, callback, data.Items[0].thingID);
-                            
-                        }
-                        else if (intentName === 'WhatsButtonStatusIntent') {
-                            if (data.Items.length > 1)
-                                deviceTooMuchResponse(intent.name, callback);
-                            else
-                                getButtonStatusFromShadow(intent, session, callback, data.Items[0].thingID);
-                            
-                        }
-                        else if (intentName === 'WhatsSensorStatusIntent') {
-                            if (data.Items.length > 1)
-                                deviceTooMuchResponse(intent.name, callback);
-                            else
-                                getSensorStatusFromShadow(intent, session, callback, data.Items[0].thingID);
-                            
-                        }
-                        
-                      
-                  }
-    
-            }
+                        //myDevices.endpoints.push(myEndPointID);
+                    }
+                    for (; i < 5;i++)
+                    {
+                        delete myDevices.endpoints[i];
+                    }
+                    console.log("myDevices",JSON.stringify(myDevices));
+                    
+/*                  
+
+This code should work but when updating the  myDevices.endpoints[i].endpointId = data.Items[i].thingID
+it updates all existing myDevices.endpoints[i].endpointId ([0], [1], [2])
+So if we have 3 devices, the last value is loaded in all [0], [1], [2]...
+
+                    //data.Items[0].thingID = 55; //Testing if this only updates Items[0]???? 
+                    //console.log("data.Items " + JSON.stringify(data.Items));
+
+                    for (  i =0; i < data.Items.length; i++)
+                    {
+                        myEndPointID.endpointId = data.Items[i].thingID;
+                        console.log("myEndPointID",JSON.stringify(myEndPointID));
+                        myDevices.endpoints[i].endpointId = data.Items[i].thingID;
+                        myDevices.endpoints.push(myEndPointID);
+                        console.log("HERE",i);
+                    
+                        console.log("myDevices",JSON.stringify(myDevices));
+                    }
+                
+
+*/                    
+                    // Dispatch to your skill's intent handlers
+                    var header = request.directive.header;
+                    header.name = "Discover.Response";
+                    log("DEBUG", "Discovery Response: ", JSON.stringify({header : header, payload : myDevices}));
+                    context.succeed({event :
+                    { header : header, payload : myDevices}});
+
+              }
+
         }
-    }
-    else if ((intentName === 'AMAZON.HelpIntent')) {
-        getHelpResponse(callback);
-                        
-    }
-    else if (intentName === 'AMAZON.StopIntent' || intentName === 'AMAZON.CancelIntent') {
-        handleSessionEndRequest(callback);
+    });
+ 
+}
+
+function log(message, message1, message2)
+{
+    console.log(message + message1 + message2);
+}
+
+function handlePowerControl(request, context, callback)
+{
+    // get device ID passed in during discovery
+    var requestMethod = request.directive.header.name;
+    // get user token pass in request
+    var requestToken = request.directive.endpoint.scope.token;
+    var powerResult;
+    var ledState;
+    var ledColor = "NULL";
+    console.log("Request=>", JSON.stringify(request));
+    console.log("Context=>", JSON.stringify(context));
+    console.log(requestMethod);
+    if (requestMethod === "TurnOn")
+    {
+
+        // Make the call to your device cloud for control 
+        // powerResult = stubControlFunctionToYourCloud(endpointId, token, request);
+        ledState = 1;
         
-    } 
-    else if(intentName === 'closeSession')
+        powerResult = "ON";
+    } else if (requestMethod === "TurnOff")
     {
-        handleSessionEndRequest(callback);
+        // Make the call to your device cloud for control and check for success 
+        // powerResult = stubControlFunctionToYourCloud(endpointId, token, request);
+        ledState = 0;
+        
+        powerResult = "OFF";
     }
-    else 
-    {
-        //throw new Error('Invalid intent');
-        getUnknownResponse(callback);
-    }
+    var contextResult = {
+        "properties" : [
+        {
+            "namespace" : "Alexa.PowerController",
+            "name" : "powerState",
+            "value" : powerResult,
+            "timeOfSample" : "2017-12-17T14:46:50.52Z", //retrieve from result.
+            "uncertaintyInMilliseconds" : 50
+        }
+        ]
+    };
+    var responseHeader = request.directive.header;
+    var endPoint = request.directive.endpoint.endpointId;
+    responseHeader.namespace = "Alexa";
+    responseHeader.name = "Response";
+    responseHeader.messageId = responseHeader.messageId + "-R";
+    var response = {
+        context : contextResult,
+        event :
+        {
+            header : responseHeader
+        },
+        "endpoint" :
+        {
+            "scope" :
+            {
+                "type" : "BearerToken",
+                "token" : "access-token-from-Amazon"
+            },
+            "endpointId" : endPoint
+        },
+        payload :
+        {}
+
+    };
+    console.log("HERE", callback);
+    set_aws_iot(ledState, ledColor, response, callback);
+    //response.endpoint.scope.token = requestToken;
+    log("DEBUG", "Alexa.PowerController ", JSON.stringify(response));
+
+}
+function handlePowerLevelControl(request, context, callback)
+{
+    // get device ID passed in during discovery
+    var levelValue = request.directive.payload.powerLevel;
+    // get user token pass in request
+    var requestToken = request.directive.endpoint.scope.token;
+    var powerResult;
+    var ledState,ledColor;
+    console.log("Request=>", JSON.stringify(request));
+    console.log("Context=>", JSON.stringify(context));
+    console.log("Power Level : ",levelValue);
     
+    // Make the call to your device cloud for control 
+    // powerResult = stubControlFunctionToYourCloud(endpointId, token, request);
+    ledState = 1;
+    ledColor = levelValue;
+    powerResult = levelValue;
     
-    
+    var contextResult = {
+        "properties" : [
+        {
+            "namespace" : "Alexa.PowerLevelController",
+            "name" : "powerLevel",
+            "value" : powerResult,
+            "timeOfSample" : "2017-12-17T14:46:50.52Z", //retrieve from result.
+            "uncertaintyInMilliseconds" : 50
+        }
+        ]
+    };
+    var responseHeader = request.directive.header;
+    var endPoint = request.directive.endpoint.endpointId;
+    responseHeader.namespace = "Alexa";
+    responseHeader.name = "Response";
+    responseHeader.messageId = responseHeader.messageId + "-R";
+    var response = {
+        context : contextResult,
+        event :
+        {
+            header : responseHeader
+        },
+        "endpoint" :
+        {
+            "scope" :
+            {
+                "type" : "BearerToken",
+                "token" : "access-token-from-Amazon"
+            },
+            "endpointId" : endPoint
+        },
+        payload :
+        {}
+
+    };
+    console.log("HERE", callback);
+    set_aws_iot(ledState, ledColor, response, callback);
+    //response.endpoint.scope.token = requestToken;
+    log("DEBUG", "Alexa.PowerController ", JSON.stringify(response));
+
+}
+var responseReportState = {  
+   "context":{  
+      "properties":[  
+         {  
+            "namespace":"Alexa.PowerController",
+            "name":"powerState",
+            "value":"ON",
+            "timeOfSample":"2017-02-03T16:20:50.52Z",
+            "uncertaintyInMilliseconds":6000
+         },
+         {  
+            "namespace":"Alexa.PowerLevelController",
+            "name":"powerLevel",
+            "value":50,
+            "timeOfSample":"2017-02-03T16:20:50.52Z",
+            "uncertaintyInMilliseconds":6000
+         }
+      ]
+   },
+   "event":{  
+      "header":{  
+         "messageId":"abc-123-def-456",
+         "correlationToken":"abcdef-123456",
+         "namespace":"Alexa",
+         "name":"StateReport",
+         "payloadVersion":"3"
+      },
+      "endpoint":{  
+         "scope":{  
+            "type":"BearerToken",
+            "token":"access-token-from-skill"
+         },
+         "endpointId":"luc_id2",
+         "cookie":{  
+
+         }
+      },
+      "payload":{  
+
+      }
+   }
 }
 
-/**
- * Called when the user ends the session.
- * Is not called when the skill returns shouldEndSession=true.
- */
-function onSessionEnded(sessionEndedRequest, session)
+
+
+exports.handler = (request, context, callback) =>
 {
-
-    console.log(`onSessionEnded requestId = ${sessionEndedRequest.requestId}, sessionId = ${session.sessionId}
-    `);
-    // Add cleanup logic here
-
-}
-
-/* --------------------------- end: Events ---------------------------------- */
-
-
-/* -------------------------- Main handler ---------------------------------- */
-
-// Route the incoming request based on type (LaunchRequest, IntentRequest, etc.) The JSON body of the request is provided in the event parameter.
-exports.handler = (event, context, callback) =>
-{
+    //exports.handler = function (request, context) {
 
     try{
-        
-        console.log("\rStarting handler =>\r");
-        //return;
-        console.log("Events", event);
-        console.log("Context", context);
-        console.log("callback", callback);
-        
-        
-        /**
-         * Uncomment this if statement and populate with your skill's application ID to
-         * prevent someone else from configuring a skill that sends requests to this function.
-         */
-        /*
-        if (event.session.application.applicationId !== 'amzn1.echo-sdk-ams.app.[unique-value-here]') {
-             callback('Invalid Application ID');l
-        }
-         */
 
-        if (event.request.type == 'LaunchRequest')
+        if (request.directive.header.namespace === 'Alexa.Discovery' && request.directive.header.name === 'Discover')
         {
-            onLaunch(event.request,
-                    event.session,
-                    (sessionAttributes, speechletResponse) =>{
-                        console.log("Returning from onLaunch");
-                        //callback(null, buildResponse(sessionAttributes, speechletResponse));
-                        context.succeed(buildResponse(sessionAttributes, speechletResponse));
+            log("DEGUG:", "Discover request", JSON.stringify(request));
+            log("DEGUG:", "Discover context", JSON.stringify(context));
+            handleDiscovery(request, context, "");
+        } else if (request.directive.header.namespace === 'Alexa.PowerController')
+        {
+            if (request.directive.header.name === 'TurnOn' || request.directive.header.name === 'TurnOff')
+            {
+                log("DEBUG:", "Request PowerCtrl =>", JSON.stringify(request));
+                log("DEBUG:", "Context PowerCtrl =>", JSON.stringify(context));
+                handlePowerControl(request, context, (response) =>{
+                    console.log("DONE LUC =>", JSON.stringify(response));
+                    context.succeed(response);
+                });
+            }
+        } else if (request.directive.header.namespace === 'Alexa.PowerLevelController')
+        {
+            log("DEBUG:", "Request PowerLevel =>", JSON.stringify(request));
+            log("DEBUG:", "Context PowerLevel =>", JSON.stringify(context));
+            handlePowerLevelControl(request, context, (response) =>{
+                console.log("DONE LUC =>", JSON.stringify(response));
+                context.succeed(response);
             });
-        } else if (event.request.type == 'IntentRequest')
-        {
-            onIntent(event.request,
-                    event.session,
-                    (sessionAttributes, speechletResponse) =>{
-                        console.log("Returning from onIntent");
-                        console.log("buildResponse returns =>",buildResponse(sessionAttributes, speechletResponse));
-                        
-                        //callback(null, buildResponse(sessionAttributes, speechletResponse));
-                        context.succeed(buildResponse(sessionAttributes, speechletResponse));
             
-                        console.log("Returning from callback");
-                        
-            });
-        } else if (event.request.type == 'SessionEndedRequest')
-        {
-            onSessionEnded(event.request, event.session);
-            callback();
         }
-
+        else
+        {
+            
+            log("DEGUG:", "Else request", JSON.stringify(request));
+            log("DEGUG:", "Else context", JSON.stringify(context));
+//            console.log("My Request is =>",request);
+//            console.log("My Context is =>",context);
+            console.log("My CallBack is =>",callback);
+            if (request.directive.header.name === "ReportState")
+            {
+                responseReportState.event.header.correlationToken = request.directive.header.correlationToken;
+                responseReportState.event.endpoint.endpointId = request.directive.endpoint.endpointId;
+                get_aws_iot(responseReportState,response =>{
+                    
+                    console.log("DONE LUC =>", JSON.stringify(response));
+                    
+                    context.succeed(response);
+                });
+                //context.succeed(responseReportState);
+                
+            }
+            
+        }
+        //callback();
 
     }
 
@@ -991,7 +909,5 @@ exports.handler = (event, context, callback) =>
     {
         callback(err);
     }
-
 };
 
-/* ----------------------- end: Main handler -------------------------------- */
