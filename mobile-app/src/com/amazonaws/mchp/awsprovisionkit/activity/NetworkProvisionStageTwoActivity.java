@@ -45,7 +45,7 @@ import android.widget.Toast;
 import com.amazonaws.mchp.awsprovisionkit.adapter.apListAdapter;
 import com.amazonaws.mchp.awsprovisionkit.base.MyThreadPool;
 import com.amazonaws.mchp.awsprovisionkit.model.APDevice;
-import com.amazonaws.mchp.awsprovisionkit.opensource.downloader.asyn.AsyncTask;
+import android.os.AsyncTask;
 import com.amazonaws.mchp.awsprovisionkit.task.net.MyHelper;
 import com.amazonaws.mchp.awsprovisionkit.task.net.WifiSEC;
 import com.amazonaws.mchp.awsprovisionkit.task.net.WlanAdapter;

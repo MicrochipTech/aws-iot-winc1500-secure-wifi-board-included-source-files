@@ -198,11 +198,6 @@ public class MsgData {
 	public float eActiveEnergy = 0;
 
 	/**
-	 * 定时信息
-	 */
-	public PlugSchedule Schedule = null;
-
-	/**
 	 * Plug时间 - 开始年份
 	 */
 	public int cStartYear = 0;
@@ -245,14 +240,8 @@ public class MsgData {
 			}
 			break;
 
-		case SF.cmdReportAttr:
-			// CID + Cluster index (n) + Attribute ID + attribute value
-			this.parseReportAttr();
-			break;
-		case SF.cmdReportCluster:
-			// CID + Cluster index (n) + attribute values
-			this.parseReport();
-			break;
+
+
 		case SF.cmdReportErrCode: // error happen
 			this.ErrorCode = MyHelper.bytesToHexText(bb, SF.fiParamStart, parametersLen);
 			this.setError("Erroed code is " + this.ErrorCode);
@@ -263,12 +252,7 @@ public class MsgData {
 			if (!this.Message.equals("+ok"))
 				this.setError("Need [+ok] response");
 			break;
-		case SF.cmdAuthRep:
-			this.parseAuthReponse();
-			break;
-		case SF.cmdAuthReq:
-			this.parseAuthRequest();
-			break;
+
 		default:
 			this.setError("Unknow command:" + this.CmdId);
 			return false;
@@ -277,143 +261,6 @@ public class MsgData {
 		return true;
 	}
 
-	void parseReportAttr() {
-		byte[] bb = this.m_data;
-		byte vStart = SF.fiParamStart + 4; // value index
-		this.CID = MyHelper.byteToInt(new byte[] { bb[SF.fiParamStart], bb[SF.fiParamStart + 1] });
-
-		switch (this.CID) {
-		case SF.cidMAC: // MAC地址
-			this.MAC = MyHelper.bytesToHexText(bb, vStart, 6);
-			break;
-
-		case SF.cidOnOff: // 开关状态
-			this.OnOff = bb[vStart] == 1;
-			break;
-		}
-	}
-
-	/**
-	 * 解析上报的数据，ReportCluster CID_2b + Cluster index (n)_1b + attribute values
-	 */
-	void parseReport() {
-		byte[] bb = this.m_data;
-		byte vStart = SF.fiParamStart + 3; // value index
-		this.CID = MyHelper.byteToInt(new byte[] { bb[SF.fiParamStart], bb[SF.fiParamStart + 1] });
-
-		switch (this.CID) {
-		case SF.cidDevTemp:
-			// 设备温度, current_2b + low_2b + high_2b
-			this.TempCurrent = MyHelper.byteToShort(new byte[] { bb[vStart], bb[vStart + 1] });
-			this.TempLow = MyHelper.byteToShort(new byte[] { bb[vStart + 2], bb[vStart + 3] });
-			this.TempHigh = MyHelper.byteToShort(new byte[] { bb[vStart + 4], bb[vStart + 5] });
-			break;
-		case SF.cidEnergy: // 电量
-			// Output Type_1b + voltage_1b + currency_2b + power_2b + energy_2b
-			this.eOutputVoltage = MyHelper.byteToInt(new byte[] { bb[vStart + 1] });
-			this.eOutputCurrent = MyHelper.byteToInt(new byte[] { bb[vStart + 2], bb[vStart + 3] });
-			this.eOutputPower = MyHelper.byteToInt(new byte[] { bb[vStart + 4], bb[vStart + 5] });
-			this.eActiveEnergy = MyHelper.byteToInt(new byte[] { bb[vStart + 6], bb[vStart + 7] });
-
-			byte t1 = bb[vStart];
-			switch (t1) {
-			case 1: // AC
-				this.eOutputType = "AC";
-				break;
-			case 2: // DC
-				this.eOutputType = "DC";
-				this.eOutputCurrent /= 10;
-				break;
-			default: // Unknown
-				this.eOutputType = MyConfig.S_EMPTY;
-				break;
-			}
-			this.eOutputPower /= 10;
-			this.eActiveEnergy /= 10;
-			break;
-		// MAC 地址, Type_1b, MAC_6b
-		case SF.cidMAC:
-			this.MAC = MyHelper.bytesToHexText(bb, vStart + 1, 6);
-			break;
-
-		case SF.cidOnOff: // 开关状态_1b
-			this.OnOff = bb[vStart] == 1;
-			break;
-		case SF.cidProduct:
-			// 产品信息，NodeType_2b + Manufacturer_2b + FirmwareVer_2b + SN_Len_1b +
-			// SN_x
-			this.pNodeType = MyHelper.byteToInt(new byte[] { bb[vStart], bb[vStart + 1] });
-			this.pManufacturerId = MyHelper.byteToInt(new byte[] { bb[vStart + 2], bb[vStart + 3] });
-			this.pVersionMain = bb[vStart + 5];
-			this.pVersionSub = bb[vStart + 4];
-			this.pSerialNo = MyHelper.bytesToHexText(bb, vStart + 7, bb[vStart + 6]);
-			break;
-		case SF.cidSchedule: // 定时信息
-			this.Schedule = new PlugSchedule();
-			this.Schedule.init(bb); // 解析结果数据
-			break;
-		case SF.cidStandard: // 设备标准
-			byte t2 = bb[vStart];
-			this.PlugStandard = t2 == 1 ? "US" : (t2 == 2 ? "EU" : (t2 == 3 ? "China" : MyConfig.S_EMPTY));
-			break;
-		case SF.cidTime: // 设备时间，暂时不需要解析此数据
-			this.cStartYear = MyHelper.byteToInt(new byte[] { bb[vStart], bb[vStart + 1] });
-			break;
-		case SF.cidHistory: // 读取历史记录
-			this.parseHistory();
-			break;
-		case SF.cidSysStatus:// 继电器粘连错误
-			this.statusOnOffERR = MyHelper.byteToInt(new byte[] { bb[vStart + 2], bb[vStart + 3] }) > 0;
-			break;
-		}
-	}
-
-
-	void parseHistory() {
-
-	}
-
-	/**
-	 * 获取到的历史数据，开关、温度、耗电
-	 */
-	public List<HisItem> hisLogs = null;
-
-	void parseAuthReponse() {
-		byte[] bb = this.m_data;
-		byte vStart = SF.fiParamStart;
-		this.Message = MyHelper.bytesToAscii(bb, vStart, 7);
-		if ("AUTHREQ".equals(this.Message)) {
-			this.cpPubD = MyHelper.subBytes(bb, vStart + 8, 64);
-			this.cpSigD = MyHelper.subBytes(bb, vStart + 8 + 64, 64);
-			this.cpPubS = MyHelper.subBytes(bb, vStart + 8 + 64 + 64, 64);
-			this.cpSigS = MyHelper.subBytes(bb, vStart + 8 + 64 + 64 + 64, 64);
-		} else if ("RAMCHAL".equals(this.Message)) {
-			this.cpAuthSig = MyHelper.subBytes(bb, vStart + 8, 64);
-		} else if ("RANCRID".equals(this.Message)) {
-			this.cpAuthSig = MyHelper.subBytes(bb, vStart + 8, 64);
-			this.cpRandnum = MyHelper.subBytes(bb, vStart + 8 + 64, 32);
-		} else if (this.Message.startsWith("+ok")) {
-		} else {
-			this.setError("Unknow Auth Response:" + this.Message);
-		}
-	}
-
-	/**
-	 * 解析 02， CID=02
-	 */
-	void parseAuthRequest() {
-		byte[] bb = this.m_data;
-		byte vStart = SF.fiParamStart;
-		this.Message = MyHelper.bytesToAscii(bb, vStart, 7);
-		if ("RAMCHAL".equals(this.Message)) {
-			cpRandnum = MyHelper.subBytes(bb, vStart + 7, 32);
-		} else if ("RNCMAC".equals(this.Message.substring(0, 6))) {
-			cpRandnum = MyHelper.subBytes(bb, vStart + 6, 32);
-			this.MAC = MyHelper.bytesToHexText(bb, vStart + 6 + 32, 6);
-		} else {
-			this.setError("Unknow auth response:" + this.Message);
-		}
-	}
 
 	/**
 	 * Pub-d= Device Public Key

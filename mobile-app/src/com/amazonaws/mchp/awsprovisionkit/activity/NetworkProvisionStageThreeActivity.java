@@ -43,7 +43,7 @@ import android.widget.Toast;
 
 import com.amazonaws.mchp.awsprovisionkit.base.MyThreadPool;
 import com.amazonaws.mchp.awsprovisionkit.model.itemInfo;
-import com.amazonaws.mchp.awsprovisionkit.opensource.downloader.asyn.AsyncTask;
+import android.os.AsyncTask;
 import com.amazonaws.mchp.awsprovisionkit.service.AwsService;
 import com.amazonaws.mchp.awsprovisionkit.task.json.AwsJsonMsg;
 import com.amazonaws.mchp.awsprovisionkit.task.json.AwsShadowJsonMsg;
