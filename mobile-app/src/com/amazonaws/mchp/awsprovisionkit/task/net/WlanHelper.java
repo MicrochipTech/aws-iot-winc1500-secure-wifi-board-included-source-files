@@ -15,7 +15,7 @@ import android.os.Build;
 import android.text.TextUtils;
 
 /**
- * 构建WifConfig
+ * WifConfig
  *
  */
 public class WlanHelper {
@@ -23,13 +23,7 @@ public class WlanHelper {
 	private static final String BSSID_ANY = "any";
 	public static final WlanSecurities ConfigSec = WlanSecurities.newInstance();
 
-	/**
-	 * 是否连接到SSID
-	 * 
-	 * @param wifi
-	 * @param ssid
-	 * @return
-	 */
+
 	public static Boolean isConnectedTo(String ssid, WifiManager wifi) {
 		WifiInfo connInfo = wifi.getConnectionInfo();
 		if (ssid.equals(connInfo.getSSID()) || connInfo.getSSID().equals("\"" + ssid + "\""))
@@ -37,20 +31,15 @@ public class WlanHelper {
 		return false;
 	}
 
-	/**
-	 * 打开WLAN设置的页面
-	 */
+
 	public static void openWlanSetting(Context ctx) {
 		Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
 		ctx.startActivity(intent);
 	}
 
 	/**
-	 * 获取已连接的WIFI配置信息
-	 * 
-	 * @param ssid
-	 * @param wifiManager
-	 * @return
+	 * Get configured network information
+	 *
 	 */
 	public static WifiConfiguration getWifiConfiguration(ScanResult scanResult, WifiManager wifiMgr) {
 		if (null == scanResult)
@@ -110,13 +99,6 @@ public class WlanHelper {
 		return null;
 	}
 
-	/**
-	 * 连接到新的WLAN
-	 * @param wifiMgr
-	 * @param scanResult
-	 * @param password
-	 * @return
-	 */
 	public static Boolean connectNewConfig(WifiManager wifiMgr, ScanResult scanResult, String password) {
 		MyHelper.d(">>>> WIFI - connectNewConfig In ");
 		final String security = ConfigSec.getScanResultSecurity(scanResult);
@@ -137,6 +119,7 @@ public class WlanHelper {
 			return null;
 		}
 
+		wifiMgr.enableNetwork(id, true);
 		/*
 		wifiMgr.disconnect();
 		MyHelper.d(">>>> enableNetwork ");
@@ -152,12 +135,12 @@ public class WlanHelper {
 			return null;
 		}
 
-		config = getWifiConfiguration(scanResult, wifiMgr);
-		MyHelper.d(">>>> WIFI - connectNewConfig, SSID = "+config.SSID);
-		MyHelper.d(">>>> WIFI - connectNewConfig, build version = "+Build.VERSION.SDK_INT);
-		Boolean rr = connectToConfiguredNetwork(wifiMgr, config);
-		return rr;
-
+		///config = getWifiConfiguration(scanResult, wifiMgr);
+		///MyHelper.d(">>>> WIFI - connectNewConfig, SSID = "+config.SSID);
+		///MyHelper.d(">>>> WIFI - connectNewConfig, build version = "+Build.VERSION.SDK_INT);
+		///Boolean rr = connectToConfiguredNetwork(wifiMgr, config);
+		///return rr;
+		return true;
 	}
 
 	public static boolean connectToConfiguredNetwork(final WifiManager wifiMgr, WifiConfiguration config) {
@@ -212,12 +195,7 @@ public class WlanHelper {
 		});
 	}
 
-	/**
-	 * 判断是否启动了AP模式
-	 * 
-	 * @param wifiManager
-	 * @return
-	 */
+
 	public static boolean isWifiApEnabled(WifiManager wifiManager) {
 		try {
 			Method method = wifiManager.getClass().getMethod("isWifiApEnabled");
@@ -231,12 +209,7 @@ public class WlanHelper {
 		return false;
 	}
 
-	/**
-	 * 关闭WIFI AP模式
-	 * 
-	 * @param wifiManager
-	 * @return
-	 */
+
 	public static boolean closeWifiAp(WifiManager wifiManager) {
 		boolean ret = false;
 		if (isWifiApEnabled(wifiManager)) {
