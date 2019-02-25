@@ -3,17 +3,8 @@ package com.amazonaws.mchp.awsprovisionkit.task.net;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
-/**
- * 数据协议适配器， 注意： 1. 数字高位在前，低位在后， 2.字符串从向后
- *
- */
 public class ProtocolAdapter {
-	/**
-	 * 尝试启用加密 并 记录SessionKey
-	 * 
-	 * @param exPubKey64
-	 * @param random
-	 */
+
 	public void trySaveSessionKey(byte[] exPubKey64, byte[] random) {
 		if (this.m_enableAES)
 			return;
@@ -23,15 +14,7 @@ public class ProtocolAdapter {
 		}
 	}
 
-	/**
-	 * 创建完整数据包
-	 * 
-	 * @param cmdId
-	 *            命令ID
-	 * @param parameters
-	 *            参数数据
-	 * @return 完整数据包
-	 */
+
 	byte[] getPackedData(byte cmdId, byte[] parameters) {
 		byte[] data = new byte[SF.fiParamStart + parameters.length + SF.lenCRC];
 		data[SF.fiSOf] = SF.SOF;
@@ -51,13 +34,7 @@ public class ProtocolAdapter {
 		return data;
 	}
 
-	/**
-	 * 解析数据包
-	 * 
-	 * @param data
-	 *            要解析的数据包
-	 * @return 返回解析的结果对象
-	 */
+
 	public static MsgData tryParse(byte[] data, byte[] random, ProtocolAdapter protocol) {
 		MsgData item = null;
 		try {
@@ -73,12 +50,7 @@ public class ProtocolAdapter {
 		return item;
 	}
 
-	/**
-	 * 构建发现设备的数据包
-	 * 
-	 * @return 完成数据包
-	 * @throws UnsupportedEncodingException
-	 */
+
 	public byte[] makeDiscoveryReq() {
 
 		byte[] parms = MyHelper.asciiToBytes("Atmel_WiFi_Discovery");
@@ -87,86 +59,47 @@ public class ProtocolAdapter {
 		return data;
 	}
 
-	/**
-	 * 获取是否启用AES加密
-	 * 
-	 * @return
-	 */
+
 	public Boolean getEnableAES() {
 		return this.m_enableAES;
 		// return false;
 	}
 
-	/**
-	 * 设置是否启用AES加密
-	 * 
-	 * @param enableAES
-	 */
+
 	public void setEnableAES(Boolean enableAES) {
 		this.m_enableAES = enableAES;
 	}
 
-	/**
-	 * 获取会话 key
-	 * 
-	 * @return
-	 */
+
 	public byte[] getSessionKey() {
 		return this.m_sessionKey;
 	}
 
-	/**
-	 * 获取IV - 加密向量
-	 * 
-	 * @return
-	 */
+
 	public byte[] getIV() {
 		return this.m_IV;
 	}
 
-	/**
-	 * 通讯序号，用于匹配数据包
-	 */
+
 	private byte m_sequence = 0;
-	/**
-	 * 是否启用AES加密，true=发送数据包启用AES
-	 */
+
 	private Boolean m_enableAES = false;
 
-	/**
-	 * 会话KEY，用于AES加密
-	 */
 	private byte[] m_sessionKey = null;
 
-	/**
-	 * 加密向量IV
-	 */
 	private byte[] m_IV = null;
 
-	/**
-	 * 查看当前Sequence
-	 * 
-	 * @return
-	 */
+
 	public byte peekSequence() {
 		return this.m_sequence;
 	}
 
-	/**
-	 * 获取通讯序号，从1开始，自动加1
-	 * 
-	 * @return 序号
-	 */
+
 	public byte getSequence() {
 		return ++m_sequence;
 	}
 
-	/**
-	 * 构建发现设备的数据包
-	 * 
-	 * @return 完成数据包
-	 * @throws UnsupportedEncodingException
-	 */
+
 	public byte[] makeDiscoveryATC(String wifiSsid, String password, WifiSEC securityType, String uuid) {
 		String ssid = wifiSsid; // "mytest81";
 		String pwd = password; // "11111111";
@@ -187,11 +120,6 @@ public class ProtocolAdapter {
 		return data;
 	}
 
-	/**
-	 * 构建发现设备的数据包
-	 * 
-	 * @return 完成数据包
-	 */
 	public byte[] makeDiscoveryATZ() {
 
 		byte[] parms = MyHelper.asciiToBytes("CONDONE");
@@ -204,11 +132,6 @@ public class ProtocolAdapter {
 		this.m_IV = MyHelper.genRandom(16);
 	}
 
-	/**
-	 * 查询MAC地址
-	 * 
-	 * @return 完成数据包
-	 */
 	public byte[] makeQueryMAC() {
 		byte[] cid = MyHelper.intToByte(SF.cidMAC);
 		// CID=0x00fd, cluster index=0, attribute=
@@ -219,11 +142,6 @@ public class ProtocolAdapter {
 	}
 
 
-	/**
-	 * 查询设备温度 Device Temperature 0x0003, Query Cluster
-	 * 
-	 * @return 数据包
-	 */
 	public byte[] makeQueryTemp() {
 		/*
 		 * format = CID=0x0003, cluster index=0, attribute1=[1] attributes

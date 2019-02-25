@@ -15,7 +15,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 
 /**
- * WiFi 操作相关
+ * WiFi Control
  *
  */
 public class WlanAdapter {
@@ -389,16 +389,12 @@ public class WlanAdapter {
 		}
 	}
 
-	/**
-	 * WIFI 连接
-	 */
+
 	void waitingNetworkChange() {
 		waitingNetworkChange(TIMEOUT);
 	}
 
-	/**
-	 * WIFI 连接
-	 */
+
 	void waitingNetworkChange(int timeout) {
 		try {
 			MyHelper.d(">>>> WIFI - wait conn...");
@@ -411,16 +407,12 @@ public class WlanAdapter {
 		}
 	}
 
-	/**
-	 * WIFI 扫描
-	 */
+
 	void waitingWifiScaned() {
 		waitingWifiScaned(TIMEOUT);
 	}
 
-	/**
-	 * WIFI 扫描
-	 */
+
 	void waitingWifiScaned(int timeout) {
 		try {
 			MyHelper.d(">>>> WIFI - wait scan...");
@@ -435,9 +427,6 @@ public class WlanAdapter {
 		}
 	}
 
-	/**
-	 * WIFI 打开、关闭
-	 */
 	void waitingWifiChange() {
 		try {
 			MyHelper.d(">>>> WIFI - wait WiFi enable...");

@@ -3,9 +3,7 @@ package com.amazonaws.mchp.awsprovisionkit.task.net;
 import android.net.wifi.ScanResult;
 import android.text.TextUtils;
 
-/**
- * 插座支持的WIFI安全类型
- */
+
 public enum WifiSEC {
 
 	OPEN((byte) 0x01), WPA((byte) 0x02), WEP((byte) 0x03), X802_1((byte) 0x04), EAP((byte) 0x05);

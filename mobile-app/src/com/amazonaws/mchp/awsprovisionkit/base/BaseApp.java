@@ -18,14 +18,14 @@ public class BaseApp extends Application {
 
 		// ActiveAndroid.initialize(this);
 
-		// JPushInterface.setDebugMode(false); // 设置开启日志,发布时请关闭日志
+		// JPushInterface.setDebugMode(false);
 		// JPushInterface.init(this);
 		// JPushInterface.setAliasAndTags(getApplicationContext(),
 		// Utility.getDeviceId(this), tags);
 
-		// 异常处理，不需要处理时注释掉这两句即可！
+
 		// CrashHandler crashHandler = CrashHandler.getInstance();
-		// 注册crashHandler
+
 		// crashHandler.init(getApplicationContext());
 
 		// 启动应用时，检查有异常产生，并发送
@@ -85,8 +85,8 @@ public class BaseApp extends Application {
 				// .postProcessor(null)
 				// .extraForDownloader(null)
 				.considerExifParams(true) // default
-				.imageScaleType(ImageScaleType.EXACTLY_STRETCHED) // EXACTLY:恰好\精确地
-																	// EXACTLY_STRETCHED:全部拉伸
+				.imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+																	
 				// default
 				// .bitmapConfig(Config.ARGB_8888) // default
 				// .decodingOptions(null)
