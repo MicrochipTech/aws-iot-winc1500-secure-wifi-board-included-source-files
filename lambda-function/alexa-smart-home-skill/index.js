@@ -5,11 +5,9 @@ const main_table = 'SensorBoardAcctTable';
 
 var config = {};
 
-config.IOT_BROKER_ENDPOINT = "a1nwxjdmwiwtr2.iot.us-east-1.amazonaws.com".toLowerCase();
+config.IOT_BROKER_ENDPOINT = "xxxxxxxxxxxx.iot.us-east-1.amazonaws.com".toLowerCase();
 
 config.IOT_BROKER_REGION = "us-east-1";
-
-config.IOT_THING_NAME = "WINC1500_1";
 
 // Load AWS SDK libraries
 var AWS = require('aws-sdk');

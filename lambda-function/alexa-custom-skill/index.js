@@ -7,13 +7,10 @@ const main_table = 'SensorBoardAcctTable';
 
 var config = {};
 
-config.IOT_BROKER_ENDPOINT = "at5oi5gztccgr.iot.us-east-1.amazonaws.com".toLowerCase();
+config.IOT_BROKER_ENDPOINT = "xxxxxxxxxxx.iot.us-east-1.amazonaws.com".toLowerCase();
 
 config.IOT_BROKER_REGION = "us-east-1";
 
-//config.IOT_THING_NAME = "89600207b3eba6d86e2847a136ad18128eb7f1a7";  //Sensor board #2  DRY6 account
-config.IOT_THING_NAME = "c922c14c3e65b718aa8ddb835603a7af88af77f9";  //Sensor board Rev C0 DR6 Account
-//config.IOT_THING_NAME = "2f5554c82bdc77dc086cafaf1464c70539d6ff3e";  //Sensor board Rev C0 DR6 Account
 
 // Load AWS SDK libraries
 var AWS = require('aws-sdk');
