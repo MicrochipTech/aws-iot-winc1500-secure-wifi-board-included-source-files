@@ -12,7 +12,7 @@
     <string name="Password">Password</string>
     <string name="Menu">Menu</string>
     <string name="title_activity_about_app">AboutApp</string>
-    <string name="about">Firmware version: 1.1</string>
+    <string name="about">Firmware version: 1.0.0</string>
     <string name="more_info">This is a sample app to show the IoT application with Microchip wireless modules</string>
     <string name="title_activity_sign_up_confirm">SignUpConfirm</string>
     <string name="title_activity_mfa">MFAActivity</string>
@@ -24,4 +24,5 @@
     <string name="title_activity_device_settings">DeviceSettings</string>
     <string name="title_activity_new_password">NewPassword</string>
     <string name="network_provision_step1_description">1. Power on the board\n2. Hold and Press the SW3 Key for 5 second\n3. LD2 blink in RED color</string>
+    <string name="OK">OK</string>
 </resources>
