@@ -62,10 +62,7 @@
 #include "cloud_wrapper.h"
 #include "aws_iot_config.h"
 
-/**
- * @brief Default MQTT HOST URL is pulled from the aws_iot_config.h
- */
-char HostAddress[255] = AWS_IOT_MQTT_HOST;
+
 
 /**
  * @brief Default MQTT port is pulled from the aws_iot_config.h
@@ -136,14 +133,15 @@ static void jsonMessagePublish(char* channel, cJSON *message)
 Cloud_RC cloud_connect(char* hostname, char* mqtt_client_id)
 {
 	IoT_Error_t rc = NONE_ERROR;
-    
+	
+
     if (strstr(hostname,"amazonaws.com") == NULL)    // hostname do not have the correct AWS IoT EndPoint
     {
         printf("Error... Cannot reade the correct AWS IoT EndPoint from ECCX08, use default AWS IoT EndPoint...\r\n");
         memset(hostname, 0, sizeof(hostname));
         strcpy(hostname,AWS_IOT_MQTT_HOST);
     }
-    printf("provisioning_get_hostname, hostname = %s\r\n", hostname);
+    //printf("provisioning_get_hostname, hostname = %s\r\n", hostname);
 	
 	gethostbyname((uint8_t *)hostname);
 	
