@@ -27,8 +27,11 @@ import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.LocationManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -93,10 +96,13 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvAwsStatus;
     private Intent service_intent;
+    private boolean checkgps;
+    private boolean checkwifi;
 
     iGatewayConnectStatusReceiver receiver;
 
     String idToken;
+
 
     // Mandatory overrides first
     @Override
@@ -125,10 +131,28 @@ public class MainActivity extends AppCompatActivity {
         tvAwsStatus.setText("Start AWS");
 
         receiver = new iGatewayConnectStatusReceiver();
-        // Initialize application
-        AppHelper.init(getApplicationContext());
-        initApp();
-        findCurrent();
+
+        if (canGetLocation() == true) {
+
+            //DO SOMETHING USEFUL HERE. ALL GPS PROVIDERS ARE CURRENTLY ENABLED
+            // Initialize application
+            if (canGetWiFiAccess() == true) {
+                AppHelper.init(getApplicationContext());
+                initApp();
+                findCurrent();
+            }
+            else {
+                showWiFiSettingsAlert();
+            }
+        } else {
+
+            //SHOW OUR SETTINGS ALERT, AND LET THE USE TURN ON ALL THE GPS PROVIDERS
+            showGPSSettingsAlert();
+
+        }
+
+
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -256,6 +280,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
+        Log.e(TAG, "onResume");
+        if (checkgps || checkwifi)
+        {
+            checkgps = false;
+            checkwifi = false;
+            if (canGetLocation() == true) {
+
+                //DO SOMETHING USEFUL HERE. ALL GPS PROVIDERS ARE CURRENTLY ENABLED
+                // Initialize application
+                if (canGetWiFiAccess() == true) {
+                    AppHelper.init(getApplicationContext());
+                    initApp();
+                    findCurrent();
+                }
+                else {
+                    showWiFiSettingsAlert();
+                }
+            } else {
+
+                //SHOW OUR SETTINGS ALERT, AND LET THE USE TURN ON ALL THE GPS PROVIDERS
+                showGPSSettingsAlert();
+
+            }
+
+        }
         IntentFilter filter = new IntentFilter(ServiceConstant.CloudStatus);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         filter.addAction(ServiceConstant.JSONMsgReport);
@@ -304,6 +353,98 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public boolean canGetWiFiAccess() {
+        WifiManager wifi = null;
+        boolean wifi_enabled = false;
+        if (wifi == null)
+            wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        // exceptions will be thrown if provider is not permitted.
+        try {
+            wifi_enabled = wifi.isWifiEnabled();
+        } catch (Exception ex) {
+
+        }
+
+
+        return wifi_enabled;
+    }
+
+    public void showWiFiSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Notice");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Please enable Wi-Fi Access ");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton(
+                getResources().getString(R.string.OK),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(
+                                Settings.ACTION_WIFI_SETTINGS);
+                        startActivity(intent);
+                        checkwifi = true;
+                    }
+                });
+
+        alertDialog.show();
+    }
+    public boolean canGetLocation() {
+        boolean result = true;
+        LocationManager lm = null;
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        if (lm == null)
+
+            lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // exceptions will be thrown if provider is not permitted.
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+
+        }
+        try {
+            network_enabled = lm
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+        if (gps_enabled == false || network_enabled == false) {
+            result = false;
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+
+    public void showGPSSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Notice");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("Please enable location access");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton(
+                getResources().getString(R.string.OK),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(
+                                Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                        checkgps = true;
+                    }
+                });
+
+        alertDialog.show();
+    }
     // Perform the action for the selected navigation item
     private void performAction(MenuItem item) {
         // Close the navigation drawer
@@ -649,8 +790,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        userDialog = builder.create();
-        userDialog.show();
+        //userDialog = builder.create();
+        //userDialog.show();
     }
 
     private void closeWaitDialog() {

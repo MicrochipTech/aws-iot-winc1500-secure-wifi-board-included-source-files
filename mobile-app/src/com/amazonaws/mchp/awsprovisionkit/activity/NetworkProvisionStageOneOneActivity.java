@@ -222,24 +222,10 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
 
         private boolean ConnectBoardByScanQR(String mac_addr){
 
-            //List<ScanResult> rdata = mWifiAdapter.tryGetWifiList();
-
-            //if (rdata == null) {
-            //    return -1;
-            //}
             ArrayList<ScanResult> data = new ArrayList<ScanResult>();
             String targetSsid = "WiFiSmartDevice_" + mac_addr;
 
-            //ScanResult sr = searchTargetDevice(rdata, targetSsid);
-            //if (sr == null)
-            //    return MyConfig.ERR_ScanAPFail;
-
-
-
-            //printProgressDiagMsg("Connecting Device...");
-
             Boolean r1 = mWifiAdapter.connectToNewWifi(targetSsid);
-            //Boolean r1 = mWifiAdapter.tryConnectWlan(sr, "12345678");
             if (r1)
                 MyHelper.d(">>>> Success connected to wifi, SSID= " + targetSsid);
             else {
@@ -248,6 +234,8 @@ public class NetworkProvisionStageOneOneActivity extends AppCompatActivity {
             }
             return true;
         }
+
+
         private ScanResult searchTargetDevice(List<ScanResult> list, String ssid)
         {
 

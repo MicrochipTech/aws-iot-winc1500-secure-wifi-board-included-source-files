@@ -95,9 +95,10 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
     private Integer mPubCounter;
 	private deviceListJsonMsgReceiver receiver;
 	private WlanAdapter mWifiAdapter = null;
+	private String uuid;
 
 	final Context context = this;
-    public String uuid;
+
 
 	String[] thing_name = new String[10];
 	ArrayList<WiFiSmartDevice> thingList = new ArrayList<WiFiSmartDevice>();
@@ -163,10 +164,10 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		uuid = intent.getStringExtra(ServiceConstant.CognitoUuid);
 		idToken = intent.getStringExtra("idToken");
 		if (idToken != null) {
-			Log.d(LOG_TAG, "Debug  idtoken=" + idToken);
+			Log.d(LOG_TAG, "Debug: idtoken=" + idToken);
 			uuid = CognitoJWTParser.getClaim(idToken, "sub");
 		}
-		Log.d(LOG_TAG, ">>>>>>>>>>> user uuid = " + uuid);
+		Log.d(LOG_TAG, "Debug: user uuid = " + uuid);
 		username = AppHelper.getCurrUser();
 		user = AppHelper.getPool().getUser(username);
 
@@ -183,7 +184,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		});
 
 		onRefresh();
-
 	}
 
 
@@ -196,8 +196,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		filter.addAction(ServiceConstant.JSONShadowMsgReport);
 		filter.addAction(ServiceConstant.ThingIDListReport);
         registerReceiver(receiver, filter);
-
-
 	}
 
 	@Override
@@ -209,21 +207,19 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 		handler.removeCallbacks(publishShadowGetCmd);
 
         unregisterReceiver(receiver);
-		// TODO GosMessageHandler.getSingleInstance().SetHandler(null);
 
 	}
 
 	// Perform the action for the selected navigation item
 	private void performAction(MenuItem item) {
 		// Close the navigation drawer
-		Log.d(LOG_TAG, "Debug 7777777 item="+item.getItemId());
+		Log.d(LOG_TAG, "Debug: item="+item.getItemId());
 		mDrawer.closeDrawers();
 
 		// Find which item was selected
 		switch(item.getItemId()) {
 			case R.id.nav_user_sign_out:
 				// Start sign-out
-
 				user.signOut();
 
 				Intent intent = new Intent();
@@ -232,13 +228,12 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 				intent.putExtra("name",username);
 				setResult(RESULT_OK, intent);
 				finish();
-
-
 				break;
+
 			case R.id.nav_about:
 				// For the inquisitive
-				//Intent aboutAppActivity = new Intent(this, AboutApp.class);
-				//startActivity(aboutAppActivity);
+				Intent aboutAppActivity = new Intent(this, AboutApp.class);
+				startActivity(aboutAppActivity);
 				break;
 
 		}
@@ -330,8 +325,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 
 				break;
-			case R.id.action_addDevice:
-				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -373,14 +366,14 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 	public void exitBy2Click() {
 		Timer tExit = null;
-			isExit = true; // 准备退出；
+			isExit = true;
 			tExit = new Timer();
 			tExit.schedule(new TimerTask() {
 				@Override
 				public void run() {
 					isExit = false; // 取消退出
 				}
-			}, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+			}, 2000);
 	}
 
 	@Override
@@ -391,7 +384,6 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 	public Handler getMyHandler() {
 
 		return handler;
-
 	}
 
 
@@ -532,7 +524,7 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 						}
 						for (int i=0; i<report_info_shadow.size(); i++){
-							if (report_info_shadow.get(i).item.equals("macAddr"))
+							if (report_info_shadow.get(i).item.equals(AwsJsonMsg.AWS_JSON_MACADDR_ATTR))
 								router.setMacAddr(report_info_shadow.get(i).value);
 						}
 
@@ -570,20 +562,16 @@ public class DeviceListActivity  extends AppCompatActivity implements OnClickLis
 
 							String[] NameSplit = split[1].split("=");
 							thing.setDeviceName(NameSplit[1]);
-							Log.i(LOG_TAG, "Added thing_ID :: " + thing.getThingID()+" thing_name :: " + thing.getDeviceName());
-
-
+							Log.d(LOG_TAG, "Added thing_ID :: " + thing.getThingID()+" thing_name :: " + thing.getDeviceName());
 
 							thingList.add(thing);
 							j++;
-
 						}
 
 					}
-					Log.i("List", "Passed Array List :: " + arr);
+					Log.d(LOG_TAG, "Passed Array List :: " + arr);
 				}
 				onRefresh();
-
 
 			}
 

@@ -24,29 +24,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mchp.awsprovisionkit.base.MyThreadPool;
-import com.amazonaws.mchp.awsprovisionkit.model.itemInfo;
 import android.os.AsyncTask;
 import com.amazonaws.mchp.awsprovisionkit.service.AwsService;
-import com.amazonaws.mchp.awsprovisionkit.task.json.AwsJsonMsg;
-import com.amazonaws.mchp.awsprovisionkit.task.json.AwsShadowJsonMsg;
 import com.amazonaws.mchp.awsprovisionkit.task.net.MsgData;
 import com.amazonaws.mchp.awsprovisionkit.task.net.MsgMulticast;
 import com.amazonaws.mchp.awsprovisionkit.task.net.MyConfig;
@@ -55,10 +47,6 @@ import com.amazonaws.mchp.awsprovisionkit.task.net.WlanAdapter;
 import com.amazonaws.mchp.awsprovisionkit.utils.*;
 import com.amazonaws.mchp.awsprovisionkit.R;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import zxing.CaptureActivity;
 
 @SuppressLint("HandlerLeak")
 public class NetworkProvisionStageThreeActivity extends AppCompatActivity {

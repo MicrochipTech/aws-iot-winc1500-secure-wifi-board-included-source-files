@@ -59,34 +59,25 @@ public class AwsJsonMsg implements Parcelable {
     public static final String   AWS_JSON_SUBCOMMAND_ADDNODE = "addNode" ;
     public static final String   AWS_JSON_SUBCOMMAND_REMOVENODE = "removeNode" ;
     public static final String   AWS_JSON_SUBCOMMAND_GET3DPLOTDATA = "get3dPlotData" ;
-    public static final String   AWS_JSON_DEVTYPE_ULPC_SENSOR = "ulpc_sensor";
-    public static final String   AWS_JSON_DEVTYPE_GATEWAY = "gateway";
     public static final String   AWS_JSON_DEVTYPE_WIFISENSORBOARD = "wifiSensorBoard";
 
     public static final String   AWS_JSON_DATATYPE_TEMP = "temp";
     public static final String   AWS_JSON_DATATYPE_HUM = "hum";
     public static final String   AWS_JSON_DATATYPE_UV = "uv";
     public static final String   AWS_JSON_DATATYPE_PRESSURE = "pressure";
-    public static final String   AWS_JSON_DATATYPE_LED1 = "led1";
+    public static final String   AWS_JSON_DATATYPE_ONLINE_STATE = "State";
 
-    public static final String   AWS_JSON_DATATYPE_ROTATION_W = "r_w_cor";
-    public static final String   AWS_JSON_DATATYPE_ROTATION_X = "r_x_cor";
-    public static final String   AWS_JSON_DATATYPE_ROTATION_Y = "r_y_cor";
-    public static final String   AWS_JSON_DATATYPE_ROTATION_Z = "r_z_cor";
+    public static final String   AWS_JSON_DATATYPE_LED_R = "LED_R";
+    public static final String   AWS_JSON_DATATYPE_LED_G = "LED_G";
+    public static final String   AWS_JSON_DATATYPE_LED_B = "LED_B";
+    public static final String   AWS_JSON_DATATYPE_LED_INTENSITY = "LED_INTENSITY";
+
+    public static final String   AWS_JSON_DATATYPE_LED_STATE = "Light";
+    public static final String   AWS_JSON_DATATYPE_BUTTON_1 = "BUTTON_1";
+    public static final String   AWS_JSON_DATATYPE_BUTTON_2 = "BUTTON_2";
+    public static final String   AWS_JSON_DATATYPE_BUTTON_3 = "BUTTON_3";
 
 
-    public AwsJsonMsg() {
-        cmd = "";
-        devName = "";
-        devType = "";
-        macAddr = "";
-        macType = "";
-        onlineDeviceNum = 0;
-
-        //nodeInfo= new endNodeInfo();
-        nodeInfo = new ArrayList<endNodeInfo>();
-        infoList = new ArrayList<infoContainer>();
-    }
 
     public AwsJsonMsg(Parcel source) {
         // reconstruct from the parcel
@@ -132,25 +123,10 @@ public class AwsJsonMsg implements Parcelable {
         dest.writeString(macAddr);
         dest.writeString(macType);
         dest.writeInt(onlineDeviceNum);
-        //dest.writeParcelable(nodeInfo, flags);
         dest.writeTypedList(nodeInfo);
         dest.writeTypedList(infoList);
     }
 
-    public void setMacAddr(String mac){macAddr = mac;}
-    public void setDevType(String type){devType = type;}
-    public void setEndNodeInfo(ArrayList<endNodeInfo> infoArray) {
-        nodeInfo.clear();   // reset the nodeinfo array
-        for (int i = 0; i < infoArray.size(); i++){
-            nodeInfo.add(infoArray.get(i));
-        }
-    }
-    public void setInfoList(ArrayList<infoContainer> infoArray) {
-        infoList.clear();   // reset the nodeinfo array
-        for (int i = 0; i < infoArray.size(); i++){
-            infoList.add(infoArray.get(i));
-        }
-    }
     public String getCmd() {
         return cmd;
     }
@@ -159,13 +135,6 @@ public class AwsJsonMsg implements Parcelable {
     }
     public String getDevType(){return devType;}
     public String getMacAddr(){return macAddr;}
-    public Integer getOnlineDeviceNum(){return onlineDeviceNum;}
-    public ArrayList<endNodeInfo> getNodeInfoArrayList(){
-        return nodeInfo;
-    }
-    public ArrayList<infoContainer> getInfoList(){
-        return infoList;
-    }
 
 
     public AwsJsonMsg parseJsonMsg(String msg) {

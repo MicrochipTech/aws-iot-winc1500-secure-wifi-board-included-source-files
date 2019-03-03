@@ -47,17 +47,13 @@ import com.amazonaws.mchp.awsprovisionkit.base.MyThreadPool;
 import com.amazonaws.mchp.awsprovisionkit.model.APDevice;
 import android.os.AsyncTask;
 import com.amazonaws.mchp.awsprovisionkit.task.net.MyHelper;
-import com.amazonaws.mchp.awsprovisionkit.task.net.WifiSEC;
 import com.amazonaws.mchp.awsprovisionkit.task.net.WlanAdapter;
 import com.amazonaws.mchp.awsprovisionkit.task.ui.SlideListView;
 import com.amazonaws.mchp.awsprovisionkit.task.ui.VerticalSwipeRefreshLayout;
 import com.amazonaws.mchp.awsprovisionkit.R;
 import com.amazonaws.mchp.awsprovisionkit.utils.ServiceConstant;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import zxing.CaptureActivity;
 
 @SuppressLint("HandlerLeak")
 public class NetworkProvisionStageTwoActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -217,8 +213,6 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
 
     private void UpdateUI() {
 
-        //llNoDevice.setVisibility(View.GONE);
-        //mSwipeLayout1.setVisibility(View.GONE);
         svListGroup.setVisibility(View.VISIBLE);
 
         Log.d(LOG_TAG, "UpdateUI ");
@@ -259,12 +253,8 @@ public class NetworkProvisionStageTwoActivity extends AppCompatActivity implemen
     }
 
     public void ScanTrigger(View view) {
-
         Log.d(LOG_TAG, "Debug: Scan button click");
-
         scanAP();
-
-
     }
 
     public void onRefresh() {
