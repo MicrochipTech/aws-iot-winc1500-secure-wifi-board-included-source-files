@@ -1,8 +1,8 @@
-CUSTOMER_SPECIFIC_ENDPOINT=xxxxxxxxxxxxxxxxx.us-east-1.amazonaws.com
-COGNITO_POOL_ID=us-east-1:xxxxxx-xxxxx-xxxx-xxxx-xxxxxxxxxxxxx
-AWS_IOT_POLICY_NAME=AWS_IOT_POLICY_NAME
-AWS_IOT_REGION=us-east-1
-COGNITO_USER_POOL_ID=us-east-1_xxxxxxx
-COGNITO_REGION=us-east-1
-COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxx
-COGNITO_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+CUSTOMER_SPECIFIC_ENDPOINT=
+COGNITO_POOL_ID=
+AWS_IOT_POLICY_NAME=
+AWS_IOT_REGION=
+COGNITO_USER_POOL_ID=
+COGNITO_REGION=
+COGNITO_CLIENT_ID=
+COGNITO_CLIENT_SECRET=
